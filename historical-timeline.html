@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Timeline - Voices of the Diaspora</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/navigation.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="fas fa-globe-africa"></i>
+                <span>Voices of the Diaspora</span>
+            </div>
+            
+            <div class="nav-center">
+                <!-- Mobile Search -->
+                <div class="mobile-search-container">
+                    <div class="mobile-search-box">
+                        <input type="text" id="mobile-search-input" placeholder="Search..." autocomplete="off">
+                        <button class="mobile-search-btn" id="mobile-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="mobile-search-results" id="mobile-search-results"></div>
+                </div>
+
+                <div class="nav-menu" id="nav-menu">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="nav-text">Learning</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Learning Resources</div>
+                            <a href="educational-content.html">
+                                <i class="fas fa-book-open"></i>Educational Content
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-laptop"></i>Online Courses
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-file-alt"></i>Research Papers
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-archive"></i>Digital Archives
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span class="nav-text">Teaching</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Teaching Tools</div>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-clipboard-list"></i>Lesson Plans
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-puzzle-piece"></i>Interactive Materials
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-check-circle"></i>Assessment Tools
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-user-graduate"></i>Educator Guides
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-palette"></i>
+                            <span class="nav-text">Culture</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Culture & Arts</div>
+                            <a href="visual-arts.html">
+                                <i class="fas fa-paint-brush"></i>Visual Arts
+                            </a>
+                            <a href="music-dance.html">
+                                <i class="fas fa-music"></i>Music & Dance
+                            </a>
+                            <a href="literature.html">
+                                <i class="fas fa-feather-alt"></i>Literature
+                            </a>
+                            <a href="festivals-events.html" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-calendar"></i>Festivals & Events
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-microphone"></i>
+                            <span class="nav-text">Voices</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Voices & Stories</div>
+                            <a href="oral-histories.html">
+                                <i class="fas fa-microphone-alt"></i>Oral Histories
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-user-edit"></i>Personal Narratives
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-users"></i>Community Voices
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-comments"></i>Interviews
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-scroll"></i>
+                            <span class="nav-text">History</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">History & Identity</div>
+                            <a href="historical-timeline.html" class="active">
+                                <i class="fas fa-clock"></i>Historical Timeline
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-sitemap"></i>Genealogy Tools
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-fingerprint"></i>Cultural Identity
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-route"></i>Migration Patterns
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="news.html" class="nav-link">
+                            <i class="fas fa-newspaper"></i>
+                            <span class="nav-text">News</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="films.html" class="nav-link">
+                            <i class="fas fa-film"></i>
+                            <span class="nav-text">Films</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="podcasts.html" class="nav-link">
+                            <i class="fas fa-podcast"></i>
+                            <span class="nav-text">Podcasts</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="maps.html" class="nav-link">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span class="nav-text">Maps</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+                        <button class="search-btn" id="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="search-results"></div>
+                </div>
+                
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <section class="page-header">
+            <div class="container">
+                <h1>Historical Timeline</h1>
+                <p>Journey through key moments in African diaspora history</p>
+            </div>
+        </section>
+        
+        <section class="timeline-content">
+            <div class="container">
+                <div class="timeline">
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">3000 BCE</div>
+                        <div class="timeline-content-item">
+                            <h3>Ancient African Civilizations</h3>
+                            <p>Rise of Nubian kingdoms and early trade networks across the Red Sea and Indian Ocean. These ancient civilizations established the foundation for complex societies and long-distance trade relationships.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">1000 BCE - 500 CE</div>
+                        <div class="timeline-content-item">
+                            <h3>Great African Empires</h3>
+                            <p>The rise of powerful empires including Aksum in Ethiopia, the Kingdom of Kush in Sudan, and early West African states. These empires controlled major trade routes and developed sophisticated political systems.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">700 - 1500 CE</div>
+                        <div class="timeline-content-item">
+                            <h3>Medieval African Kingdoms</h3>
+                            <p>Golden age of West African empires including Ghana, Mali, and Songhai. These kingdoms controlled trans-Saharan trade routes and became centers of learning and Islamic scholarship.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">1400s - 1800s</div>
+                        <div class="timeline-content-item">
+                            <h3>Transatlantic Slave Trade</h3>
+                            <p>Forced migration of millions of Africans to the Americas, creating diaspora communities across the Caribbean, North and South America. This period saw the violent disruption of African societies and the birth of new diaspora cultures.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">1800s - 1900</div>
+                        <div class="timeline-content-item">
+                            <h3>Abolition and Reconstruction</h3>
+                            <p>End of slavery in various regions, Reconstruction era in the United States, and early Pan-African movements. Despite freedom, new forms of oppression emerged through segregation and colonialism.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">1900 - 1960</div>
+                        <div class="timeline-content-item">
+                            <h3>Pan-African Renaissance</h3>
+                            <p>Harlem Renaissance, Négritude movement, and early independence movements in Africa. Artists, writers, and activists across the diaspora began asserting cultural pride and political rights.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">1960s - 1980s</div>
+                        <div class="timeline-content-item">
+                            <h3>Civil Rights and Independence</h3>
+                            <p>Civil Rights Movement in the United States, independence movements across Africa, and anti-apartheid struggle in South Africa. This era saw unprecedented political mobilization and achievement of formal equality.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">1990s - 2000s</div>
+                        <div class="timeline-content-item">
+                            <h3>Globalization and Cultural Renaissance</h3>
+                            <p>End of apartheid, rise of Afrocentrism, and increased cultural exchange through globalization. African music, fashion, and culture gained global recognition and influence.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item animate-on-scroll">
+                        <div class="timeline-date">2000s - Present</div>
+                        <div class="timeline-content-item">
+                            <h3>Digital Renaissance and Return</h3>
+                            <p>Technology enables new forms of cultural connection and diaspora identity expression. "Year of Return" initiatives, DNA ancestry testing, and social media create new pathways for diaspora engagement with African heritage.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#" onclick="alert('Page coming soon!')">API Documentation</a></li>
+                        <li><a href="#" onclick="alert('Page coming soon!')">Contribute</a></li>
+                        <li><a href="#" onclick="alert('Page coming soon!')">Partnerships</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#" onclick="alert('Page coming soon!')">Contact Us</a></li>
+                        <li><a href="#" onclick="alert('Page coming soon!')">FAQ</a></li>
+                        <li><a href="#" onclick="alert('Page coming soon!')">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Voices of the Diaspora. Empowering communities through shared heritage.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/animations.js"></script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voices of the Diaspora</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/navigation.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="goToHomePage()" style="cursor: pointer;">
+                <i class="fas fa-globe-africa"></i>
+                <span>Voices of the Diaspora</span>
+            </div>
+            
+            <div class="nav-center">
+                <!-- Mobile Search (hidden by default, shown in mobile menu) -->
+                <div class="mobile-search-container">
+                    <div class="mobile-search-box">
+                        <input type="text" id="mobile-search-input" placeholder="Search..." autocomplete="off">
+                        <button class="mobile-search-btn" id="mobile-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="mobile-search-results" id="mobile-search-results"></div>
+                </div>
+
+                <div class="nav-menu" id="nav-menu">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="nav-text">Learning</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Learning Resources</div>
+                            <a href="#" onclick="loadPage('educational-content')">
+                                <i class="fas fa-book-open"></i>Educational Content
+                            </a>
+                            <a href="#" onclick="loadPage('online-courses')">
+                                <i class="fas fa-laptop"></i>Online Courses
+                            </a>
+                            <a href="#" onclick="loadPage('research-papers')">
+                                <i class="fas fa-file-alt"></i>Research Papers
+                            </a>
+                            <a href="#" onclick="loadPage('digital-archives')">
+                                <i class="fas fa-archive"></i>Digital Archives
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span class="nav-text">Teaching</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Teaching Tools</div>
+                            <a href="#" onclick="loadPage('lesson-plans')">
+                                <i class="fas fa-clipboard-list"></i>Lesson Plans
+                            </a>
+                            <a href="#" onclick="loadPage('interactive-materials')">
+                                <i class="fas fa-puzzle-piece"></i>Interactive Materials
+                            </a>
+                            <a href="#" onclick="loadPage('assessment-tools')">
+                                <i class="fas fa-check-circle"></i>Assessment Tools
+                            </a>
+                            <a href="#" onclick="loadPage('educator-guides')">
+                                <i class="fas fa-user-graduate"></i>Educator Guides
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-palette"></i>
+                            <span class="nav-text">Culture</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Culture & Arts</div>
+                            <a href="#" onclick="loadPage('visual-arts')">
+                                <i class="fas fa-paint-brush"></i>Visual Arts
+                            </a>
+                            <a href="#" onclick="loadPage('music-dance')">
+                                <i class="fas fa-music"></i>Music & Dance
+                            </a>
+                            <a href="#" onclick="loadPage('literature')">
+                                <i class="fas fa-feather-alt"></i>Literature
+                            </a>
+                            <a href="festivals-events.html" onclick="loadPage('festivals-events')">
+                                <i class="fas fa-calendar"></i>Festivals & Events
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-microphone"></i>
+                            <span class="nav-text">Voices</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Voices & Stories</div>
+                            <a href="#" onclick="loadPage('oral-histories')">
+                                <i class="fas fa-microphone-alt"></i>Oral Histories
+                            </a>
+                            <a href="#" onclick="loadPage('personal-narratives')">
+                                <i class="fas fa-user-edit"></i>Personal Narratives
+                            </a>
+                            <a href="#" onclick="loadPage('community-voices')">
+                                <i class="fas fa-users"></i>Community Voices
+                            </a>
+                            <a href="#" onclick="loadPage('interviews')">
+                                <i class="fas fa-comments"></i>Interviews
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-scroll"></i>
+                            <span class="nav-text">History</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">History & Identity</div>
+                            <a href="historical-timeline.html" onclick="loadPage('historical-timeline')">
+                                <i class="fas fa-clock"></i>Historical Timeline
+                            </a>
+                            <a href="#" onclick="loadPage('genealogy-tools')">
+                                <i class="fas fa-sitemap"></i>Genealogy Tools
+                            </a>
+                            <a href="#" onclick="loadPage('cultural-identity')">
+                                <i class="fas fa-fingerprint"></i>Cultural Identity
+                            </a>
+                            <a href="#" onclick="loadPage('migration-patterns')">
+                                <i class="fas fa-route"></i>Migration Patterns
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="news.html" class="nav-link" onclick="loadPage('news')" title="News">
+                            <i class="fas fa-newspaper"></i>
+                            <span class="nav-text">News</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadPage('films')" title="Films">
+                            <i class="fas fa-film"></i>
+                            <span class="nav-text">Films</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadPage('podcasts')" title="Podcasts">
+                            <i class="fas fa-podcast"></i>
+                            <span class="nav-text">Podcasts</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="maps.html" class="nav-link" onclick="loadPage('maps')" title="Maps">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span class="nav-text">Maps</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+                        <button class="search-btn" id="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="search-results"></div>
+                </div>
+                
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-background">
+                <img src="assets/images/hero/hero-background.jpg" alt="African diaspora communities worldwide" class="hero-bg-image">
+                <div class="hero-overlay"></div>
+                <div class="hero-particles"></div>
+            </div>
+            <div class="hero-content">
+                <h1 class="hero-title animate-fade-in">
+                    Voices of the Diaspora
+                </h1>
+                <p class="hero-subtitle animate-slide-up">
+                    Connecting cultures, preserving heritage, empowering communities across the global African diaspora
+                </p>
+                <div class="hero-buttons animate-slide-up-delayed">
+                    <button class="btn btn-primary" onclick="loadPage('explore')">
+                        <i class="fas fa-compass"></i>
+                        Explore Now
+                    </button>
+                    <button class="btn btn-outline" onclick="loadPage('about')">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Slideshow -->
+        <section class="feature-slideshow-section">
+            <div class="container">
+                <div class="slideshow-container">
+                    <div class="slideshow-wrapper">
+                        <div class="slide active" data-feature="maps">
+                            <div class="slide-image">
+                                <img src="assets/images/features/slideshow/maps-feature.jpg" alt="Interactive diaspora migration maps" class="slide-bg-image">
+                                <i class="fas fa-map-marked-alt"></i>
+                                <div class="slide-overlay">
+                                    <h3>Interactive Maps</h3>
+                                    <p>Explore migration patterns and cultural connections across continents</p>
+                                    <button class="btn btn-small" onclick="loadPage('maps')">
+                                        <i class="fas fa-compass"></i>
+                                        Explore Maps
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slide" data-feature="podcasts">
+                            <div class="slide-image">
+                                <img src="assets/images/features/slideshow/podcasts-feature.jpg" alt="Diaspora voices and stories podcast studio" class="slide-bg-image">
+                                <i class="fas fa-podcast"></i>
+                                <div class="slide-overlay">
+                                    <h3>Podcasts</h3>
+                                    <p>Listen to voices and stories from communities worldwide</p>
+                                    <button class="btn btn-small" onclick="loadPage('podcasts')">
+                                        <i class="fas fa-headphones"></i>
+                                        Listen Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slide" data-feature="films">
+                            <div class="slide-image">
+                                <img src="assets/images/features/slideshow/films-feature.jpg" alt="African diaspora filmmaking and cinema" class="slide-bg-image">
+                                <i class="fas fa-film"></i>
+                                <div class="slide-overlay">
+                                    <h3>Films & Documentaries</h3>
+                                    <p>Visual storytelling from talented diaspora filmmakers</p>
+                                    <button class="btn btn-small" onclick="loadPage('films')">
+                                        <i class="fas fa-play"></i>
+                                        Watch Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slide" data-feature="timeline">
+                            <div class="slide-image">
+                                <img src="assets/images/features/slideshow/timeline-feature.jpg" alt="Historical timeline of African diaspora" class="slide-bg-image">
+                                <i class="fas fa-clock"></i>
+                                <div class="slide-overlay">
+                                    <h3>Historical Timeline</h3>
+                                    <p>Journey through key moments in diaspora history</p>
+                                    <button class="btn btn-small" onclick="loadPage('historical-timeline')">
+                                        <i class="fas fa-history"></i>
+                                        Explore History
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slide" data-feature="culture">
+                            <div class="slide-image">
+                                <img src="assets/images/features/slideshow/culture-feature.jpg" alt="African diaspora arts and cultural expressions" class="slide-bg-image">
+                                <i class="fas fa-palette"></i>
+                                <div class="slide-overlay">
+                                    <h3>Arts & Culture</h3>
+                                    <p>Discover rich artistic traditions and contemporary expressions</p>
+                                    <button class="btn btn-small" onclick="loadPage('music-dance')">
+                                        <i class="fas fa-music"></i>
+                                        Discover Arts
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Dots -->
+                    <div class="slideshow-dots">
+                        <span class="dot active" onclick="goToSlide(0)"></span>
+                        <span class="dot" onclick="goToSlide(1)"></span>
+                        <span class="dot" onclick="goToSlide(2)"></span>
+                        <span class="dot" onclick="goToSlide(3)"></span>
+                        <span class="dot" onclick="goToSlide(4)"></span>
+                    </div>
+
+                    <!-- Navigation Arrows -->
+                    <button class="slideshow-nav prev" onclick="prevSlide()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="slideshow-nav next" onclick="nextSlide()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Country Search Section -->
+        <section class="country-search-section">
+            <div class="container">
+                <h2 class="section-title">Explore Diaspora by Country</h2>
+                <div class="country-search-container">
+                    <div class="country-search-box">
+                        <input type="text" id="country-search-input" placeholder="Search for a country (e.g., Nigeria, Jamaica, Brazil)..." autocomplete="off">
+                        <button class="country-search-btn" id="country-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="country-suggestions" id="country-suggestions"></div>
+                </div>
+                
+                <!-- AI Summary Container -->
+                <div class="ai-summary-container" id="ai-summary-container" style="display: none;">
+                    <div class="ai-summary-header">
+                        <div class="country-flag-placeholder">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                        <div class="country-info">
+                            <h3 id="country-name">Country Name</h3>
+                            <span id="country-region">Region</span>
+                        </div>
+                        <div class="ai-badge">
+                            <i class="fas fa-robot"></i>
+                            <span>AI Summary</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-summary-content">
+                        <div class="summary-loading" id="summary-loading">
+                            <div class="loading-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <p>Generating AI summary...</p>
+                        </div>
+                        
+                        <div class="summary-text" id="summary-text" style="display: none;">
+                            <!-- AI generated content will appear here -->
+                        </div>
+                        
+                        <div class="summary-stats" id="summary-stats" style="display: none;">
+                            <div class="stat-item">
+                                <div class="stat-number" id="diaspora-population">-</div>
+                                <div class="stat-label">Diaspora Population</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="main-destinations">-</div>
+                                <div class="stat-label">Main Destinations</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="cultural-centers">-</div>
+                                <div class="stat-label">Cultural Centers</div>
+                            </div>
+                        </div>
+                        
+                        <div class="summary-actions">
+                            <button class="btn btn-small" onclick="exploreCountryMore()">
+                                <i class="fas fa-compass"></i>
+                                Explore More
+                            </button>
+                            <button class="btn btn-outline btn-small" onclick="shareCountrySummary()">
+                                <i class="fas fa-share"></i>
+                                Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Content -->
+        <section class="featured-content">
+            <div class="container">
+                <h2 class="section-title">Featured Content</h2>
+                <div class="featured-grid">
+                    <div class="featured-card animate-on-scroll">
+                        <div class="card-image">
+                            <img src="assets/images/features/cards/historical-timeline.jpg" alt="Historical timeline of African diaspora" class="card-bg-image">
+                            <i class="fas fa-history card-icon"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Historical Timeline</h3>
+                            <p>Explore key moments in African diaspora history from ancient civilizations to modern movements.</p>
+                            <button class="btn btn-small" onclick="loadPage('historical-timeline')">Explore</button>
+                        </div>
+                    </div>
+
+                    <div class="featured-card animate-on-scroll">
+                        <div class="card-image">
+                            <img src="assets/images/features/cards/cultural-expressions.jpg" alt="African diaspora cultural arts and music" class="card-bg-image">
+                            <i class="fas fa-music card-icon"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Cultural Expressions</h3>
+                            <p>Discover the rich tapestry of music, art, and traditions across diaspora communities.</p>
+                            <button class="btn btn-small" onclick="loadPage('music-dance')">Discover</button>
+                        </div>
+                    </div>
+
+                    <div class="featured-card animate-on-scroll">
+                        <div class="card-image">
+                            <img src="assets/images/features/cards/interactive-maps.jpg" alt="Global diaspora migration and cultural maps" class="card-bg-image">
+                            <i class="fas fa-globe card-icon"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Interactive Maps</h3>
+                            <p>Navigate migration patterns and cultural connections across continents and centuries.</p>
+                            <button class="btn btn-small" onclick="loadPage('maps')">Navigate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item animate-counter">
+                        <div class="stat-number" data-target="200">0</div>
+                        <div class="stat-label">Million+ Diaspora</div>
+                    </div>
+                    <div class="stat-item animate-counter">
+                        <div class="stat-number" data-target="54">0</div>
+                        <div class="stat-label">African Countries</div>
+                    </div>
+                    <div class="stat-item animate-counter">
+                        <div class="stat-number" data-target="1000">0</div>
+                        <div class="stat-label">Languages</div>
+                    </div>
+                    <div class="stat-item animate-counter">
+                        <div class="stat-number" data-target="5">0</div>
+                        <div class="stat-label">Continents</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#" onclick="loadPage('api-docs')">API Documentation</a></li>
+                        <li><a href="#" onclick="loadPage('contribute')">Contribute</a></li>
+                        <li><a href="#" onclick="loadPage('partnerships')">Partnerships</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#" onclick="loadPage('contact')">Contact Us</a></li>
+                        <li><a href="#" onclick="loadPage('faq')">FAQ</a></li>
+                        <li><a href="#" onclick="loadPage('privacy')">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Voices of the Diaspora. Empowering communities through shared heritage.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/page-loader.js"></script>
+    <script src="js/country-search.js"></script>
+    <script src="js/slideshow.js"></script>
+    <script src="js/maps-interactive.js"></script>
+</body>
+</html>
