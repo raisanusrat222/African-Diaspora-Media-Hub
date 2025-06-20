@@ -190,12 +190,12 @@ function preloadFeaturePages() {
         // Create invisible link to hint to browser to preload
         const link = document.createElement('link');
         link.rel = 'prefetch';
-        link.href = `#${page}`;
+        link.href = `${page}.html`;
         document.head.appendChild(link);
     });
 }
 
-// Handle slide click to navigate to feature
+// Handle slide click to navigate to feature - FIXED VERSION
 function setupSlideNavigation() {
     slides.forEach(slide => {
         slide.addEventListener('click', function(e) {
@@ -206,15 +206,70 @@ function setupSlideNavigation() {
             
             const feature = this.dataset.feature;
             const pageMap = {
-                'maps': 'maps',
-                'podcasts': 'podcasts',
-                'films': 'films',
-                'timeline': 'historical-timeline',
-                'culture': 'music-dance'
+                'maps': 'maps.html',
+                'podcasts': 'podcasts.html',
+                'films': 'films.html',
+                'timeline': 'historical-timeline.html',
+                'culture': 'music-dance.html'
             };
             
-            if (pageMap[feature] && typeof loadPage === 'function') {
-                loadPage(pageMap[feature]);
+            // Always use direct navigation to be safe
+            if (pageMap[feature]) {
+                window.location.href = pageMap[feature];
+            }
+        });
+    });
+}
+
+// Also fix the button clicks in slide overlays
+function setupSlideButtonNavigation() {
+    // Target buttons more specifically and override their onclick behavior
+    const slideButtons = document.querySelectorAll('.slide .btn, .slide button');
+    
+    slideButtons.forEach(button => {
+        // Remove any existing onclick handlers
+        button.removeAttribute('onclick');
+        
+        // Add our own click handler
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Determine which page to navigate to based on button text or parent slide
+            const buttonText = this.textContent.toLowerCase();
+            const parentSlide = this.closest('.slide');
+            const feature = parentSlide ? parentSlide.dataset.feature : null;
+            
+            let targetPage = null;
+            
+            // Map based on button text first
+            if (buttonText.includes('maps') || buttonText.includes('explore maps')) {
+                targetPage = 'maps.html';
+            } else if (buttonText.includes('podcast') || buttonText.includes('listen')) {
+                targetPage = 'podcasts.html';
+            } else if (buttonText.includes('film') || buttonText.includes('watch')) {
+                targetPage = 'films.html';
+            } else if (buttonText.includes('history') || buttonText.includes('timeline')) {
+                targetPage = 'historical-timeline.html';
+            } else if (buttonText.includes('arts') || buttonText.includes('culture') || buttonText.includes('music')) {
+                targetPage = 'music-dance.html';
+            } else if (feature) {
+                // Fallback to feature mapping
+                const pageMap = {
+                    'maps': 'maps.html',
+                    'podcasts': 'podcasts.html',
+                    'films': 'films.html',
+                    'timeline': 'historical-timeline.html',
+                    'culture': 'music-dance.html'
+                };
+                targetPage = pageMap[feature];
+            }
+            
+            if (targetPage) {
+                console.log('Navigating to:', targetPage); // Debug log
+                window.location.href = targetPage;
+            } else {
+                console.warn('Could not determine target page for button:', this);
             }
         });
     });
@@ -229,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addSlideTransitions();
         preloadFeaturePages();
         setupSlideNavigation();
+        setupSlideButtonNavigation();
     }, 100);
 });
 
