@@ -1,0 +1,613 @@
+/* responsive.css */
+
+/* Base responsive utilities */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+    }
+
+    .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+    }
+
+    .nav-menu {
+        gap: 20px;
+    }
+
+    .nav-link {
+        font-size: 0.95rem;
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    /* Hero Section Mobile */
+    .hero {
+        height: 100vh;
+        padding: 0 20px;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        margin-bottom: 15px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
+
+    /* Navigation Mobile */
+    .nav-container {
+        padding: 0 15px;
+        height: 60px;
+    }
+
+    .nav-logo {
+        font-size: 1.3rem;
+    }
+
+    .nav-logo i {
+        font-size: 1.5rem;
+    }
+
+    /* Content Sections Mobile */
+    .featured-content {
+        padding: 60px 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 40px;
+    }
+
+    .featured-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    .featured-card {
+        padding: 30px 20px;
+    }
+
+    .card-icon {
+        font-size: 3rem;
+    }
+
+    .featured-card h3 {
+        font-size: 1.3rem;
+    }
+
+    /* Stats Section Mobile */
+    .stats-section {
+        padding: 60px 0;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+
+    .stat-item {
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+    }
+
+    /* Footer Mobile */
+    .footer {
+        padding: 40px 0 20px;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    /* Hero Section Small Mobile */
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+
+    /* Navigation Small Mobile */
+    .nav-container {
+        height: 55px;
+    }
+
+    .nav-logo {
+        font-size: 1.2rem;
+    }
+
+    /* Content Small Mobile */
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .featured-card {
+        padding: 25px 15px;
+    }
+
+    .card-icon {
+        font-size: 2.5rem;
+    }
+
+    /* Stats Small Mobile */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    /* Page-specific responsive */
+    .timeline-item {
+        margin-left: 20px;
+    }
+
+    .timeline-content-item {
+        padding: 20px 15px;
+    }
+
+    .map-placeholder {
+        padding: 60px 20px;
+    }
+
+    .podcast-grid,
+    .news-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .news-article {
+        padding: 20px;
+    }
+}
+
+/* Large Screen Styles */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1400px;
+    }
+
+    .hero-title {
+        font-size: 5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 3.5rem;
+    }
+
+    .featured-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 50px;
+    }
+
+    .featured-card {
+        padding: 50px 40px;
+    }
+
+    .card-icon {
+        font-size: 5rem;
+    }
+
+    .stat-number {
+        font-size: 4rem;
+    }
+}
+
+/* Landscape Mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .hero {
+        height: 100vh;
+        padding: 0;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+
+    .hero-buttons {
+        flex-direction: row;
+        gap: 15px;
+    }
+
+    .btn {
+        width: auto;
+        padding: 10px 20px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .nav-toggle,
+    .hero-buttons,
+    .social-links {
+        display: none !important;
+    }
+
+    .hero {
+        height: auto;
+        padding: 40px 0;
+    }
+
+    .hero-background,
+    .hero-overlay,
+    .hero-particles {
+        display: none;
+    }
+
+    .hero-content {
+        color: #000 !important;
+    }
+
+    .section-title,
+    .featured-card h3 {
+        color: #000 !important;
+    }
+
+    .featured-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .stats-section {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .footer {
+        background: #fff !important;
+        color: #000 !important;
+        border-top: 1px solid #ccc;
+    }
+}
+
+/* Page-specific responsive styles */
+
+/* Timeline Page Responsive */
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .page-header p {
+        font-size: 1rem;
+        padding: 0 20px;
+    }
+    
+    .timeline-content {
+        padding: 60px 0;
+    }
+    
+    .timeline::before {
+        left: 30px;
+    }
+    
+    .timeline-item {
+        flex-direction: column;
+        margin-left: 50px;
+        margin-bottom: 40px;
+    }
+    
+    .timeline-item:nth-child(odd) {
+        flex-direction: column;
+    }
+    
+    .timeline-item::after {
+        left: 30px;
+        transform: none;
+    }
+    
+    .timeline-content-item {
+        margin: 10px 0 0 0;
+        padding: 25px;
+        border-left: 4px solid var(--primary-color);
+        border-right: none;
+    }
+    
+    .timeline-item:nth-child(even) .timeline-content-item {
+        border-left: 4px solid var(--primary-color);
+        border-right: none;
+    }
+    
+    .timeline-date {
+        font-size: 1.1rem;
+        padding: 15px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .timeline-content {
+        padding: 40px 0;
+    }
+    
+    .page-header {
+        padding: 100px 0 50px;
+    }
+    
+    .timeline-item {
+        margin-left: 30px;
+    }
+    
+    .timeline-content-item {
+        padding: 20px;
+    }
+    
+    .timeline-content-item h3 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Maps Page Responsive */
+@media (max-width: 1024px) {
+    .interactive-map-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .map-legend {
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .maps-content {
+        padding: 60px 0;
+    }
+    
+    .map-tabs {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .map-tab-btn {
+        width: 100%;
+        max-width: 250px;
+        justify-content: center;
+    }
+    
+    .map-placeholder {
+        min-height: 350px;
+    }
+    
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .stat-card {
+        padding: 20px;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .map-placeholder {
+        min-height: 300px;
+    }
+    
+    .map-legend {
+        padding: 20px;
+    }
+    
+    .quick-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .country-info-section h2 {
+        font-size: 1.6rem;
+    }
+}
+
+/* Podcasts Page Responsive */
+@media (max-width: 768px) {
+    .podcasts-content {
+        padding: 60px 0;
+    }
+    
+    .podcast-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .episode-controls {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .progress-bar {
+        min-width: 200px;
+    }
+    
+    .episode-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .episode-details {
+        width: 100%;
+    }
+    
+    .episode-meta {
+        justify-content: center;
+    }
+    
+    .featured-episode, .recent-episodes {
+        padding: 25px;
+    }
+    
+    .category-filter {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+    
+    .featured-episode h2, .recent-episodes h3 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .featured-episode, .recent-episodes {
+        padding: 20px;
+    }
+    
+    .episode-item {
+        padding: 15px;
+    }
+    
+    .episode-thumbnail {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .episode-details h4 {
+        font-size: 1rem;
+    }
+    
+    .podcast-card {
+        padding: 25px 20px;
+    }
+    
+    .podcast-image {
+        height: 100px;
+    }
+    
+    .podcast-image i {
+        font-size: 2.5rem;
+    }
+}
+
+/* High DPI / Retina Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .hero-particles {
+        background-size: 50px 50px, 75px 75px, 40px 40px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --light-color: #ffffff;
+        --text-color: #e0e0e0;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .hero-particles {
+        animation: none;
+    }
+    
+    .animate-on-scroll {
+        transition: none;
+    }
+    
+    .btn {
+        transition: none;
+    }
+    
+    .featured-card {
+        transition: none;
+    }
+}
+
