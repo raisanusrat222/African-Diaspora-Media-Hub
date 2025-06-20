@@ -1117,7 +1117,7 @@ body {
 
 .legend-item span {
     font-size: 0.9rem;
-    color: var(--text-color);
+    color: var(--dark-color);
 }
 
 /* Podcasts Page Styles */
@@ -1556,7 +1556,7 @@ body {
 
 .country-info-section p {
     text-align: center;
-    color: var(--text-color);
+    color: var(--dark-color);
     font-size: 1.1rem;
     margin-bottom: 40px;
     max-width: 600px;
@@ -1612,7 +1612,7 @@ body {
 
 .stat-card p {
     margin: 5px 0 0;
-    color: var(--text-color);
+    color: var(--dark-color);
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
