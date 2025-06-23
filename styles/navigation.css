@@ -281,6 +281,88 @@
     font-size: 0.85rem;
 }
 
+/* Google Translate Positioning */
+.google-translate-container {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+}
+
+/* REMOVE GOOGLE BANNER COMPLETELY */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+/* Fix body positioning when banner is removed */
+body {
+    top: 0px !important;
+    position: static !important;
+}
+
+/* Style the Google Translate dropdown to match theme */
+.goog-te-combo {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    color: var(--light-color) !important;
+    padding: 8px 12px !important;
+    border-radius: 25px !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+    min-width: 80px !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+.goog-te-combo:hover,
+.goog-te-combo:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Style the dropdown options */
+.goog-te-combo option {
+    background: var(--dark-color) !important;
+    color: var(--light-color) !important;
+    padding: 8px !important;
+}
+
+/* Style the selected value */
+.goog-te-menu-value {
+    color: var(--light-color) !important;
+}
+
+.goog-te-menu-value span {
+    color: var(--light-color) !important;
+}
+
+.goog-te-gadget-icon {
+    display: none !important;
+}
+
+.goog-te-gadget {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 0 !important;
+}
+
+/* Hide "Powered by Google" text */
+.goog-te-gadget-simple .goog-te-menu-value span:first-child {
+    display: none !important;
+}
+
+/* Mobile translate container */
+.mobile-translate-container {
+    display: none;
+    width: 90%;
+    max-width: 300px;
+    margin: 0 auto 20px;
+    text-align: center;
+}
+
 .nav-toggle {
     display: none;
     flex-direction: column;
@@ -334,10 +416,16 @@
     .search-btn i {
         font-size: 0.8rem;
     }
+    
+    /* Compress Google Translate */
+    .goog-te-combo {
+        min-width: 70px !important;
+        padding: 6px 10px !important;
+        font-size: 0.8rem !important;
+    }
 }
 
 @media (max-width: 1000px) {
-    /* Further compress search */
     #search-input {
         width: 100px;
         padding: 6px 30px 6px 10px;
@@ -350,99 +438,107 @@
     #search-input::placeholder {
         font-size: 0.75rem;
     }
+    
+    .goog-te-combo {
+        min-width: 60px !important;
+        padding: 6px 8px !important;
+        font-size: 0.75rem !important;
+    }
 }
 
-    /* Mobile search styles */
-    .mobile-search-container {
-        display: none;
-        width: 90%;
-        max-width: 300px;
-        margin: 0 auto 30px;
-        position: relative;
-    }
-    
-    .mobile-search-box {
-        position: relative;
-        display: flex;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        border-radius: 25px;
-        overflow: hidden;
-    }
-    
-    #mobile-search-input {
-        flex: 1;
-        border: none;
-        outline: none;
-        padding: 12px 45px 12px 16px;
-        font-size: 0.9rem;
-        background: transparent;
-        color: var(--light-color);
-    }
-    
-    #mobile-search-input::placeholder {
-        color: rgba(255, 255, 255, 0.6);
-    }
-    
-    .mobile-search-btn {
-        position: absolute;
-        right: 4px;
-        background: var(--primary-color);
-        border: none;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .mobile-search-btn:hover {
-        background: #ffd700;
-        transform: scale(1.05);
-    }
-    
-    .mobile-search-btn i {
-        font-size: 0.8rem;
-        color: var(--dark-color);
-    }
-    
-    .mobile-search-results {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: rgba(26, 26, 26, 0.98);
-        backdrop-filter: blur(15px);
-        border-radius: 12px;
-        margin-top: 8px;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        max-height: 200px;
-        overflow-y: auto;
-        z-index: 1000;
-    }
-    
-    .mobile-search-results.show {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
+/* Mobile search styles */
+.mobile-search-container {
+    display: none;
+    width: 90%;
+    max-width: 300px;
+    margin: 0 auto 30px;
+    position: relative;
+}
+
+.mobile-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+#mobile-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px 45px 12px 16px;
+    font-size: 0.9rem;
+    background: transparent;
+    color: var(--light-color);
+}
+
+#mobile-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.mobile-search-btn {
+    position: absolute;
+    right: 4px;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mobile-search-btn:hover {
+    background: #ffd700;
+    transform: scale(1.05);
+}
+
+.mobile-search-btn i {
+    font-size: 0.8rem;
+    color: var(--dark-color);
+}
+
+.mobile-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(26, 26, 26, 0.98);
+    backdrop-filter: blur(15px);
+    border-radius: 12px;
+    margin-top: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.mobile-search-results.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
 
 @media (max-width: 900px) {
-    /* Hide desktop search, show mobile search */
-    .nav-actions .search-container {
+    /* Hide desktop search and translate, show mobile versions */
+    .nav-actions .search-container,
+    .nav-actions .google-translate-container {
         display: none;
     }
     
-    .mobile-search-container {
+    .mobile-search-container,
+    .mobile-translate-container {
         display: block;
     }
     
@@ -465,33 +561,12 @@
     .nav-center.active {
         left: 0;
     }
-    
-    /* Mobile search at top of menu */
-    .nav-center::before {
-        content: '';
-        display: block;
-        width: 100%;
-        height: 20px;
-    }
 
     .nav-menu {
         flex-direction: column;
         gap: 20px;
         width: 100%;
-    }
-    
-    .nav-menu::before {
-        content: '';
-        order: -2;
-        width: 90%;
-        max-width: 300px;
-        margin: 0 auto 20px;
-        display: flex;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        border-radius: 25px;
-        overflow: hidden;
+        margin-top: 20px;
     }
 
     .nav-item {
@@ -624,4 +699,79 @@
         font-size: 0.85rem;
         padding: 10px 15px;
     }
+}
+
+/* Additional Google Translate Styling */
+.goog-te-gadget-simple {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    border-radius: 20px !important;
+    padding: 0 !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value {
+    color: var(--light-color) !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    padding: 8px 12px !important;
+    margin: 0 !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Hide Google branding */
+.goog-te-gadget .goog-te-combo {
+    margin: 0 !important;
+}
+
+.goog-te-menu-frame {
+    background: rgba(26, 26, 26, 0.98) !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    border-radius: 8px !important;
+}
+
+/* Mobile translate styling */
+.mobile-translate-container .goog-te-combo {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px 12px !important;
+}
+
+body.goog-te-mode {
+    top: 0 !important;
+    position: static !important;
+}
+
+body[style*="margin-top"],
+html[style*="margin-top"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Force override any Google Translate body positioning */
+body {
+    position: static !important;
+    top: auto !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Additional banner removal*/
+div[id*="goog-gt-"],
+div[class*="goog-te-banner"],
+div[class*="VIpgJd-ZVi9od"],
+.goog-te-spinner-pos,
+.goog-te-ftab {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    z-index: -1 !important;
 }

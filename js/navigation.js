@@ -9,6 +9,15 @@ function setupNavigation() {
     const searchBtn = document.getElementById('search-btn');
     const searchResults = document.getElementById('search-results');
 
+    // Simple banner removal (less aggressive)
+    setTimeout(() => {
+        const banner = document.querySelector('.goog-te-banner-frame');
+        if (banner) {
+            banner.style.display = 'none';
+        }
+        document.body.style.top = '0px';
+    }, 1000);
+
     // Mobile menu toggle
     navToggle.addEventListener('click', function() {
         navCenter.classList.toggle('active');
