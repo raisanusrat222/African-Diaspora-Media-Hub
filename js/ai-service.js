@@ -1,4 +1,4 @@
-// js/ai-service.js
+// js/ai-service.js - Fixed version with NaN prevention
 class DiasporaAIService {
     constructor() {
         // Store API key securely - you'll set this via environment or config
@@ -85,12 +85,13 @@ class DiasporaAIService {
     
     // Generate country diaspora summary with better prompting
     async generateCountrySummary(country) {
-        const enhancedPrompt = `Write an engaging 300-word summary about the ${country} diaspora community. Make it interesting and informative by including:
+        const enhancedPrompt = `Write an engaging 300-word or less summary about the ${country} diaspora community. Make it interesting and informative by including:
 
 - Specific numbers and geographic spread of the diaspora
 - 2-3 notable figures who've made an impact (name them specifically)
 - Unique cultural contributions or innovations they've brought to their new countries
 - How they maintain connections to ${country} today
+- Similarities in modern African Diaspora
 - One surprising or lesser-known fact about this diaspora community
 
 Write in a conversational, engaging tone that would captivate someone browsing a cultural website. Focus on stories and concrete examples rather than generic statements.`;
@@ -117,15 +118,31 @@ Write in a conversational, engaging tone that would captivate someone browsing a
     async generateCountryStats(country) {
         const prompt = `Provide realistic statistics for the ${country} diaspora in this exact format:
         Diaspora Population: [specific number like "4.2M worldwide"]
-        Main Destinations: [top 3-4 countries like "USA, UK, Canada, Germany"]
+        Main Destinations: [top 3-4 countries like "USA, UK, Canada, Germany that the diaspora migrated to"]
         Cultural Centers: [number like "300+ globally"]
         
         Be specific with actual numbers, not vague ranges.`;
         
         try {
             const stats = await this.callOpenAI(prompt, 150, 0.3);
-            return this.parseStatsResponse(stats);
+            const parsedStats = this.parseStatsResponse(stats);
+            
+            // If AI parsing failed or returned empty, use fallback
+            if (!parsedStats.population && !parsedStats.destinations && !parsedStats.centers) {
+                console.log('AI stats parsing failed, using fallback for:', country);
+                return this.getFallbackStats(country);
+            }
+            
+            // Mix AI results with fallbacks for missing fields
+            const fallbackStats = this.getFallbackStats(country);
+            return {
+                population: parsedStats.population || fallbackStats.population,
+                destinations: parsedStats.destinations || fallbackStats.destinations,
+                centers: parsedStats.centers || fallbackStats.centers
+            };
+            
         } catch (error) {
+            console.error('Error generating country stats:', error);
             return this.getFallbackStats(country);
         }
     }
@@ -188,7 +205,11 @@ Write in a conversational, engaging tone that would captivate someone browsing a
     }
     
     trackPageTime(page, timeSpent) {
-        this.userProfile.timeSpent[page] = (this.userProfile.timeSpent[page] || 0) + timeSpent;
+        // FIXED: Add NaN prevention for time tracking
+        const validTimeSpent = this.safeParseNumber(timeSpent, 0);
+        const currentTime = this.safeParseNumber(this.userProfile.timeSpent[page], 0);
+        
+        this.userProfile.timeSpent[page] = currentTime + validTimeSpent;
         this.saveUserProfile();
     }
     
@@ -205,29 +226,75 @@ Write in a conversational, engaging tone that would captivate someone browsing a
         try {
             const saved = localStorage.getItem('diaspora_user_profile');
             if (saved) {
-                this.userProfile = { ...this.userProfile, ...JSON.parse(saved) };
+                const parsedProfile = JSON.parse(saved);
+                // FIXED: Ensure loaded profile has valid structure
+                this.userProfile = {
+                    countries: Array.isArray(parsedProfile.countries) ? parsedProfile.countries : [],
+                    interests: Array.isArray(parsedProfile.interests) ? parsedProfile.interests : [],
+                    timeSpent: typeof parsedProfile.timeSpent === 'object' && parsedProfile.timeSpent !== null ? parsedProfile.timeSpent : {},
+                    lastActivity: this.safeParseNumber(parsedProfile.lastActivity, Date.now())
+                };
             }
         } catch (error) {
             console.warn('Could not load user profile:', error);
+            // Reset to default if parsing fails
+            this.userProfile = {
+                countries: [],
+                interests: [],
+                timeSpent: {},
+                lastActivity: Date.now()
+            };
         }
     }
     
-    // Utility methods
+    // FIXED: Enhanced parseStatsResponse with NaN prevention
     parseStatsResponse(response) {
         const lines = response.split('\n');
         const stats = {};
         
         lines.forEach(line => {
-            if (line.includes('Diaspora Population:')) {
-                stats.population = line.split(':')[1].trim();
-            } else if (line.includes('Main Destinations:')) {
-                stats.destinations = line.split(':')[1].trim();
-            } else if (line.includes('Cultural Centers:')) {
-                stats.centers = line.split(':')[1].trim();
+            try {
+                if (line.includes('Diaspora Population:')) {
+                    const value = line.split(':')[1];
+                    stats.population = value ? value.trim() : 'Data unavailable';
+                } else if (line.includes('Main Destinations:')) {
+                    const value = line.split(':')[1];
+                    stats.destinations = value ? value.trim() : 'Data unavailable';
+                } else if (line.includes('Cultural Centers:')) {
+                    const value = line.split(':')[1];
+                    stats.centers = value ? value.trim() : 'Data unavailable';
+                }
+            } catch (error) {
+                console.warn('Error parsing stats line:', line, error);
             }
         });
         
-        return stats;
+        // FIXED: Ensure all required fields exist with fallbacks
+        return {
+            population: stats.population || 'Data unavailable',
+            destinations: stats.destinations || 'Data unavailable',
+            centers: stats.centers || 'Data unavailable'
+        };
+    }
+    
+    // FIXED: Added utility function for safe number parsing
+    safeParseNumber(value, fallback = 0) {
+        if (value === null || value === undefined || value === '') {
+            return fallback;
+        }
+        
+        const parsed = typeof value === 'number' ? value : parseFloat(value);
+        return isNaN(parsed) ? fallback : parsed;
+    }
+    
+    // FIXED: Enhanced safeParseInt for integer values
+    safeParseInt(value, fallback = 0) {
+        if (value === null || value === undefined || value === '') {
+            return fallback;
+        }
+        
+        const parsed = typeof value === 'number' ? Math.floor(value) : parseInt(value, 10);
+        return isNaN(parsed) ? fallback : parsed;
     }
     
     // Fallback content when API is unavailable
@@ -246,8 +313,8 @@ Write in a conversational, engaging tone that would captivate someone browsing a
         };
     }
     
+    // FIXED: Enhanced fallback stats with guaranteed valid structure
     getFallbackStats(country) {
-        // Make sure these match the expected format
         const fallbackData = {
             'Nigeria': { population: "17M+", destinations: "USA, UK, Canada", centers: "450+" },
             'Jamaica': { population: "3.5M+", destinations: "USA, UK, Canada", centers: "120+" },
@@ -261,10 +328,18 @@ Write in a conversational, engaging tone that would captivate someone browsing a
             'Trinidad and Tobago': { population: "800K+", destinations: "USA, UK, Canada", centers: "60+" }
         };
         
-        return fallbackData[country] || {
+        const defaultStats = {
             population: "Several million worldwide",
             destinations: "North America, Europe, Caribbean",
             centers: "100+ globally"
+        };
+        
+        // FIXED: Ensure we always return a valid stats object
+        const countryStats = fallbackData[country] || defaultStats;
+        return {
+            population: countryStats.population || defaultStats.population,
+            destinations: countryStats.destinations || defaultStats.destinations,
+            centers: countryStats.centers || defaultStats.centers
         };
     }
     

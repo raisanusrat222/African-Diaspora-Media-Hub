@@ -1,4 +1,4 @@
-// Secure AI Configuration
+// Secure AI Configuration - Fixed version
 
 class SecureAIConfig {
     constructor() {
@@ -66,6 +66,7 @@ class SecureAIConfig {
         
         if (!this.initialized || !this.apiKey) {
             console.log('❌ AI not available - initialized:', this.initialized, 'has key:', !!this.apiKey);
+            // Don't show error - just use the static content that's already displayed
             return;
         }
         
@@ -128,25 +129,33 @@ class SecureAIConfig {
                     const mainDestinations = document.getElementById('main-destinations');
                     const culturalCenters = document.getElementById('cultural-centers');
                     
-                    if (result.statistics.population && diasporaPopulation) {
+                    // FIXED: Only update if we have valid data (not "Data unavailable")
+                    if (result.statistics.population && 
+                        result.statistics.population !== 'Data unavailable' && 
+                        diasporaPopulation) {
                         diasporaPopulation.textContent = result.statistics.population;
                     }
-                    if (result.statistics.destinations && mainDestinations) {
+                    if (result.statistics.destinations && 
+                        result.statistics.destinations !== 'Data unavailable' && 
+                        mainDestinations) {
                         mainDestinations.textContent = result.statistics.destinations;
                     }
-                    if (result.statistics.centers && culturalCenters) {
+                    if (result.statistics.centers && 
+                        result.statistics.centers !== 'Data unavailable' && 
+                        culturalCenters) {
                         culturalCenters.textContent = result.statistics.centers;
                     }
                 }
             } else {
                 console.log('⚠️ Got fallback content instead of real AI');
                 
-                // Show that we're using fallback
+                // FIXED: Just add AI badge to existing content, don't replace with fallback message
+                const existingContent = summaryText.innerHTML;
                 summaryText.innerHTML = `
-                    <p>${result.text}</p>
-                    <div style="background: rgba(255, 152, 0, 0.1); border: 1px solid rgba(255, 152, 0, 0.3); color: #ff9800; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 0.85rem;">
+                    ${existingContent}
+                    <div class="ai-badge" style="margin-top: 15px; background: rgba(255, 152, 0, 0.1); border: 1px solid rgba(255, 152, 0, 0.3); color: #ff9800; padding: 10px; border-radius: 6px; font-size: 0.85rem;">
                         <i class="fas fa-info-circle"></i>
-                        Using fallback content - AI may not be properly configured
+                        <span>AI enhancement used fallback data</span>
                     </div>
                 `;
             }
@@ -154,7 +163,6 @@ class SecureAIConfig {
         } catch (error) {
             console.error('💥 Failed to enhance with AI:', error);
             
-            // Show error but don't break the existing functionality
             const summaryText = document.getElementById('summary-text');
             if (summaryText) {
                 const errorNote = document.createElement('div');
@@ -162,14 +170,17 @@ class SecureAIConfig {
                     background: rgba(244, 67, 54, 0.1);
                     border: 1px solid rgba(244, 67, 54, 0.3);
                     color: #f44336;
-                    padding: 10px;
+                    padding: 8px 12px;
                     border-radius: 6px;
                     margin-top: 10px;
-                    font-size: 0.85rem;
+                    font-size: 0.8rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
                 `;
                 errorNote.innerHTML = `
                     <i class="fas fa-exclamation-triangle"></i>
-                    AI enhancement failed: ${error.message}
+                    AI enhancement temporarily unavailable
                 `;
                 summaryText.appendChild(errorNote);
             }

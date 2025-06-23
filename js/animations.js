@@ -1,4 +1,4 @@
-// animations.js
+// animations.js - Fixed version of YOUR existing file
 
 function setupAnimations() {
     // Scroll animations
@@ -40,14 +40,23 @@ function setupScrollAnimations() {
 }
 
 function setupCounters() {
-    const counters = document.querySelectorAll('.stat-number');
+    const counters = document.querySelectorAll('.stat-number[data-target]');
     
     const counterObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const counter = entry.target;
-                const target = parseInt(counter.getAttribute('data-target'));
-                animateCounter(counter, target);
+                // FIXED: Add validation before parsing
+                const targetAttr = counter.getAttribute('data-target');
+                const target = parseInt(targetAttr);
+                
+                // FIXED: Check for valid target before animating
+                if (!isNaN(target) && target > 0) {
+                    animateCounter(counter, target);
+                } else {
+                    console.warn('Invalid data-target for counter:', targetAttr);
+                    counter.textContent = '0'; // Fallback display
+                }
                 counterObserver.unobserve(counter);
             }
         });
@@ -57,10 +66,24 @@ function setupCounters() {
 }
 
 function animateCounter(element, target) {
+    // FIXED: Validate target parameter
+    if (isNaN(target) || target <= 0) {
+        console.warn('Invalid target for counter animation:', target);
+        element.textContent = '0';
+        return;
+    }
+    
     let current = 0;
     const increment = target / 100;
     const duration = 2000; // 2 seconds
     const stepTime = duration / 100;
+    
+    // FIXED: Validate increment calculation
+    if (isNaN(increment)) {
+        console.warn('Invalid increment calculated:', increment);
+        element.textContent = target.toString();
+        return;
+    }
     
     const timer = setInterval(() => {
         current += increment;
@@ -69,7 +92,8 @@ function animateCounter(element, target) {
             clearInterval(timer);
         }
         
-        const displayValue = Math.floor(current);
+        // FIXED: Validate current value before display
+        const displayValue = isNaN(current) ? 0 : Math.floor(current);
         const suffix = target >= 1000 ? '+' : '';
         element.textContent = displayValue + suffix;
     }, stepTime);
@@ -86,10 +110,13 @@ function createParticleEffect() {
         const particle = document.createElement('div');
         particle.className = 'particle';
         
-        const size = Math.random() * 4 + 1;
-        const opacity = Math.random() * 0.5 + 0.2;
-        const duration = Math.random() * 20 + 10;
-        const delay = Math.random() * duration;
+        // FIXED: Ensure all random values are valid
+        const size = Math.max(1, Math.random() * 4 + 1);
+        const opacity = Math.max(0.1, Math.random() * 0.5 + 0.2);
+        const duration = Math.max(10, Math.random() * 20 + 10);
+        const delay = Math.max(0, Math.random() * duration);
+        const leftPos = Math.max(0, Math.min(100, Math.random() * 100));
+        const topPos = Math.max(0, Math.min(100, Math.random() * 100));
         
         particle.style.cssText = `
             position: absolute;
@@ -97,8 +124,8 @@ function createParticleEffect() {
             height: ${size}px;
             background: rgba(255,255,255,${opacity});
             border-radius: 50%;
-            left: ${Math.random() * 100}%;
-            top: ${Math.random() * 100}%;
+            left: ${leftPos}%;
+            top: ${topPos}%;
             animation: floatParticle ${duration}s infinite linear;
             animation-delay: -${delay}s;
             pointer-events: none;
@@ -194,6 +221,12 @@ function setupHoverEffects() {
             const size = Math.max(rect.width, rect.height);
             const x = e.clientX - rect.left - size / 2;
             const y = e.clientY - rect.top - size / 2;
+            
+            // FIXED: Validate all calculations
+            if (isNaN(size) || isNaN(x) || isNaN(y)) {
+                console.warn('Invalid ripple calculations');
+                return;
+            }
             
             ripple.style.cssText = `
                 position: absolute;
@@ -292,7 +325,15 @@ function setupParallaxEffects() {
         const scrollTop = window.pageYOffset;
         
         parallaxElements.forEach(el => {
-            const speed = parseFloat(el.dataset.parallax) || 0.5;
+            const speedAttr = el.dataset.parallax;
+            const speed = parseFloat(speedAttr) || 0.5;
+            
+            // FIXED: Validate speed value
+            if (isNaN(speed)) {
+                console.warn('Invalid parallax speed:', speedAttr);
+                return;
+            }
+            
             const yPos = -(scrollTop * speed);
             el.style.transform = `translateY(${yPos}px)`;
         });
@@ -363,13 +404,22 @@ function createLoadingSpinner(container) {
 
 // Progress bar animation
 function animateProgressBar(element, targetPercentage, duration = 1000) {
+    // FIXED: Validate input parameters
+    const validTarget = parseFloat(targetPercentage);
+    const validDuration = parseFloat(duration);
+    
+    if (isNaN(validTarget) || isNaN(validDuration)) {
+        console.warn('Invalid progress bar parameters:', targetPercentage, duration);
+        return;
+    }
+    
     let start = null;
     const startPercentage = 0;
     
     function step(timestamp) {
         if (!start) start = timestamp;
-        const progress = Math.min((timestamp - start) / duration, 1);
-        const currentPercentage = startPercentage + (targetPercentage - startPercentage) * progress;
+        const progress = Math.min((timestamp - start) / validDuration, 1);
+        const currentPercentage = startPercentage + (validTarget - startPercentage) * progress;
         
         element.style.width = currentPercentage + '%';
         element.textContent = Math.round(currentPercentage) + '%';
@@ -385,7 +435,14 @@ function animateProgressBar(element, targetPercentage, duration = 1000) {
 // Stagger animation for lists
 function staggerAnimation(elements, delay = 100) {
     elements.forEach((el, index) => {
-        el.style.animationDelay = `${index * delay}ms`;
+        // FIXED: Validate delay calculation
+        const validDelay = parseFloat(delay);
+        if (isNaN(validDelay)) {
+            console.warn('Invalid stagger delay:', delay);
+            return;
+        }
+        
+        el.style.animationDelay = `${index * validDelay}ms`;
         el.classList.add('animate-fade-in');
     });
 }
