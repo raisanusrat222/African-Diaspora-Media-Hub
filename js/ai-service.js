@@ -4,7 +4,7 @@ class DiasporaAIService {
         // Store API key securely - you'll set this via environment or config
         this.apiKey = null;
         this.baseURL = 'https://api.openai.com/v1/chat/completions';
-        this.model = 'gpt-3.5-turbo';
+        this.model = 'gpt-4.1';
         this.isInitialized = false;
         
         // User tracking for personalization
