@@ -1,3 +1,4 @@
+// js/ai-service.js
 class DiasporaAIService {
     constructor() {
         // Store API key securely - you'll set this via environment or config
@@ -27,8 +28,12 @@ class DiasporaAIService {
     // Core OpenAI API call
     async callOpenAI(prompt, maxTokens = 400, temperature = 0.7) {
         if (!this.isInitialized) {
+            console.log('❌ AI service not initialized');
             throw new Error('AI service not initialized. Please call initialize() with your API key.');
         }
+        
+        console.log('🚀 Making OpenAI API call...');
+        console.log('📝 Prompt preview:', prompt.substring(0, 100) + '...');
         
         try {
             const response = await fetch(this.baseURL, {
@@ -42,7 +47,7 @@ class DiasporaAIService {
                     messages: [
                         {
                             role: "system",
-                            content: "You are an expert on African diaspora history, culture, and communities worldwide. Provide accurate, engaging, and culturally sensitive, unbiased information."
+                            content: "You are an expert on African diaspora history, culture, and communities worldwide. Provide accurate, engaging, and culturally sensitive information."
                         },
                         {
                             role: "user",
@@ -54,36 +59,44 @@ class DiasporaAIService {
                 })
             });
             
+            console.log('📡 API response status:', response.status);
+            
             if (!response.ok) {
-                throw new Error(`OpenAI API error: ${response.status}`);
+                const errorText = await response.text();
+                console.error('❌ OpenAI API error:', response.status, errorText);
+                throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
             }
             
             const data = await response.json();
-            return data.choices[0].message.content.trim();
+            const content = data.choices[0].message.content.trim();
+            
+            console.log('✅ API success! Content preview:', content.substring(0, 100) + '...');
+            
+            return content;
             
         } catch (error) {
-            console.error('AI Service Error:', error);
+            console.error('💥 AI Service Error:', error);
             
             // Fallback to pre-written content if API fails
+            console.log('⚠️ Falling back to static content');
             return this.getFallbackContent(prompt);
         }
     }
     
-    // Generate country diaspora summary
+    // Generate country diaspora summary with better prompting
     async generateCountrySummary(country) {
-        const prompt = `Generate a comprehensive but concise summary about the ${country} diaspora community. Include:
-        
-        1. Population estimates and main destination countries
-        2. Key historical migration periods and reasons
-        3. Cultural contributions and notable communities
-        4. Current cultural centers and organizations
-        5. Notable figures and achievements
-        6. The impact on present-day diaspora communities
-        
-        Keep it engaging, informative, and 500 words or less. Focus on both positive and negative aspects, non bias, while being historically accurate. Include any fun facts that you see fit.`;
+        const enhancedPrompt = `Write an engaging 300-word summary about the ${country} diaspora community. Make it interesting and informative by including:
+
+- Specific numbers and geographic spread of the diaspora
+- 2-3 notable figures who've made an impact (name them specifically)
+- Unique cultural contributions or innovations they've brought to their new countries
+- How they maintain connections to ${country} today
+- One surprising or lesser-known fact about this diaspora community
+
+Write in a conversational, engaging tone that would captivate someone browsing a cultural website. Focus on stories and concrete examples rather than generic statements.`;
         
         try {
-            const summary = await this.callOpenAI(prompt, 350);
+            const summary = await this.callOpenAI(enhancedPrompt, 400, 0.8);
             
             // Track user interest
             this.trackUserInterest('country', country);
@@ -91,7 +104,7 @@ class DiasporaAIService {
             return {
                 text: summary,
                 statistics: await this.generateCountryStats(country),
-                recommendations: await this.generateRelatedCountries(country)
+                recommendations: this.getDefaultRecommendations()
             };
             
         } catch (error) {
@@ -102,12 +115,12 @@ class DiasporaAIService {
     
     // Generate country statistics
     async generateCountryStats(country) {
-        const prompt = `Provide key statistics for the ${country} diaspora in this format:
-        Diaspora Population: [number]
-        Main Destinations: [top 3 countries]
-        Cultural Centers: [estimated number globally]
+        const prompt = `Provide realistic statistics for the ${country} diaspora in this exact format:
+        Diaspora Population: [specific number like "4.2M worldwide"]
+        Main Destinations: [top 3-4 countries like "USA, UK, Canada, Germany"]
+        Cultural Centers: [number like "300+ globally"]
         
-        Give realistic estimates based on known data.`;
+        Be specific with actual numbers, not vague ranges.`;
         
         try {
             const stats = await this.callOpenAI(prompt, 150, 0.3);
@@ -234,7 +247,21 @@ class DiasporaAIService {
     }
     
     getFallbackStats(country) {
-        return {
+        // Make sure these match the expected format
+        const fallbackData = {
+            'Nigeria': { population: "17M+", destinations: "USA, UK, Canada", centers: "450+" },
+            'Jamaica': { population: "3.5M+", destinations: "USA, UK, Canada", centers: "120+" },
+            'Ghana': { population: "3.2M+", destinations: "USA, UK, Germany", centers: "200+" },
+            'Ethiopia': { population: "2.8M+", destinations: "USA, Saudi Arabia, Sudan", centers: "180+" },
+            'South Africa': { population: "2.5M+", destinations: "Australia, UK, USA", centers: "150+" },
+            'Kenya': { population: "3M+", destinations: "USA, UK, Canada", centers: "140+" },
+            'Senegal': { population: "1.8M+", destinations: "France, Italy, Spain", centers: "90+" },
+            'Haiti': { population: "2.5M+", destinations: "USA, Canada, France", centers: "110+" },
+            'Brazil': { population: "4.5M+", destinations: "USA, Europe, Latin America", centers: "200+" },
+            'Trinidad and Tobago': { population: "800K+", destinations: "USA, UK, Canada", centers: "60+" }
+        };
+        
+        return fallbackData[country] || {
             population: "Several million worldwide",
             destinations: "North America, Europe, Caribbean",
             centers: "100+ globally"

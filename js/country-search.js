@@ -1,5 +1,3 @@
-// country-search.js
-
 // Country data with diaspora information
 const countryData = [
     {
@@ -109,7 +107,6 @@ function initializeCountrySearch() {
     const searchInput = document.getElementById('country-search-input');
     const searchBtn = document.getElementById('country-search-btn');
     const suggestions = document.getElementById('country-suggestions');
-    const summaryContainer = document.getElementById('ai-summary-container');
 
     if (!searchInput || !searchBtn || !suggestions) return;
 
@@ -171,7 +168,7 @@ function findCountryMatches(query) {
         return country.name.toLowerCase().includes(query) ||
                country.region.toLowerCase().includes(query) ||
                country.keywords.some(keyword => keyword.includes(query));
-    }).slice(0, 5); // Limit to 5 results
+    }).slice(0, 5);
 }
 
 function displaySuggestions(matches) {
@@ -204,10 +201,14 @@ function displaySuggestions(matches) {
 
 function hideSuggestions() {
     const suggestions = document.getElementById('country-suggestions');
-    suggestions.classList.remove('show');
+    if (suggestions) {
+        suggestions.classList.remove('show');
+    }
 }
 
 function selectCountry(country) {
+    console.log('Country selected:', country.name);
+    
     const searchInput = document.getElementById('country-search-input');
     const summaryContainer = document.getElementById('ai-summary-container');
     
@@ -217,27 +218,23 @@ function selectCountry(country) {
     // Hide suggestions
     hideSuggestions();
     
-    // Show and populate AI summary
+    // Show and populate summary
     showAISummary(country);
     
     // Scroll to summary
     setTimeout(() => {
-        summaryContainer.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-        });
+        if (summaryContainer) {
+            summaryContainer.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
     }, 300);
-    
-    // Track analytics
-    if (window.DiasporaHub && window.DiasporaHub.Analytics) {
-        window.DiasporaHub.Analytics.track('country_search', {
-            country: country.name,
-            region: country.region
-        });
-    }
 }
 
 function showAISummary(country) {
+    console.log('Showing AI summary for:', country.name);
+    
     const summaryContainer = document.getElementById('ai-summary-container');
     const countryName = document.getElementById('country-name');
     const countryRegion = document.getElementById('country-region');
@@ -251,60 +248,63 @@ function showAISummary(country) {
     const flagIcon = document.querySelector('.country-flag-placeholder i');
     
     // Update header information
-    countryName.textContent = country.name;
-    countryRegion.textContent = country.region;
+    if (countryName) countryName.textContent = country.name;
+    if (countryRegion) countryRegion.textContent = country.region;
     
-    // Update flag image - try to show the actual flag
+    // Handle flag image
     if (country.flagImage && flagImage && flagIcon) {
-        // Start with icon hidden and try to load image
         flagIcon.style.display = 'none';
         flagImage.style.display = 'block';
         flagImage.src = country.flagImage;
-        flagImage.alt = `${country.name} flag`;
+        flagImage.alt = country.name + ' flag';
         
         flagImage.onload = function() {
-            // Image loaded successfully
-            console.log(`Flag loaded for ${country.name}: ${country.flagImage}`);
+            console.log('Flag loaded for', country.name);
             flagIcon.style.display = 'none';
             flagImage.style.display = 'block';
         };
         
         flagImage.onerror = function() {
-            // Image failed to load, show icon instead
-            console.log(`Flag failed to load for ${country.name}: ${country.flagImage}`);
+            console.log('Flag failed to load for', country.name);
             flagImage.style.display = 'none';
             flagIcon.style.display = 'flex';
         };
     }
     
     // Show container
-    summaryContainer.style.display = 'block';
-    summaryContainer.classList.add('show');
+    if (summaryContainer) {
+        summaryContainer.style.display = 'block';
+        summaryContainer.classList.add('show');
+    }
     
     // Show loading state
-    summaryLoading.style.display = 'block';
-    summaryText.style.display = 'none';
-    summaryStats.style.display = 'none';
+    if (summaryLoading) summaryLoading.style.display = 'block';
+    if (summaryText) summaryText.style.display = 'none';
+    if (summaryStats) summaryStats.style.display = 'none';
     
-    // Simulate AI processing delay
+    // Show static content first
     setTimeout(() => {
-        // Hide loading
-        summaryLoading.style.display = 'none';
+        console.log('Showing static content...');
         
-        // Show content with animation
-        summaryText.innerHTML = `<p>${country.summary}</p>`;
-        summaryText.style.display = 'block';
+        // Hide loading
+        if (summaryLoading) summaryLoading.style.display = 'none';
+        
+        // Show static content
+        if (summaryText) {
+            summaryText.innerHTML = '<p>' + country.summary + '</p>';
+            summaryText.style.display = 'block';
+        }
         
         // Update stats
-        diasporaPopulation.textContent = country.diaspora;
-        mainDestinations.textContent = country.destinations;
-        culturalCenters.textContent = country.culturalCenters;
+        if (diasporaPopulation) diasporaPopulation.textContent = country.diaspora;
+        if (mainDestinations) mainDestinations.textContent = country.destinations;
+        if (culturalCenters) culturalCenters.textContent = country.culturalCenters;
         
-        summaryStats.style.display = 'grid';
+        if (summaryStats) summaryStats.style.display = 'grid';
         
         // Animate stats
         setTimeout(() => {
-            const statNumbers = summaryStats.querySelectorAll('.stat-number');
+            const statNumbers = document.querySelectorAll('.stat-number');
             statNumbers.forEach((stat, index) => {
                 setTimeout(() => {
                     stat.style.transform = 'scale(1.1)';
@@ -315,50 +315,83 @@ function showAISummary(country) {
             });
         }, 300);
         
-    }, 2000); // 2 second delay to simulate AI processing
+        // NOW trigger AI enhancement
+        setTimeout(() => {
+            triggerAIEnhancement(country);
+        }, 1000);
+        
+    }, 1000);
+}
+
+// Trigger AI enhancement function
+function triggerAIEnhancement(country) {
+    console.log('Triggering AI enhancement for:', country.name);
+    
+    // Check if AI is available
+    if (window.secureAIConfigInstance && window.secureAIConfigInstance.initialized) {
+        console.log('AI is available, enhancing content...');
+        window.secureAIConfigInstance.enhanceCountrySummaryWithAI(country);
+    } else if (window.enhanceWithAI) {
+        console.log('Using global AI enhancement function...');
+        window.enhanceWithAI(country);
+    } else {
+        console.log('AI not available:', {
+            configInstance: !!window.secureAIConfigInstance,
+            initialized: window.secureAIConfigInstance ? window.secureAIConfigInstance.initialized : false,
+            enhanceWithAI: !!window.enhanceWithAI
+        });
+        
+        // Show that AI wasn't available
+        const summaryText = document.getElementById('summary-text');
+        if (summaryText) {
+            const aiNote = document.createElement('div');
+            aiNote.style.cssText = `
+                background: rgba(255, 152, 0, 0.1);
+                border: 1px solid rgba(255, 152, 0, 0.3);
+                color: #ff9800;
+                padding: 8px 12px;
+                border-radius: 6px;
+                margin-top: 15px;
+                font-size: 0.8rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            `;
+            aiNote.innerHTML = '<i class="fas fa-info-circle"></i> AI enhancement unavailable - showing static content';
+            summaryText.appendChild(aiNote);
+        }
+    }
 }
 
 function exploreCountryMore() {
-    const countryName = document.getElementById('country-name').textContent;
-    
-    // This would typically navigate to a detailed country page
-    // For now, we'll show an alert
-    alert(`Exploring more about ${countryName} diaspora communities...`);
-    
-    // Track analytics
-    if (window.DiasporaHub && window.DiasporaHub.Analytics) {
-        window.DiasporaHub.Analytics.track('explore_country_more', {
-            country: countryName
-        });
-    }
+    const countryName = document.getElementById('country-name');
+    const name = countryName ? countryName.textContent : 'this country';
+    alert('Exploring more about ' + name + ' diaspora communities...');
 }
 
 function shareCountrySummary() {
-    const countryName = document.getElementById('country-name').textContent;
+    const countryName = document.getElementById('country-name');
+    const name = countryName ? countryName.textContent : 'diaspora';
     
     if (navigator.share) {
         navigator.share({
-            title: `${countryName} Diaspora Information`,
-            text: `Learn about the ${countryName} diaspora community on Voices of the Diaspora media hub.`,
+            title: name + ' Diaspora Information',
+            text: 'Learn about the ' + name + ' diaspora community on Voices of the Diaspora media hub.',
             url: window.location.href
         });
     } else {
-        // Fallback - copy to clipboard
         const url = window.location.href;
-        navigator.clipboard.writeText(url).then(() => {
-            alert('Link copied to clipboard!');
-        });
-    }
-    
-    // Track analytics
-    if (window.DiasporaHub && window.DiasporaHub.Analytics) {
-        window.DiasporaHub.Analytics.track('share_country_summary', {
-            country: countryName
-        });
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        } else {
+            alert('Share link: ' + url);
+        }
     }
 }
 
-// Utility function for debouncing (if not already defined)
+// Utility function for debouncing
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -373,5 +406,6 @@ function debounce(func, wait) {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing country search...');
     initializeCountrySearch();
 });

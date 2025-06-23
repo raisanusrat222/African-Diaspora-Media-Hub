@@ -1,3 +1,5 @@
+/* styles/ai-features.css */
+
 /* AI Badge Styling */
 .ai-badge {
     display: inline-flex;
@@ -26,7 +28,7 @@
 
 /* AI Recommendations Widget */
 .ai-recommendations-widget {
-    background: rgba(26, 26, 26, 0.95);
+    background: var(--light-color);
     border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 12px;
     padding: 20px;
@@ -51,7 +53,7 @@
 
 .recommendations-content li {
     padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px var(--light-color);
     position: relative;
     padding-left: 20px;
 }
@@ -569,13 +571,171 @@
     animation: slideInRight 0.3s ease-out;
 }
 
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(100%);
+/* Enhanced AI Content Styling */
+.ai-enhanced-content {
+    line-height: 1.7;
+    color: var(--light-color);
+}
+
+.summary-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.summary-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-header {
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-content {
+    margin: 0;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.enhanced-paragraph {
+    margin-bottom: 15px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.ai-enhancement-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--primary-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.ai-enhancement-badge i {
+    animation: pulse 2s infinite;
+}
+
+/* Enhanced Stats Styling */
+.enhanced-stat .stat-main {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.enhanced-stat .stat-detail {
+    display: block;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 2px;
+    font-weight: normal;
+}
+
+/* Cultural Recommendations */
+.cultural-recommendations {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.03) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.recommendations-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.recommendations-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.recommendations-header i {
+    font-size: 1rem;
+}
+
+.recommendations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recommendation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.recommendation-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateX(5px);
+}
+
+.recommendation-item i {
+    color: var(--primary-color);
+    margin-top: 2px;
+    font-size: 0.8rem;
+}
+
+.recommendation-item span {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+    font-size: 0.9rem;
+}
+
+/* Loading overlay animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive enhancements */
+@media (max-width: 768px) {
+    .summary-section {
+        margin-bottom: 15px;
+        padding-bottom: 12px;
     }
-    to {
-        opacity: 1;
-        transform: translateX(0);
+    
+    .section-header {
+        font-size: 0.9rem;
+    }
+    
+    .enhanced-stat .stat-main {
+        font-size: 1.4rem;
+    }
+    
+    .cultural-recommendations {
+        padding: 15px;
+        margin-top: 20px;
+    }
+    
+    .recommendations-header h4 {
+        font-size: 1rem;
+    }
+    
+    .recommendation-item {
+        padding: 8px;
     }
 }

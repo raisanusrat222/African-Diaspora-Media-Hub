@@ -1,11 +1,11 @@
-// Secure AI Configuration for prod
+// Secure AI Configuration
 
 class SecureAIConfig {
     constructor() {
         this.initialized = false;
         this.apiKey = null;
         this.isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        this.isLiveServer = window.location.port === '5500'; // Live Server default port
+        this.isLiveServer = window.location.port === '5500';
     }
     
     async initialize() {
@@ -26,247 +26,154 @@ class SecureAIConfig {
                 window.DiasporaAI.initialize(this.apiKey);
                 this.initialized = true;
                 this.showAIStatus('AI features enabled ✅');
-                this.initializeAIFeatures();
+                this.enhanceExistingSearch();
                 return true;
             } else {
-                this.showAIStatus('AI features disabled - using demo mode', 'warning');
-                this.initializeDemoMode();
+                this.showAIStatus('AI features disabled - using static data', 'warning');
                 return false;
             }
             
         } catch (error) {
             console.error('Failed to initialize AI:', error);
             this.showAIStatus('AI features unavailable', 'error');
-            this.initializeDemoMode();
             return false;
         }
     }
     
-    // Method 1: Load API key from backend (PROD)
-    async loadFromBackend() {
-        try {
-            const response = await fetch('/api/ai-config', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json',
-                }
-            });
-            
-            if (response.ok) {
-                const config = await response.json();
-                return config.apiKey;
-            }
-        } catch (error) {
-            console.warn('Could not load API key from backend:', error);
+    // Enhance the existing country search with AI
+    enhanceExistingSearch() {
+        console.log('Enhancing existing country search with AI...');
+        
+        // Override the showAISummary function to use real AI
+        if (window.showAISummary) {
+            const originalShowAISummary = window.showAISummary;
+            window.showAISummary = async (country) => {
+                // Call the original function first (for UI setup)
+                originalShowAISummary(country);
+                
+                // Then enhance with real AI
+                await this.enhanceCountrySummaryWithAI(country);
+            };
         }
-        return null;
+        
+        // Add AI enhancement to global scope
+        window.enhanceWithAI = this.enhanceCountrySummaryWithAI.bind(this);
     }
     
-    // Method 2: GitHub Pages with Netlify/Vercel Functions
-    async loadFromGitHubBackend() {
-        try {
-            // If using Netlify Functions
-            const response = await fetch('/.netlify/functions/get-api-key', {
-                method: 'GET',
-            });
-            
-            // Or if using Vercel
-            // const response = await fetch('/api/get-api-key');
-            
-            if (response.ok) {
-                const data = await response.json();
-                return data.apiKey;
-            }
-        } catch (error) {
-            console.warn('Could not load API key from serverless function:', error);
+    // Enhance the country summary display with real AI
+    async enhanceCountrySummaryWithAI(country) {
+        console.log('🤖 Starting AI enhancement for:', country.name);
+        
+        if (!this.initialized || !this.apiKey) {
+            console.log('❌ AI not available - initialized:', this.initialized, 'has key:', !!this.apiKey);
+            return;
         }
-        return null;
-    }
-    
-    // Method 3: Development prompt (ONLY for local dev)
-    async promptForAPIKey() {
-        if (this.isDevelopment || this.isLiveServer) {
-            const stored = localStorage.getItem('dev_openai_key');
-            if (stored) {
-                const useStored = confirm('Use previously entered API key for development?');
-                if (useStored) return stored;
-            }
-            
-            const apiKey = prompt(`
-🔐 DEVELOPMENT MODE ONLY
-
-Enter OpenAI API key for testing:
-
-⚠️ This is only for local development!!
-⚠️ Never commit API keys to git!!
-            `.trim());
-            
-            if (apiKey && apiKey.startsWith('sk-')) {
-                localStorage.setItem('dev_openai_key', apiKey);
-                return apiKey;
-            }
-        }
-        return null;
-    }
-    
-    // Demo mode with fallback content when no API key
-    initializeDemoMode() {
-        console.log('Initializing demo mode with fallback content');
-        
-        // Override AI service to use only fallbacks
-        window.DiasporaAI.generateCountrySummary = async (country) => {
-            return window.DiasporaAI.getFallbackCountrySummary(country);
-        };
-        
-        window.DiasporaAI.generatePersonalizedRecommendations = async () => {
-            return window.DiasporaAI.getDefaultRecommendations();
-        };
-        
-        window.DiasporaAI.generateSearchSuggestions = async (query) => {
-            return window.DiasporaAI.getFallbackSearchSuggestions(query);
-        };
-        
-        // Initialize other features that don't need API
-        this.enhanceCountrySearch();
-        this.initializePersonalization();
-        
-        // Show demo mode indicator
-        this.showDemoModeIndicator();
-    }
-    
-    showDemoModeIndicator() {
-        const indicator = document.createElement('div');
-        indicator.style.cssText = `
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            z-index: 10000;
-            font-size: 12px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
-        `;
-        indicator.innerHTML = `
-            <i class="fas fa-info-circle"></i> Demo Mode
-            <div style="font-size: 10px; margin-top: 2px; opacity: 0.9;">
-                Using fallback content
-            </div>
-        `;
-        document.body.appendChild(indicator);
-        
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            if (indicator.parentNode) {
-                indicator.remove();
-            }
-        }, 5000);
-    }
-    
-    // Rest of existing methods...
-    enhanceCountrySearch() {
-        const countrySearchInput = document.getElementById('country-search-input');
-        const countrySearchBtn = document.getElementById('country-search-btn');
-        
-        if (countrySearchInput && countrySearchBtn) {
-            countrySearchBtn.addEventListener('click', this.handleAICountrySearch.bind(this));
-            
-            countrySearchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.handleAICountrySearch();
-                }
-            });
-        }
-    }
-    
-    async handleAICountrySearch() {
-        const input = document.getElementById('country-search-input');
-        const summaryContainer = document.getElementById('ai-summary-container');
-        const loadingElement = document.getElementById('summary-loading');
-        const summaryText = document.getElementById('summary-text');
-        const summaryStats = document.getElementById('summary-stats');
-        const countryName = document.getElementById('country-name');
-        
-        if (!input || !summaryContainer) return;
-        
-        const country = input.value.trim();
-        if (!country) return;
         
         try {
-            // Show loading state
-            summaryContainer.style.display = 'block';
-            summaryContainer.classList.add('show');
-            loadingElement.style.display = 'block';
-            summaryText.style.display = 'none';
-            summaryStats.style.display = 'none';
+            const summaryText = document.getElementById('summary-text');
+            const summaryStats = document.getElementById('summary-stats');
             
-            // Update country name
-            if (countryName) {
-                countryName.textContent = country;
+            if (!summaryText) {
+                console.log('❌ Summary text element not found');
+                return;
             }
             
-            // Generate AI summary (will use fallback if no API key)
-            const result = await window.DiasporaAI.generateCountrySummary(country);
+            console.log('✅ AI is initialized, starting enhancement...');
             
-            // Simulate loading for demo effect
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Show that AI is processing
+            const loadingText = document.createElement('div');
+            loadingText.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: var(--primary-color);
+                font-style: italic;
+                margin-top: 10px;
+                font-size: 0.9rem;
+            `;
+            loadingText.innerHTML = `
+                <i class="fas fa-robot"></i>
+                AI is enhancing this summary...
+            `;
+            summaryText.appendChild(loadingText);
             
-            // Hide loading and show results
-            loadingElement.style.display = 'none';
+            console.log('🔄 Calling DiasporaAI.generateCountrySummary...');
             
-            // Display summary text
-            if (summaryText) {
-                summaryText.innerHTML = `<p>${result.text}</p>`;
-                summaryText.style.display = 'block';
-            }
+            // Generate AI summary
+            const result = await window.DiasporaAI.generateCountrySummary(country.name);
             
-            // Display statistics
-            if (summaryStats && result.statistics) {
-                const statsHTML = `
-                    <div class="stat-item">
-                        <div class="stat-number">${result.statistics.population || '-'}</div>
-                        <div class="stat-label">Diaspora Population</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${result.statistics.destinations || '-'}</div>
-                        <div class="stat-label">Main Destinations</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${result.statistics.centers || '-'}</div>
-                        <div class="stat-label">Cultural Centers</div>
+            console.log('📝 AI result received:', result);
+            
+            // Remove loading text
+            loadingText.remove();
+            
+            // Check if we got a real AI result or fallback
+            if (result && result.text && !result.text.includes('rich history spanning multiple continents')) {
+                console.log('✅ Using real AI content');
+                
+                // Replace with AI-generated content
+                summaryText.innerHTML = `
+                    <p>${result.text}</p>
+                    <div class="ai-badge" style="margin-top: 15px;">
+                        <i class="fas fa-robot"></i>
+                        <span>Enhanced with AI</span>
                     </div>
                 `;
-                summaryStats.innerHTML = statsHTML;
-                summaryStats.style.display = 'flex';
+                
+                // Update stats if AI provided them
+                if (result.statistics && summaryStats) {
+                    console.log('📊 Updating stats with AI data:', result.statistics);
+                    
+                    const diasporaPopulation = document.getElementById('diaspora-population');
+                    const mainDestinations = document.getElementById('main-destinations');
+                    const culturalCenters = document.getElementById('cultural-centers');
+                    
+                    if (result.statistics.population && diasporaPopulation) {
+                        diasporaPopulation.textContent = result.statistics.population;
+                    }
+                    if (result.statistics.destinations && mainDestinations) {
+                        mainDestinations.textContent = result.statistics.destinations;
+                    }
+                    if (result.statistics.centers && culturalCenters) {
+                        culturalCenters.textContent = result.statistics.centers;
+                    }
+                }
+            } else {
+                console.log('⚠️ Got fallback content instead of real AI');
+                
+                // Show that we're using fallback
+                summaryText.innerHTML = `
+                    <p>${result.text}</p>
+                    <div style="background: rgba(255, 152, 0, 0.1); border: 1px solid rgba(255, 152, 0, 0.3); color: #ff9800; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 0.85rem;">
+                        <i class="fas fa-info-circle"></i>
+                        Using fallback content - AI may not be properly configured
+                    </div>
+                `;
             }
             
-            // Track analytics
-            this.trackAIUsage('country_search', country);
-            
         } catch (error) {
-            console.error('Error in AI country search:', error);
-            this.showErrorMessage('Unable to generate summary. Please try again.');
+            console.error('💥 Failed to enhance with AI:', error);
+            
+            // Show error but don't break the existing functionality
+            const summaryText = document.getElementById('summary-text');
+            if (summaryText) {
+                const errorNote = document.createElement('div');
+                errorNote.style.cssText = `
+                    background: rgba(244, 67, 54, 0.1);
+                    border: 1px solid rgba(244, 67, 54, 0.3);
+                    color: #f44336;
+                    padding: 10px;
+                    border-radius: 6px;
+                    margin-top: 10px;
+                    font-size: 0.85rem;
+                `;
+                errorNote.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    AI enhancement failed: ${error.message}
+                `;
+                summaryText.appendChild(errorNote);
+            }
         }
-    }
-    
-    initializePersonalization() {
-        const currentPage = this.getCurrentPage();
-        window.DiasporaAI.trackUserInterest('topic', currentPage);
-        
-        let startTime = Date.now();
-        window.addEventListener('beforeunload', () => {
-            const timeSpent = Date.now() - startTime;
-            window.DiasporaAI.trackPageTime(currentPage, timeSpent);
-        });
-    }
-    
-    getCurrentPage() {
-        const path = window.location.pathname;
-        const page = path.split('/').pop() || 'home';
-        return page.replace('.html', '');
     }
     
     showAIStatus(message, type = 'info') {
@@ -293,30 +200,16 @@ Enter OpenAI API key for testing:
             setTimeout(() => statusDiv.remove(), 3000);
         }
     }
-    
-    showErrorMessage(message) {
-        const summaryText = document.getElementById('summary-text');
-        if (summaryText) {
-            summaryText.innerHTML = `<p style="color: #ff6b6b;"><i class="fas fa-exclamation-triangle"></i> ${message}</p>`;
-            summaryText.style.display = 'block';
-        }
-    }
-    
-    trackAIUsage(feature, details) {
-        if (window.DiasporaHub && window.DiasporaHub.Analytics) {
-            window.DiasporaHub.Analytics.track('ai_feature_used', {
-                feature: feature,
-                details: details,
-                timestamp: new Date().toISOString()
-            });
-        }
-    }
 }
 
-// Initialize when DOM is ready
+// Initialize when DOM is ready (after country-search.js loads)
 document.addEventListener('DOMContentLoaded', async () => {
-    const aiConfig = new SecureAIConfig();
-    await aiConfig.initialize();
+    // Wait a bit for other scripts to load
+    setTimeout(async () => {
+        const aiConfig = new SecureAIConfig();
+        window.secureAIConfigInstance = aiConfig;
+        await aiConfig.initialize();
+    }, 1000);
 });
 
 window.SecureAIConfig = SecureAIConfig;
