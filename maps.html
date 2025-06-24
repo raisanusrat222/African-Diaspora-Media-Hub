@@ -8,15 +8,16 @@
     <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/navigation.css">
     <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/maps.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-        <script type="text/javascript">
+    <script type="text/javascript">
     function googleTranslateElementInit() {
         new google.translate.TranslateElement({
             pageLanguage: 'en',
             includedLanguages: 'en,es,fr,pt'
         }, 'google_translate_element');
-}
+    }
     </script>
     <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
@@ -221,7 +222,7 @@
         <section class="page-header">
             <div class="container">
                 <h1>Interactive Maps</h1>
-                <p>Explore migration patterns and cultural connections across continents</p>
+                <p>Explore African heritage, migration patterns, and cultural connections across history</p>
             </div>
         </section>
         
@@ -229,225 +230,228 @@
             <div class="container">
                 <!-- Map Tabs -->
                 <div class="map-tabs">
-                    <button class="map-tab-btn active" data-map="modern-borders">
-                        <i class="fas fa-globe"></i>
-                        Modern Diaspora
-                    </button>
-                    <button class="map-tab-btn" data-map="pre-slavery">
+                    <button class="map-tab-btn active" data-map="pre-slavery">
                         <i class="fas fa-crown"></i>
-                        Ancient Kingdoms
+                        Pre-Slavery Africa
                     </button>
-                    <button class="map-tab-btn" data-map="trade-routes">
-                        <i class="fas fa-route"></i>
-                        Trade Routes
+                    <button class="map-tab-btn" data-map="slave-trade">
+                        <i class="fas fa-ship"></i>
+                        Transatlantic Trade Routes
+                    </button>
+                    <button class="map-tab-btn" data-map="modern-borders">
+                        <i class="fas fa-globe"></i>
+                        Modern Political Borders
                     </button>
                 </div>
 
                 <!-- Interactive Map Container -->
                 <div class="interactive-map-container">
                     <div class="map-display">
-                        <!-- Modern Diaspora Map -->
-                        <div class="map-view active" id="modern-borders-map">
-                            <div class="map-placeholder">
-                                <img src="assets/images/maps/world-diaspora-map.jpg" alt="World diaspora map" class="map-image" onerror="this.style.display='none';">
-                                <div class="map-overlay">
-                                    <!-- North America -->
-                                    <div class="map-marker country-marker" style="top: 45%; left: 10%;" data-country="United States">
-                                        <i class="fas fa-users"></i>
-                                        <div class="marker-tooltip">United States - 40M+ African Americans</div>
-                                    </div>
-                                    <div class="map-marker country-marker" style="top: 35%; left: 10%;" data-country="Canada">
-                                        <i class="fas fa-users"></i>
-                                        <div class="marker-tooltip">Canada - 1.2M+ African Canadians</div>
-                                    </div>
-                                    
-                                    <!-- Caribbean -->
-                                    <div class="map-marker country-marker" style="top: 55%; left: 25%;" data-country="Jamaica">
-                                        <i class="fas fa-flag"></i>
-                                        <div class="marker-tooltip">Jamaica - 2.7M population</div>
-                                    </div>
-                                    
-                                    <!-- South America -->
-                                    <div class="map-marker country-marker" style="top: 68%; left: 32%;" data-country="Brazil">
-                                        <i class="fas fa-flag"></i>
-                                        <div class="marker-tooltip">Brazil - 55M+ African Brazilians</div>
-                                    </div>
-                                    
-                                    <!-- Europe -->
-                                    <div class="map-marker country-marker" style="top: 25%; left: 50%;" data-country="United Kingdom">
-                                        <i class="fas fa-users"></i>
-                                        <div class="marker-tooltip">United Kingdom - 3M+ Black British</div>
-                                    </div>
-                                    <div class="map-marker country-marker" style="top: 30%; left: 52%;" data-country="France">
-                                        <i class="fas fa-users"></i>
-                                        <div class="marker-tooltip">France - 5M+ African French</div>
-                                    </div>
-                                    
-                                    <!-- Africa -->
-                                    <div class="map-marker country-marker" style="top: 45%; left: 65%;" data-country="Nigeria">
-                                        <i class="fas fa-flag"></i>
-                                        <div class="marker-tooltip">Nigeria - 17M+ diaspora worldwide</div>
-                                    </div>
-                                    <div class="map-marker country-marker" style="top: 50%; left: 60%;" data-country="Ghana">
-                                        <i class="fas fa-flag"></i>
-                                        <div class="marker-tooltip">Ghana - 3M+ diaspora worldwide</div>
-                                    </div>
-                                    <div class="map-marker country-marker" style="top: 40%; left: 68%;" data-country="Ethiopia">
-                                        <i class="fas fa-flag"></i>
-                                        <div class="marker-tooltip">Ethiopia - 2M+ diaspora worldwide</div>
-                                    </div>
-                                    <div class="map-marker country-marker" style="top: 70%; left: 65%;" data-country="South Africa">
-                                        <i class="fas fa-flag"></i>
-                                        <div class="marker-tooltip">South Africa - 2.5M+ diaspora</div>
-                                    </div>
+                        <!-- Pre-Slavery Africa Map -->
+                        <div class="map-view active" id="pre-slavery-map">
+                            <div class="map-image-container">
+                                <img src="assets/images/maps/pre-slavery-africa.jpg" alt="Pre-Slavery Africa Map" class="map-image">
+                                
+                                <!-- Fixed Position Markers with Tooltips -->
+                                <div class="marker" data-region="mali" style="left: 25%; top: 35%;" data-tooltip="Mali Empire (1230-1600) - Gold trade powerhouse">
+                                    <div class="marker-dot kingdom-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="songhai" style="left: 35%; top: 32%;" data-tooltip="Songhai Empire (1464-1591) - Largest African empire">
+                                    <div class="marker-dot kingdom-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="kush" style="left: 65%; top: 28%;" data-tooltip="Kingdom of Kush (1070 BCE - 350 CE) - Land of pyramid builders">
+                                    <div class="marker-dot kingdom-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="kongo" style="left: 55%; top: 65%;" data-tooltip="Kingdom of Kongo (1390-1914) - Sophisticated Central African state">
+                                    <div class="marker-dot kingdom-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="zimbabwe" style="left: 70%; top: 75%;" data-tooltip="Great Zimbabwe (1220-1450) - Stone city builders">
+                                    <div class="marker-dot kingdom-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="ethiopia" style="left: 75%; top: 40%;" data-tooltip="Ethiopian Empire (1270-1974) - Never colonized">
+                                    <div class="marker-dot kingdom-marker"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Pre-Slavery Map -->
-                        <div class="map-view" id="pre-slavery-map">
-                            <div class="map-placeholder">
-                                <img src="assets/images/maps/ancient-africa-map.jpg" alt="Ancient African kingdoms map" class="map-image" onerror="this.style.display='none';">
-                                <div class="map-overlay">
-                                    <div class="map-marker kingdom-marker" style="top: 30%; left: 55%;" data-kingdom="mali">
-                                        <i class="fas fa-crown"></i>
-                                        <div class="marker-tooltip">Mali Empire (1230-1600)</div>
-                                    </div>
-                                    <div class="map-marker kingdom-marker" style="top: 35%; left: 62%;" data-kingdom="songhai">
-                                        <i class="fas fa-crown"></i>
-                                        <div class="marker-tooltip">Songhai Empire (1464-1591)</div>
-                                    </div>
-                                    <div class="map-marker kingdom-marker" style="top: 55%; left: 60%;" data-kingdom="kongo">
-                                        <i class="fas fa-crown"></i>
-                                        <div class="marker-tooltip">Kingdom of Kongo (1390-1914)</div>
-                                    </div>
-                                    <div class="map-marker kingdom-marker" style="top: 40%; left: 68%;" data-kingdom="ethiopia">
-                                        <i class="fas fa-crown"></i>
-                                        <div class="marker-tooltip">Ethiopian Empire</div>
-                                    </div>
+                        <!-- Slave Trade Routes Map -->
+                        <div class="map-view" id="slave-trade-map">
+                            <div class="map-image-container">
+                                <!-- Use your actual slave trade map image -->
+                                <img src="assets/images/maps/slave-trade-routes.png" alt="Transatlantic Slave Trade Routes Map" class="map-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <!-- Fallback placeholder if image doesn't load -->
+                                <div class="map-placeholder" style="display: none; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #666;">
+                                    <p>Slave Trade Routes Map<br><small>Place your slave-trade-routes.png image here</small></p>
+                                </div>
+                                
+                                <!-- African Departure Points - Positioned based on your map -->
+                                <!-- Senegambia region (Senegal/Gambia area) -->
+                                <div class="marker test-marker" data-region="senegambia" style="left: 48%; top: 43%;" data-tooltip="Senegambia - 1.2M people enslaved and shipped">
+                                    <div class="marker-dot departure-marker"></div>
+                                </div>
+                                
+                                <!-- Gold Coast (Ghana - Accra/Cape Coast area) -->
+                                <div class="marker test-marker" data-region="gold-coast" style="left: 50%; top: 50%;" data-tooltip="Gold Coast (Ghana) - 1M enslaved through slave castles">
+                                    <div class="marker-dot departure-marker"></div>
+                                </div>
+                                
+                                <!-- Bight of Benin (Nigeria - Lagos area) -->
+                                <div class="marker test-marker" data-region="bight-benin" style="left: 52%; top: 51%;" data-tooltip="Bight of Benin - 1.2M enslaved via Yoruba lands">
+                                    <div class="marker-dot departure-marker"></div>
+                                </div>
+                                
+                                <!-- Bight of Biafra (Nigeria - Calabar area) -->
+                                <div class="marker test-marker" data-region="bight-biafra" style="left: 55%; top: 52%;" data-tooltip="Bight of Biafra - 1.5M Igbo and other peoples enslaved">
+                                    <div class="marker-dot departure-marker"></div>
+                                </div>
+                                
+                                <!-- West Central Africa (Angola - Luanda area) -->
+                                <div class="marker test-marker" data-region="west-central" style="left: 58%; top: 65%;" data-tooltip="West Central Africa - 5.6M enslaved (largest source)">
+                                    <div class="marker-dot departure-marker"></div>
+                                </div>
+                                
+                                <!-- American Destinations -->
+                                <!-- Brazil (Eastern South America) -->
+                                <div class="marker test-marker" data-region="brazil" style="left: 25%; top: 70%;" data-tooltip="Brazil - 4.9M Africans received (largest destination)">
+                                    <div class="marker-dot destination-marker"></div>
+                                </div>
+                                
+                                <!-- Caribbean (Islands between North and South America) -->
+                                <div class="marker test-marker" data-region="caribbean" style="left: 15%; top: 45%;" data-tooltip="Caribbean - 2.3M received for sugar plantations">
+                                    <div class="marker-dot destination-marker"></div>
+                                </div>
+                                
+                                <!-- North America (Southern United States) -->
+                                <div class="marker test-marker" data-region="north-america" style="left: 12%; top: 35%;" data-tooltip="North America - 400K received in Southern colonies">
+                                    <div class="marker-dot destination-marker"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Trade Routes Map -->
-                        <div class="map-view" id="trade-routes-map">
-                            <div class="map-placeholder">
-                                <img src="assets/images/maps/trade-routes-map.jpg" alt="Historical trade routes map" class="map-image" onerror="this.style.display='none';">
-                                <div class="map-overlay trade-routes">
-                                    <!-- Trade route lines would be overlaid here -->
-                                    <div class="route-line" style="top: 40%; left: 20%; width: 400px; transform: rotate(15deg);"></div>
-                                    <div class="route-line" style="top: 50%; left: 30%; width: 300px; transform: rotate(-10deg);"></div>
+                        <!-- Modern Political Borders Map -->
+                        <div class="map-view" id="modern-borders-map">
+                            <div class="map-image-container">
+                                <img src="assets/images/maps/modern-africa.png" alt="Modern Africa Political Map" class="map-image">
+                                
+                                <!-- Modern African Countries with Diaspora Info -->
+                                <div class="marker" data-region="nigeria" style="left: 32%; top: 50%;" data-tooltip="Nigeria - 220M population, 17M+ diaspora worldwide">
+                                    <div class="marker-dot country-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="ghana" style="left: 25%; top: 52%;" data-tooltip="Ghana - 32M population, 3M+ diaspora, Year of Return">
+                                    <div class="marker-dot country-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="senegal" style="left: 18%; top: 38%;" data-tooltip="Senegal - 17M population, 1M+ diaspora, democratic stability">
+                                    <div class="marker-dot country-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="ethiopia" style="left: 75%; top: 42%;" data-tooltip="Ethiopia - 120M population, 2M+ diaspora, never colonized">
+                                    <div class="marker-dot country-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="kenya" style="left: 72%; top: 55%;" data-tooltip="Kenya - 54M population, 1.5M+ diaspora, Silicon Savannah">
+                                    <div class="marker-dot country-marker"></div>
+                                </div>
+                                
+                                <div class="marker" data-region="south-africa" style="left: 60%; top: 85%;" data-tooltip="South Africa - 60M population, 2.5M+ diaspora, Rainbow Nation">
+                                    <div class="marker-dot country-marker"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="map-legend">
-                        <h4>Legend</h4>
-                        
-                        <div class="legend-items modern-borders-legend active">
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--primary-color);"></span>
-                                <span>African Countries</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--secondary-color);"></span>
-                                <span>Major Diaspora Communities</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--accent-color);"></span>
-                                <span>Cultural Centers</span>
-                            </div>
+                    <!-- Information Sidebar -->
+                    <div class="info-sidebar" id="info-sidebar">
+                        <div class="sidebar-header">
+                            <h3 id="sidebar-title">Select a Region</h3>
+                            <button class="sidebar-close" onclick="closeSidebar()">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                         
-                        <div class="legend-items pre-slavery-legend">
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--primary-color);"></span>
-                                <span>Ancient Kingdoms</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--secondary-color);"></span>
-                                <span>Trade Centers</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--accent-color);"></span>
-                                <span>Cultural Sites</span>
-                            </div>
-                        </div>
-                        
-                        <div class="legend-items trade-routes-legend">
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--primary-color);"></span>
-                                <span>Trans-Saharan Routes</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--secondary-color);"></span>
-                                <span>Atlantic Trade Routes</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--accent-color);"></span>
-                                <span>Indian Ocean Routes</span>
+                        <div class="sidebar-content" id="sidebar-content">
+                            <div class="default-content">
+                                <div class="instruction-icon">
+                                    <i class="fas fa-hand-pointer"></i>
+                                </div>
+                                <p>Click on any marker to explore detailed information about African heritage and diaspora connections.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Country Profile Information -->
+                <!-- Map Legend -->
+                <div class="map-legend-container">
+                    <div class="map-legend">
+                        <h4>Legend</h4>
+                        
+                        <div class="legend-items pre-slavery-legend active">
+                            <div class="legend-item">
+                                <span class="legend-dot kingdom-marker"></span>
+                                <span>Ancient Kingdoms & Empires</span>
+                            </div>
+                        </div>
+                        
+                        <div class="legend-items slave-trade-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot departure-marker"></span>
+                                <span>Departure Points</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot destination-marker"></span>
+                                <span>Arrival Destinations</span>
+                            </div>
+                        </div>
+                        
+                        <div class="legend-items modern-borders-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot country-marker"></span>
+                                <span>Modern African Countries</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
                 <div class="country-info-section" style="margin-top: 60px;">
-                    <h2>Explore Diaspora Communities</h2>
-                    <p>Click on markers above to learn more about specific countries and their diaspora communities worldwide.</p>
+                    <h2>Explore African Heritage & Diaspora</h2>
+                    <p>Click on markers in the maps above to discover the rich history and global connections of African peoples.</p>
                     
                     <div class="quick-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 40px;">
                         <div class="stat-card" style="background: var(--light-color); padding: 30px; border-radius: 15px; text-align: center; box-shadow: var(--shadow);">
-                            <i class="fas fa-users" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                            <i class="fas fa-crown" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                            <h3 style="margin: 0; color: var(--dark-color);">100+</h3>
+                            <p style="margin: 5px 0 0; color: var(--dark-color);">Ancient Kingdoms</p>
+                        </div>
+                        
+                        <div class="stat-card" style="background: var(--light-color); padding: 30px; border-radius: 15px; text-align: center; box-shadow: var(--shadow);">
+                            <i class="fas fa-ship" style="font-size: 2rem; color: var(--secondary-color); margin-bottom: 15px;"></i>
+                            <h3 style="margin: 0; color: var(--dark-color);">12.5M</h3>
+                            <p style="margin: 5px 0 0; color: var(--dark-color);">People Enslaved</p>
+                        </div>
+                        
+                        <div class="stat-card" style="background: var(--light-color); padding: 30px; border-radius: 15px; text-align: center; box-shadow: var(--shadow);">
+                            <i class="fas fa-users" style="font-size: 2rem; color: var(--accent-color); margin-bottom: 15px;"></i>
                             <h3 style="margin: 0; color: var(--dark-color);">200M+</h3>
                             <p style="margin: 5px 0 0; color: var(--dark-color);">Global Diaspora</p>
                         </div>
                         
                         <div class="stat-card" style="background: var(--light-color); padding: 30px; border-radius: 15px; text-align: center; box-shadow: var(--shadow);">
-                            <i class="fas fa-globe" style="font-size: 2rem; color: var(--secondary-color); margin-bottom: 15px;"></i>
+                            <i class="fas fa-globe" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
                             <h3 style="margin: 0; color: var(--dark-color);">6</h3>
                             <p style="margin: 5px 0 0; color: var(--dark-color);">Continents</p>
-                        </div>
-                        
-                        <div class="stat-card" style="background: var(--light-color); padding: 30px; border-radius: 15px; text-align: center; box-shadow: var(--shadow);">
-                            <i class="fas fa-flag" style="font-size: 2rem; color: var(--accent-color); margin-bottom: 15px;"></i>
-                            <h3 style="margin: 0; color: var(--dark-color);">54</h3>
-                            <p style="margin: 5px 0 0; color: var(--dark-color);">African Countries</p>
-                        </div>
-                        
-                        <div class="stat-card" style="background: var(--light-color); padding: 30px; border-radius: 15px; text-align: center; box-shadow: var(--shadow);">
-                            <i class="fas fa-language" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 15px;"></i>
-                            <h3 style="margin: 0; color: var(--dark-color);">2000+</h3>
-                            <p style="margin: 5px 0 0; color: var(--dark-color);">Languages</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-
-    <!-- Country Profile Modal -->
-    <div class="country-profile-modal" id="country-profile-modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="profile-country-name">Country Name</h2>
-                <button class="modal-close" onclick="closeCountryProfile()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="profile-tabs">
-                    <button class="profile-tab active" onclick="switchProfileTab('overview')">Overview</button>
-                    <button class="profile-tab" onclick="switchProfileTab('culture')">Culture</button>
-                    <button class="profile-tab" onclick="switchProfileTab('heritage')">Heritage</button>
-                </div>
-                <div class="profile-content" id="profile-content">
-                    <!-- Content will be loaded dynamically -->
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -490,5 +494,10 @@
     <script src="js/navigation.js"></script>
     <script src="js/animations.js"></script>
     <script src="js/maps-interactive.js"></script>
+    
+    <!-- AI Enhancement Scripts (if available) -->
+    <script src="js/env-loader.js"></script>
+    <script src="js/ai-service.js"></script>
+    <script src="js/ai-config-secure.js"></script>
 </body>
 </html>

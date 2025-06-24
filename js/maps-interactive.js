@@ -1,540 +1,590 @@
-// maps-interactive.js
+// maps-interactive.js - Interactive Maps with Fixed Marker Positions
 
-// Country profile data
-const countryProfiles = {
-    'Nigeria': {
-        flag: 'assets/images/countries/flags/nigeria flag.gif',
-        anthem: 'Arise, O Compatriots',
-        religion: 'Christianity (50%), Islam (45%), Traditional (5%)',
-        overview: {
-            history: 'Nigeria\'s history spans over 2,000 years, featuring powerful kingdoms like Nok, Ife, and Benin. The region experienced significant involvement in the transatlantic slave trade from the 15th-19th centuries.',
-            slaveTradeRole: 'Major source region with an estimated 1.5 million people enslaved and transported. Key departure ports included Lagos, Bonny, and Calabar.',
-            familyStructure: 'Extended family systems with strong kinship bonds. Traditional polygamous and patriarchal structures, though modernizing.',
-            communityStructure: 'Village-based communities led by traditional rulers (Obas, Emirs, Obi). Age-grade associations and title societies maintain social order.'
-        },
-        culture: {
-            festivals: ['Osun Festival', 'Durbar Festival', 'New Yam Festival', 'Eyo Festival'],
-            foods: ['Jollof Rice', 'Pounded Yam', 'Egusi Soup', 'Suya', 'Akara'],
-            dress: ['Agbada', 'Kaftan', 'Wrapper and Blouse', 'Ankara fabrics'],
-            music: ['Afrobeat', 'Highlife', 'Fuji', 'Traditional drumming']
-        },
-        heritage: {
-            thenNow: [
-                {
-                    category: 'Music',
-                    then: 'Traditional drumming and folk songs',
-                    now: 'Afrobeats and global fusion',
-                    thenImage: 'assets/images/heritage/nigeria-traditional-music.jpg',
-                    nowImage: 'assets/images/heritage/nigeria-modern-music.jpg'
-                },
-                {
-                    category: 'Food',
-                    then: 'Simple grains and vegetables',
-                    now: 'Complex spiced dishes and global influences',
-                    thenImage: 'assets/images/heritage/nigeria-traditional-food.jpg',
-                    nowImage: 'assets/images/heritage/nigeria-modern-food.jpg'
-                }
-            ],
-            videos: [
-                {
-                    title: 'Traditional Yoruba Wedding Ceremony',
-                    description: 'Experience the rich traditions of a Yoruba wedding',
-                    thumbnail: 'assets/images/videos/yoruba-wedding-thumb.jpg'
-                },
-                {
-                    title: 'Igbo Masquerade Festival',
-                    description: 'Ancient spiritual traditions brought to life',
-                    thumbnail: 'assets/images/videos/igbo-masquerade-thumb.jpg'
-                }
-            ]
-        }
+// Region data for detailed information
+const regionData = {
+    // Pre-Slavery Africa - Ancient Kingdoms
+    'mali': {
+        name: 'Mali Empire',
+        period: '1230-1600 CE',
+        capital: 'Niani',
+        peakPopulation: '40-45 million',
+        description: 'The Mali Empire was one of the richest and most powerful empires in medieval Africa, controlling trans-Saharan trade routes and vast gold mines. Famous for Mansa Musa, considered the wealthiest person in history.',
+        achievements: [
+            'Controlled trans-Saharan gold and salt trade',
+            'Home to the University of Timbuktu',
+            'Advanced Islamic scholarship and architecture',
+            'Sophisticated administrative system'
+        ],
+        modernLegacy: 'Modern Mali, parts of Senegal, Niger, Burkina Faso, Guinea, Gambia, and Mauritania'
     },
-    'Ghana': {
-        flag: 'assets/images/countries/flags/ghana flag.gif',
-        anthem: 'God Bless Our Homeland Ghana',
-        religion: 'Christianity (71%), Islam (18%), Traditional (5%)',
-        overview: {
-            history: 'Ancient Ghana Empire was a major gold trading center. The region later saw the rise of Ashanti Kingdom and significant involvement in Atlantic trade.',
-            slaveTradeRole: 'Central hub with Cape Coast and Elmina castles. An estimated 1 million people were enslaved and shipped from Ghanaian ports.',
-            familyStructure: 'Matrilineal and patrilineal systems coexist. Extended family networks provide social security and identity.',
-            communityStructure: 'Traditional chieftaincy system with paramount chiefs. Community decisions made through council of elders.'
-        },
-        culture: {
-            festivals: ['Homowo Festival', 'Yam Festival', 'Akwasidae', 'Panafest'],
-            foods: ['Fufu', 'Banku', 'Kelewele', 'Red Red', 'Waakye'],
-            dress: ['Kente cloth', 'Smock', 'Adinkra prints', 'Traditional sandals'],
-            music: ['Highlife', 'Hiplife', 'Traditional drumming', 'Azonto']
-        },
-        heritage: {
-            thenNow: [
-                {
-                    category: 'Textiles',
-                    then: 'Hand-woven Kente on wooden looms',
-                    now: 'Machine-made Kente and modern fashion',
-                    thenImage: 'assets/images/heritage/ghana-traditional-kente.jpg',
-                    nowImage: 'assets/images/heritage/ghana-modern-kente.jpg'
-                }
-            ],
-            videos: [
-                {
-                    title: 'Ashanti Royal Ceremony',
-                    description: 'Traditional coronation and cultural displays',
-                    thumbnail: 'assets/images/videos/ashanti-ceremony-thumb.jpg'
-                }
-            ]
-        }
+    'songhai': {
+        name: 'Songhai Empire',
+        period: '1464-1591 CE',
+        capital: 'Gao',
+        peakPopulation: '20-25 million',
+        description: 'The Songhai Empire was the largest empire in African history, known for its advanced military organization and the famous centers of learning in Timbuktu and Gao.',
+        achievements: [
+            'Largest empire in African history',
+            'Advanced military and administrative systems',
+            'Major centers of Islamic learning',
+            'Controlled Niger River trade routes'
+        ],
+        modernLegacy: 'Modern Mali, Niger, and parts of Burkina Faso'
     },
-    'Senegal': {
-        flag: 'assets/images/countries/flags/senegal flag.gif',
-        anthem: 'Pincez Tous vos Koras, Frappez les Balafons',
-        religion: 'Islam (96%), Christianity (3%), Traditional (1%)',
-        overview: {
-            history: 'Historical kingdoms of Wolof, Serer, and Fula. Gorée Island became a major slave trading post under European colonization.',
-            slaveTradeRole: 'Gorée Island was a crucial departure point. An estimated 500,000 people were enslaved from this region.',
-            familyStructure: 'Islamic family structures with strong extended family ties. Polygamy is practiced within Islamic guidelines.',
-            communityStructure: 'Islamic brotherhoods (Murids, Tijaniyya) provide social organization alongside traditional village structures.'
-        },
-        culture: {
-            festivals: ['Tabaski', 'Magal', 'Korité', 'Tamkharit'],
-            foods: ['Thieboudienne', 'Yassa', 'Mafe', 'Pastels', 'Bissap'],
-            dress: ['Boubou', 'Kaftan', 'Wrapper and headwrap', 'Traditional sandals'],
-            music: ['Mbalax', 'Sabar drumming', 'Griot traditions', 'Modern Senegalese pop']
-        },
-        heritage: {
-            thenNow: [
-                {
-                    category: 'Music',
-                    then: 'Griot oral traditions and kora music',
-                    now: 'Mbalax fusion and international collaborations',
-                    thenImage: 'assets/images/heritage/senegal-traditional-griot.jpg',
-                    nowImage: 'assets/images/heritage/senegal-modern-music.jpg'
-                }
-            ],
-            videos: [
-                {
-                    title: 'Griot Storytelling Tradition',
-                    description: 'Ancient oral history preservation methods',
-                    thumbnail: 'assets/images/videos/griot-tradition-thumb.jpg'
-                }
-            ]
-        }
+    'kush': {
+        name: 'Kingdom of Kush',
+        period: '1070 BCE - 350 CE',
+        capital: 'Meroe',
+        peakPopulation: '2-3 million',
+        description: 'The Kingdom of Kush was known for its powerful queens (Candaces), advanced iron working technology, and impressive pyramid building traditions.',
+        achievements: [
+            'Advanced iron working and metallurgy',
+            'Built over 200 pyramids',
+            'Ruled Egypt for nearly a century',
+            'Powerful female rulers (Candaces)'
+        ],
+        modernLegacy: 'Modern Sudan and southern Egypt'
     },
-    'Ethiopia': {
-        flag: 'assets/images/countries/flags/ethiopia.png',
-        anthem: 'Whedefit Gesgeshi Woude Henate Ethiopia',
-        religion: 'Ethiopian Orthodox (44%), Islam (34%), Protestant (19%)',
-        overview: {
-            history: 'One of the oldest independent nations, never fully colonized. Ancient Kingdom of Aksum was a major trading power.',
-            slaveTradeRole: 'Limited involvement in Atlantic trade; more connected to Indian Ocean and Arab slave trades.',
-            familyStructure: 'Patriarchal extended families with strong lineage connections. Orthodox Christian and Islamic influences.',
-            communityStructure: 'Village councils and traditional assemblies. Religious institutions play central roles in community life.'
-        },
-        culture: {
-            festivals: ['Timkat', 'Meskel', 'Genna', 'Irreecha'],
-            foods: ['Injera', 'Doro Wat', 'Kitfo', 'Berbere spice', 'Coffee ceremony'],
-            dress: ['Habesha kemis', 'Netela', 'Traditional cotton garments', 'Shamma'],
-            music: ['Traditional highland music', 'Ethio-jazz', 'Religious chants', 'Modern Ethiopian pop']
-        },
-        heritage: {
-            thenNow: [
-                {
-                    category: 'Coffee Culture',
-                    then: 'Ancient coffee ceremonies in clay pots',
-                    now: 'Traditional ceremonies meet modern coffee culture',
-                    thenImage: 'assets/images/heritage/ethiopia-traditional-coffee.jpg',
-                    nowImage: 'assets/images/heritage/ethiopia-modern-coffee.jpg'
-                }
-            ],
-            videos: [
-                {
-                    title: 'Ethiopian Orthodox Timkat Ceremony',
-                    description: 'Ancient baptismal celebration traditions',
-                    thumbnail: 'assets/images/videos/timkat-ceremony-thumb.jpg'
-                }
-            ]
-        }
+    'kongo': {
+        name: 'Kingdom of Kongo',
+        period: '1390-1914 CE',
+        capital: 'Mbanza-Kongo',
+        peakPopulation: '2.5-3 million',
+        description: 'The Kingdom of Kongo was a sophisticated Central African state with advanced metalworking, agriculture, and complex political systems.',
+        achievements: [
+            'Sophisticated political confederation',
+            'Advanced copper and iron working',
+            'Complex agricultural innovations',
+            'Early diplomatic contact with Europe'
+        ],
+        modernLegacy: 'Modern Angola, Democratic Republic of Congo, Republic of Congo'
+    },
+    'zimbabwe': {
+        name: 'Great Zimbabwe',
+        period: '1220-1450 CE',
+        capital: 'Great Zimbabwe',
+        peakPopulation: '18,000-20,000',
+        description: 'Great Zimbabwe was a medieval city known for its impressive stone architecture and control of gold trade routes between the interior and Indian Ocean coast.',
+        achievements: [
+            'Massive stone architecture without mortar',
+            'Controlled Indian Ocean gold trade',
+            'Advanced cattle domestication',
+            'Sophisticated urban planning'
+        ],
+        modernLegacy: 'Modern Zimbabwe'
+    },
+    'ethiopia': {
+        name: 'Ethiopian Empire',
+        period: '1270-1974 CE',
+        capital: 'Various (Gondar, Addis Ababa)',
+        peakPopulation: '12-15 million (by 1900)',
+        description: 'The Ethiopian Empire was one of the few African nations to resist European colonization, maintaining independence and preserving ancient Christian traditions.',
+        achievements: [
+            'Successfully resisted European colonization',
+            'Ancient Christian civilization',
+            'Unique calendar and writing system',
+            'Original home of coffee cultivation'
+        ],
+        modernLegacy: 'Modern Ethiopia and Eritrea'
+    },
+
+    // Slave Trade Routes
+    'senegambia': {
+        name: 'Senegambia Region',
+        period: '1500-1850',
+        enslavedNumbers: '1.2 million',
+        description: 'The Senegambia region, including modern Senegal and Gambia, was a major departure point for the transatlantic slave trade.',
+        majorPorts: ['Gorée Island', 'Saint-Louis', 'James Island'],
+        destinations: ['Caribbean', 'North America', 'South America'],
+        culturalImpact: 'Wolof, Mandinka, and Fulani cultural influences spread throughout the Americas'
+    },
+    'gold-coast': {
+        name: 'Gold Coast (Ghana)',
+        period: '1471-1850',
+        enslavedNumbers: '1 million',
+        description: 'The Gold Coast saw the construction of numerous slave castles and became a major hub for the transatlantic slave trade.',
+        majorPorts: ['Cape Coast Castle', 'Elmina Castle', 'Fort James'],
+        destinations: ['Caribbean', 'Brazil', 'North America'],
+        culturalImpact: 'Akan cultural traditions and languages preserved in Caribbean and Americas'
+    },
+    'west-central': {
+        name: 'West Central Africa',
+        period: '1500-1850',
+        enslavedNumbers: '5.6 million',
+        description: 'West Central Africa, primarily Angola and the Congo region, was the largest source of enslaved Africans.',
+        majorPorts: ['Luanda', 'Benguela', 'Cabinda'],
+        destinations: ['Brazil (primary)', 'Caribbean', 'Spanish Americas'],
+        culturalImpact: 'Bantu languages and cultural practices heavily influenced Brazilian and Caribbean cultures'
+    },
+    'bight-benin': {
+        name: 'Bight of Benin',
+        period: '1640-1850',
+        enslavedNumbers: '1.2 million',
+        description: 'The Bight of Benin, including modern Nigeria and Benin, was known as the "Slave Coast" during the peak of the trade.',
+        majorPorts: ['Ouidah', 'Lagos', 'Porto-Novo'],
+        destinations: ['Haiti', 'Brazil', 'Cuba'],
+        culturalImpact: 'Yoruba religious and cultural practices survived and evolved in the Americas'
+    },
+    'bight-biafra': {
+        name: 'Bight of Biafra',
+        period: '1650-1850',
+        enslavedNumbers: '1.5 million',
+        description: 'The Bight of Biafra region contributed significantly to the enslaved population in North America.',
+        majorPorts: ['Bonny', 'Calabar', 'New Calabar'],
+        destinations: ['Virginia', 'South Carolina', 'Caribbean'],
+        culturalImpact: 'Igbo cultural influences and resistance traditions documented in American history'
+    },
+    'brazil': {
+        name: 'Brazil',
+        period: '1500-1850',
+        receivedNumbers: '4.9 million',
+        description: 'Brazil received the largest number of enslaved Africans and developed the largest Afro-descendant population outside Africa.',
+        majorRegions: ['Bahia', 'Rio de Janeiro', 'Pernambuco'],
+        culturalLegacy: 'Rich Afro-Brazilian culture including Capoeira, Candomblé, and Carnival traditions'
+    },
+    'caribbean': {
+        name: 'Caribbean Islands',
+        period: '1500-1850',
+        receivedNumbers: '2.3 million',
+        description: 'The Caribbean islands became centers of sugar production with brutal plantation conditions.',
+        majorRegions: ['Jamaica', 'Haiti', 'Cuba', 'Barbados'],
+        culturalLegacy: 'Maroon communities, early independence movements, and vibrant Caribbean cultures'
+    },
+    'north-america': {
+        name: 'North America',
+        period: '1619-1860',
+        receivedNumbers: '400,000',
+        description: 'North America received a smaller percentage but developed into the foundation of African American culture.',
+        majorRegions: ['Virginia', 'South Carolina', 'Georgia', 'Louisiana'],
+        culturalLegacy: 'Foundation of African American culture and Civil Rights movement'
+    },
+
+    // Modern Countries
+    'nigeria': {
+        name: 'Nigeria',
+        population: '220 million',
+        diaspora: '17 million+',
+        description: 'Nigeria has the largest diaspora of any African country, with significant communities worldwide contributing to global culture and innovation.',
+        diasporaCountries: ['United States', 'United Kingdom', 'Canada', 'Germany', 'South Africa'],
+        culturalExports: ['Nollywood films', 'Afrobeats music', 'Literature', 'Fashion', 'Cuisine'],
+        modernContributions: 'Technology innovation, entertainment industry, academic excellence, entrepreneurship'
+    },
+    'ghana': {
+        name: 'Ghana',
+        population: '32 million',
+        diaspora: '3 million+',
+        description: 'Ghana is a symbol of African independence and Pan-Africanism, with strong cultural ties to its diaspora.',
+        diasporaCountries: ['United States', 'United Kingdom', 'Canada', 'Germany'],
+        culturalExports: ['Kente cloth', 'Highlife music', 'Year of Return initiative', 'Traditional crafts'],
+        modernContributions: 'Pan-African leadership, democratic governance, cultural tourism, gold mining'
+    },
+    'senegal': {
+        name: 'Senegal',
+        population: '17 million',
+        diaspora: '1 million+',
+        description: 'Senegal maintains strong cultural ties with its diaspora and is known for its vibrant arts scene and democratic stability.',
+        diasporaCountries: ['France', 'Italy', 'United States', 'Spain'],
+        culturalExports: ['Teranga hospitality', 'Mbalax music', 'Wrestling (Laamb)', 'Visual arts'],
+        modernContributions: 'Democratic stability, cultural diplomacy, fishing industry, renewable energy'
+    },
+    'ethiopia': {
+        name: 'Ethiopia',
+        population: '120 million',
+        diaspora: '2 million+',
+        description: 'Ethiopia, never fully colonized, maintains ancient traditions while building a modern global diaspora community.',
+        diasporaCountries: ['United States', 'Israel', 'Saudi Arabia', 'Sudan'],
+        culturalExports: ['Coffee culture', 'Orthodox Christianity', 'Long-distance running', 'Ancient history'],
+        modernContributions: 'Coffee industry, athletic excellence, ancient heritage preservation, regional diplomacy'
+    },
+    'kenya': {
+        name: 'Kenya',
+        population: '54 million',
+        diaspora: '1.5 million+',
+        description: 'Kenya has a rapidly growing diaspora, particularly in North America and Europe, known for innovation and athletics.',
+        diasporaCountries: ['United States', 'United Kingdom', 'Canada', 'Australia'],
+        culturalExports: ['Safari tourism', 'Athletics', 'Tea and coffee', 'Maasai culture'],
+        modernContributions: 'Technology hub (Silicon Savannah), conservation leadership, mobile banking innovation'
+    },
+    'south-africa': {
+        name: 'South Africa',
+        population: '60 million',
+        diaspora: '2.5 million+',
+        description: 'South Africa has a complex history and significant diaspora communities worldwide, known for its transition to democracy.',
+        diasporaCountries: ['United Kingdom', 'Australia', 'United States', 'Canada'],
+        culturalExports: ['Anti-apartheid legacy', 'Wine industry', 'Mining expertise', 'Rainbow Nation concept'],
+        modernContributions: 'Human rights leadership, mineral resources, democratic transition model, sports excellence'
     }
 };
 
-// Initialize interactive maps functionality
+// Current state
+let currentMap = 'pre-slavery';
+let sidebarOpen = false;
+
+// Initialize interactive maps
 function initializeInteractiveMaps() {
-    // Set up map switching
+    console.log('Initializing interactive maps...');
     setupMapTabs();
+    setupMarkers();
+    setupSidebar();
     
-    // Initialize markers
-    setupMapMarkers();
-    
-    // Set up modal functionality
-    setupCountryModal();
-    
-    // Initialize then-now sliders
-    initializeThenNowSliders();
+    // Show initial map
+    showMap('pre-slavery');
 }
 
+// Setup map tab functionality
 function setupMapTabs() {
-    const mapTabs = document.querySelectorAll('.map-tab-btn');
-    
-    mapTabs.forEach(tab => {
+    const tabs = document.querySelectorAll('.map-tab-btn');
+    tabs.forEach(tab => {
         tab.addEventListener('click', function() {
-            const mapType = this.dataset.map;
-            switchMap(mapType);
-        });
-    });
-}
-
-function switchMap(mapType) {
-    // Update tab states
-    document.querySelectorAll('.map-tab-btn').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    document.querySelector(`[data-map="${mapType}"]`).classList.add('active');
-    
-    // Update map views
-    document.querySelectorAll('.map-view').forEach(view => {
-        view.classList.remove('active');
-    });
-    document.getElementById(`${mapType}-map`).classList.add('active');
-    
-    // Update legend
-    document.querySelectorAll('.legend-items').forEach(legend => {
-        legend.classList.remove('active');
-    });
-    document.querySelector(`.${mapType}-legend`).classList.add('active');
-    
-    // Track analytics
-    if (window.DiasporaHub && window.DiasporaHub.Analytics) {
-        window.DiasporaHub.Analytics.track('map_switch', {
-            mapType: mapType,
-            timestamp: new Date().toISOString()
-        });
-    }
-}
-
-function setupMapMarkers() {
-    // Add click events to markers
-    const markers = document.querySelectorAll('.map-marker');
-    
-    markers.forEach(marker => {
-        marker.addEventListener('click', function() {
-            const country = this.dataset.country;
-            const kingdom = this.dataset.kingdom;
-            
-            if (country) {
-                loadCountryProfile(country);
-            } else if (kingdom) {
-                showKingdomInfo(kingdom);
+            const mapType = this.getAttribute('data-map');
+            if (mapType && mapType !== currentMap) {
+                showMap(mapType);
             }
         });
     });
 }
 
-function loadCountryProfile(countryName) {
-    const profile = countryProfiles[countryName];
-    if (!profile) return;
-    
-    const modal = document.getElementById('country-profile-modal');
-    const countryNameEl = document.getElementById('profile-country-name');
-    
-    countryNameEl.textContent = countryName;
-    
-    // Load overview tab by default
-    switchProfileTab('overview');
-    
-    // Show modal
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    
-    // Track analytics
-    if (window.DiasporaHub && window.DiasporaHub.Analytics) {
-        window.DiasporaHub.Analytics.track('country_profile_view', {
-            country: countryName,
-            timestamp: new Date().toISOString()
-        });
-    }
-}
-
-function switchProfileTab(tabName) {
-    const countryName = document.getElementById('profile-country-name').textContent;
-    const profile = countryProfiles[countryName];
-    if (!profile) return;
+// Show specific map
+function showMap(mapType) {
+    console.log('Switching to map:', mapType);
+    currentMap = mapType;
     
     // Update tab states
-    document.querySelectorAll('.profile-tab').forEach(tab => {
+    document.querySelectorAll('.map-tab-btn').forEach(tab => {
         tab.classList.remove('active');
     });
-    document.querySelector(`[onclick="switchProfileTab('${tabName}')"]`).classList.add('active');
     
-    // Load content based on tab
-    const content = document.getElementById('profile-content');
-    
-    switch(tabName) {
-        case 'overview':
-            content.innerHTML = generateOverviewContent(profile, countryName);
-            break;
-        case 'culture':
-            content.innerHTML = generateCultureContent(profile);
-            break;
-        case 'heritage':
-            content.innerHTML = generateHeritageContent(profile);
-            break;
+    const activeTab = document.querySelector(`[data-map="${mapType}"]`);
+    if (activeTab) {
+        activeTab.classList.add('active');
     }
     
-    // Re-initialize sliders if heritage tab
-    if (tabName === 'heritage') {
-        setTimeout(() => {
-            initializeThenNowSliders();
-        }, 100);
+    // Update map views
+    document.querySelectorAll('.map-view').forEach(view => {
+        view.classList.remove('active');
+    });
+    
+    const activeMap = document.getElementById(`${mapType}-map`);
+    if (activeMap) {
+        activeMap.classList.add('active');
     }
-}
-
-function generateOverviewContent(profile, countryName) {
-    return `
-        <div class="country-overview">
-            <div class="country-header">
-                <div class="country-flag">
-                    <img src="${profile.flag}" alt="${countryName} flag" style="width: 80px; height: auto; border-radius: 5px;">
-                </div>
-                <div class="country-details">
-                    <h3>National Information</h3>
-                    <p><strong>National Anthem:</strong> ${profile.anthem}</p>
-                    <p><strong>Dominant Religions:</strong> ${profile.religion}</p>
-                </div>
-            </div>
-            
-            <div class="overview-sections">
-                <div class="overview-section">
-                    <h4><i class="fas fa-scroll"></i> Brief History</h4>
-                    <p>${profile.overview.history}</p>
-                </div>
-                
-                <div class="overview-section">
-                    <h4><i class="fas fa-ship"></i> Role in Slave Trade</h4>
-                    <p>${profile.overview.slaveTradeRole}</p>
-                </div>
-                
-                <div class="overview-section">
-                    <h4><i class="fas fa-users"></i> Family Structure</h4>
-                    <p>${profile.overview.familyStructure}</p>
-                </div>
-                
-                <div class="overview-section">
-                    <h4><i class="fas fa-building"></i> Community Structure</h4>
-                    <p>${profile.overview.communityStructure}</p>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function generateCultureContent(profile) {
-    return `
-        <div class="culture-content">
-            <div class="culture-grid">
-                <div class="culture-category">
-                    <h4><i class="fas fa-calendar"></i> Festivals</h4>
-                    <ul class="culture-list">
-                        ${profile.culture.festivals.map(item => `<li>${item}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="culture-category">
-                    <h4><i class="fas fa-utensils"></i> Traditional Foods</h4>
-                    <ul class="culture-list">
-                        ${profile.culture.foods.map(item => `<li>${item}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="culture-category">
-                    <h4><i class="fas fa-tshirt"></i> Traditional Dress</h4>
-                    <ul class="culture-list">
-                        ${profile.culture.dress.map(item => `<li>${item}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="culture-category">
-                    <h4><i class="fas fa-music"></i> Music & Arts</h4>
-                    <ul class="culture-list">
-                        ${profile.culture.music.map(item => `<li>${item}</li>`).join('')}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function generateHeritageContent(profile) {
-    const thenNowSliders = profile.heritage.thenNow.map((item, index) => `
-        <div class="heritage-item">
-            <h4>${item.category}</h4>
-            <div class="then-now-slider" data-slider="${index}">
-                <div class="slider-container">
-                    <div class="slider-image then" style="background-image: url('${item.thenImage}');">
-                        <div class="image-placeholder">
-                            <i class="fas fa-history"></i>
-                            <p>Traditional ${item.category}</p>
-                        </div>
-                    </div>
-                    <div class="slider-image now" style="background-image: url('${item.nowImage}');">
-                        <div class="image-placeholder">
-                            <i class="fas fa-globe"></i>
-                            <p>Modern ${item.category}</p>
-                        </div>
-                    </div>
-                    <div class="slider-divider"></div>
-                </div>
-                <div class="slider-labels">
-                    <div class="slider-label">Then: ${item.then}</div>
-                    <div class="slider-label">Now: ${item.now}</div>
-                </div>
-            </div>
-        </div>
-    `).join('');
     
-    const videos = profile.heritage.videos.map(video => `
-        <div class="video-card">
-            <div class="video-thumbnail">
-                <img src="${video.thumbnail}" alt="${video.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="video-placeholder" style="display: none;">
-                    <i class="fas fa-video" style="font-size: 2rem; color: var(--primary-color);"></i>
-                </div>
-                <button class="video-play-btn" onclick="playHeritageVideo('${video.title}')">
-                    <i class="fas fa-play"></i>
-                </button>
-            </div>
-            <div class="video-info">
-                <h4>${video.title}</h4>
-                <p>${video.description}</p>
-            </div>
-        </div>
-    `).join('');
+    // Update legend
+    document.querySelectorAll('.legend-items').forEach(legend => {
+        legend.classList.remove('active');
+    });
     
-    return `
-        <div class="heritage-content">
-            <div class="heritage-section">
-                <h3><i class="fas fa-exchange-alt"></i> Cultural Evolution</h3>
-                <p>Explore how traditions have evolved over time through our interactive sliders.</p>
-                ${thenNowSliders}
-            </div>
-            
-            <div class="heritage-section">
-                <h3><i class="fas fa-video"></i> Traditional Ceremonies & Practices</h3>
-                <div class="heritage-videos">
-                    ${videos}
-                </div>
-            </div>
-        </div>
-    `;
+    const activeLegend = document.querySelector(`.${mapType}-legend`);
+    if (activeLegend) {
+        activeLegend.classList.add('active');
+    }
+    
+    // Close sidebar when switching maps
+    closeSidebar();
 }
 
-function initializeThenNowSliders() {
-    const sliders = document.querySelectorAll('.then-now-slider');
+// Setup marker interactions
+function setupMarkers() {
+    const markers = document.querySelectorAll('.marker');
     
-    sliders.forEach(slider => {
-        const divider = slider.querySelector('.slider-divider');
-        const thenImage = slider.querySelector('.slider-image.then');
-        const nowImage = slider.querySelector('.slider-image.now');
+    markers.forEach(marker => {
+        // Click handler
+        marker.addEventListener('click', function(e) {
+            e.stopPropagation();
+            handleMarkerClick(this);
+        });
         
-        let isDragging = false;
+        // Make markers keyboard accessible
+        marker.setAttribute('tabindex', '0');
+        marker.setAttribute('role', 'button');
         
-        function updateSlider(percentage) {
-            thenImage.style.width = percentage + '%';
-            nowImage.style.width = (100 - percentage) + '%';
-            divider.style.left = percentage + '%';
+        // Keyboard handler
+        marker.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleMarkerClick(this);
+            }
+        });
+        
+        // Add tooltip data attribute for accessibility
+        const tooltip = marker.getAttribute('data-tooltip');
+        if (tooltip) {
+            marker.setAttribute('aria-label', tooltip);
         }
-        
-        function startDrag(e) {
-            isDragging = true;
-            slider.style.cursor = 'ew-resize';
-        }
-        
-        function drag(e) {
-            if (!isDragging) return;
-            
-            const rect = slider.getBoundingClientRect();
-            const x = (e.clientX || e.touches[0].clientX) - rect.left;
-            const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
-            
-            updateSlider(percentage);
-        }
-        
-        function stopDrag() {
-            isDragging = false;
-            slider.style.cursor = '';
-        }
-        
-        // Mouse events
-        divider.addEventListener('mousedown', startDrag);
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', stopDrag);
-        
-        // Touch events for mobile
-        divider.addEventListener('touchstart', startDrag);
-        document.addEventListener('touchmove', drag);
-        document.addEventListener('touchend', stopDrag);
-        
-        // Prevent default drag behavior
-        divider.addEventListener('dragstart', e => e.preventDefault());
     });
 }
 
-function playHeritageVideo(videoTitle) {
-    // In a real implementation, this would open a video player
-    alert(`Playing video: ${videoTitle}\n\nIn a full implementation, this would open a video player with the cultural heritage content.`);
+// Handle marker clicks
+function handleMarkerClick(marker) {
+    const regionKey = marker.getAttribute('data-region');
+    const regionInfo = regionData[regionKey];
     
-    // Track analytics
-    if (window.DiasporaHub && window.DiasporaHub.Analytics) {
-        window.DiasporaHub.Analytics.track('heritage_video_play', {
-            videoTitle: videoTitle,
-            timestamp: new Date().toISOString()
+    if (regionInfo) {
+        // Remove selection from other markers
+        document.querySelectorAll('.marker').forEach(m => {
+            m.classList.remove('selected');
         });
+        
+        // Select current marker
+        marker.classList.add('selected');
+        
+        // Show information in sidebar
+        showRegionInfo(regionInfo);
+        
+        // Track analytics if available
+        if (window.DiasporaHub && window.DiasporaHub.Analytics) {
+            window.DiasporaHub.Analytics.track('marker_click', {
+                region: regionKey,
+                map: currentMap,
+                timestamp: new Date().toISOString()
+            });
+        }
     }
 }
 
-function showKingdomInfo(kingdom) {
-    // Simple kingdom info display
-    const kingdomInfo = {
-        'mali': 'Mali Empire (1230-1600): One of the wealthiest empires in history, famous for Mansa Musa\'s pilgrimage to Mecca.',
-        'songhai': 'Songhai Empire (1464-1591): The largest empire in African history, controlling important trade routes.',
-        'kongo': 'Kingdom of Kongo (1390-1914): Powerful Central African kingdom with sophisticated political structure.',
-        'ethiopia': 'Ethiopian Empire: One of the oldest continuous civilizations, never fully colonized by Europeans.'
-    };
+// Show region information in sidebar
+function showRegionInfo(regionInfo) {
+    const sidebar = document.getElementById('info-sidebar');
+    const title = document.getElementById('sidebar-title');
+    const content = document.getElementById('sidebar-content');
     
-    alert(kingdomInfo[kingdom] || 'Ancient African Kingdom - Click to learn more about this historical civilization.');
+    if (!sidebar || !title || !content) return;
+    
+    title.textContent = regionInfo.name;
+    content.innerHTML = generateRegionContent(regionInfo);
+    
+    // Show sidebar (especially important for mobile)
+    sidebar.classList.add('active');
+    sidebarOpen = true;
+}
+
+// Generate content based on region type
+function generateRegionContent(info) {
+    let html = '<div class="region-info">';
+    
+    // Header with period/timeframe
+    if (info.period) {
+        html += `
+            <div class="region-header">
+                <div class="region-title">${info.name}</div>
+                <div class="region-period">${info.period}</div>
+            </div>
+        `;
+    } else {
+        html += `
+            <div class="region-header">
+                <div class="region-title">${info.name}</div>
+            </div>
+        `;
+    }
+    
+    // Description
+    html += `<div class="region-description">${info.description}</div>`;
+    
+    // Stats section
+    html += '<div class="region-stats"><h4>Key Information</h4>';
+    
+    if (info.capital) {
+        html += `<div class="stat-row"><span class="stat-label">Capital:</span><span class="stat-value">${info.capital}</span></div>`;
+    }
+    
+    if (info.peakPopulation) {
+        html += `<div class="stat-row"><span class="stat-label">Peak Population:</span><span class="stat-value">${info.peakPopulation}</span></div>`;
+    }
+    
+    if (info.population) {
+        html += `<div class="stat-row"><span class="stat-label">Population:</span><span class="stat-value">${info.population}</span></div>`;
+    }
+    
+    if (info.diaspora) {
+        html += `<div class="stat-row"><span class="stat-label">Global Diaspora:</span><span class="stat-value">${info.diaspora}</span></div>`;
+    }
+    
+    if (info.enslavedNumbers) {
+        html += `<div class="stat-row"><span class="stat-label">People Enslaved:</span><span class="stat-value">${info.enslavedNumbers}</span></div>`;
+    }
+    
+    if (info.receivedNumbers) {
+        html += `<div class="stat-row"><span class="stat-label">People Received:</span><span class="stat-value">${info.receivedNumbers}</span></div>`;
+    }
+    
+    html += '</div>';
+    
+    // Additional sections based on data type
+    if (info.achievements) {
+        html += '<div class="achievements-section"><h4>Major Achievements</h4><ul>';
+        info.achievements.forEach(achievement => {
+            html += `<li>${achievement}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    
+    if (info.majorPorts) {
+        html += `<div class="ports-section"><h4>Major Ports</h4><p>${info.majorPorts.join(', ')}</p></div>`;
+    }
+    
+    if (info.culturalExports) {
+        html += '<div class="cultural-section"><h4>Cultural Exports</h4><ul>';
+        info.culturalExports.forEach(item => {
+            html += `<li>${item}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    
+    if (info.modernLegacy) {
+        html += `<div class="legacy-section"><h4>Modern Legacy</h4><p>${info.modernLegacy}</p></div>`;
+    }
+    
+    if (info.culturalImpact) {
+        html += `<div class="impact-section"><h4>Cultural Impact</h4><p>${info.culturalImpact}</p></div>`;
+    }
+    
+    if (info.modernContributions) {
+        html += `<div class="contributions-section"><h4>Modern Contributions</h4><p>${info.modernContributions}</p></div>`;
+    }
+    
+    html += '</div>';
+    
+    return html;
+}
+
+// Setup sidebar functionality
+function setupSidebar() {
+    const closeBtn = document.querySelector('.sidebar-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeSidebar);
+    }
+    
+    // Close sidebar when clicking outside (mobile)
+    document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('info-sidebar');
+        if (sidebarOpen && sidebar && !sidebar.contains(e.target) && !e.target.closest('.marker')) {
+            closeSidebar();
+        }
+    });
+    
+    // Close sidebar with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebarOpen) {
+            closeSidebar();
+        }
+    });
+}
+
+// Close sidebar and reset
+function closeSidebar() {
+    const sidebar = document.getElementById('info-sidebar');
+    if (sidebar) {
+        sidebar.classList.remove('active');
+    }
+    
+    // Clear selected markers
+    document.querySelectorAll('.marker').forEach(marker => {
+        marker.classList.remove('selected');
+    });
+    
+    // Reset sidebar content
+    const title = document.getElementById('sidebar-title');
+    const content = document.getElementById('sidebar-content');
+    
+    if (title) title.textContent = 'Select a Region';
+    if (content) {
+        content.innerHTML = `
+            <div class="default-content">
+                <div class="instruction-icon">
+                    <i class="fas fa-hand-pointer"></i>
+                </div>
+                <p>Click on any marker to explore detailed information about African heritage and diaspora connections.</p>
+            </div>
+        `;
+    }
+    
+    sidebarOpen = false;
+}
+
+// Legacy function support for backward compatibility
+function switchMap(mapType) {
+    showMap(mapType);
+}
+
+function loadCountryProfile(countryName) {
+    const regionKey = countryName.toLowerCase();
+    const regionInfo = regionData[regionKey];
+    if (regionInfo) {
+        showRegionInfo(regionInfo);
+    }
 }
 
 function closeCountryProfile() {
-    const modal = document.getElementById('country-profile-modal');
-    modal.style.display = 'none';
-    document.body.style.overflow = '';
+    closeSidebar();
 }
 
-// Legacy function for backward compatibility
 function filterMap(type) {
-    // Map old filter types to new map types
-    const typeMapping = {
-        'migration': 'trade-routes',
+    const mapping = {
+        'migration': 'modern-borders',
         'cultural': 'modern-borders',
-        'historical': 'pre-slavery'
+        'historical': 'pre-slavery',
+        'trade': 'slave-trade'
     };
-    
-    const newType = typeMapping[type] || 'modern-borders';
-    switchMap(newType);
+    showMap(mapping[type] || 'modern-borders');
+}
+
+// Utility function to handle window resize (maintain marker positions)
+function handleResize() {
+    // Markers maintain their percentage-based positions automatically
+    // This function can be used for additional responsive adjustments if needed
+    console.log('Window resized - markers maintain relative positions');
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    // Only initialize if we're on the maps page
     if (document.querySelector('.interactive-map-container')) {
         initializeInteractiveMaps();
+        
+        // Add resize listener for potential future enhancements
+        window.addEventListener('resize', handleResize);
     }
 });
 
-// Export functions for global access
+// Global exports for legacy compatibility
 window.MapsInteractive = {
+    showMap,
+    closeSidebar,
     switchMap,
     loadCountryProfile,
-    switchProfileTab,
     closeCountryProfile,
-    playHeritageVideo,
-    filterMap // Legacy support
+    filterMap,
+    handleResize
 };
+
+// Additional helper functions for potential AI integration
+function generateAIInsights(regionKey) {
+    // Check if AI service is available
+    if (window.AIService && window.AIService.isConfigured && window.AIService.isConfigured()) {
+        const regionInfo = regionData[regionKey];
+        if (regionInfo) {
+            const prompt = `Provide additional historical insights about ${regionInfo.name}. Focus on lesser-known facts and cultural significance.`;
+            
+            window.AIService.generateCountrySummary(regionInfo.name, prompt)
+                .then(insights => {
+                    // Add AI insights to sidebar if currently open
+                    const content = document.getElementById('sidebar-content');
+                    if (content && sidebarOpen) {
+                        const aiSection = document.createElement('div');
+                        aiSection.className = 'ai-insights-section';
+                        aiSection.innerHTML = `
+                            <h4><i class="fas fa-robot"></i> AI Insights</h4>
+                            <p>${insights}</p>
+                        `;
+                        content.appendChild(aiSection);
+                    }
+                })
+                .catch(error => {
+                    console.warn('AI insights not available:', error);
+                });
+        }
+    }
+}
+
+// Export AI function for potential use
+window.MapsInteractive.generateAIInsights = generateAIInsights;
