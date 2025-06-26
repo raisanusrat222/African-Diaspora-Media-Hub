@@ -93,7 +93,7 @@ class SecureAIConfig {
                 font-size: 0.9rem;
             `;
             loadingText.innerHTML = `
-                <i class="fas fa-robot"></i>
+                <i class="fas fa-robot fa-pulse"></i>
                 AI is enhancing this summary...
             `;
             summaryText.appendChild(loadingText);
@@ -190,26 +190,10 @@ class SecureAIConfig {
     showAIStatus(message, type = 'info') {
         console.log(`AI Status [${type}]:`, message);
         
-        if (this.isDevelopment) {
-            const statusDiv = document.createElement('div');
-            statusDiv.style.cssText = `
-                position: fixed;
-                top: 80px;
-                right: 20px;
-                background: ${type === 'error' ? '#f44336' : type === 'warning' ? '#ff9800' : '#4caf50'};
-                color: white;
-                padding: 10px 15px;
-                border-radius: 5px;
-                z-index: 10000;
-                font-size: 14px;
-                max-width: 300px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            `;
-            statusDiv.textContent = message;
-            document.body.appendChild(statusDiv);
-            
-            setTimeout(() => statusDiv.remove(), 3000);
-        }
+        // Remove popup notifications - keep only console logging
+        // if (this.isDevelopment) {
+        //     // Popup code removed to eliminate notifications
+        // }
     }
 }
 

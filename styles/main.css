@@ -167,7 +167,7 @@ body {
 /* Feature Slideshow Section */
 .feature-slideshow-section {
     padding: 60px 0;
-    background: var(--dark-color);
+    background: var(--light-color);
     position: relative;
     overflow: hidden;
 }
@@ -223,6 +223,13 @@ body {
     object-fit: cover;
     object-position: center;
     z-index: 1;
+    filter: grayscale(100%);
+    transition: filter 0.5s ease;
+    will-change: filter;
+}
+
+.slide:hover .slide-bg-image {
+    filter: grayscale(0%);
 }
 
 .slide-image::before {
@@ -234,6 +241,11 @@ body {
     bottom: 0;
     background: rgba(0,0,0,0.3);
     z-index: 2;
+}
+
+.slide[data-feature="maps"] .slide-image {
+    background: linear-gradient(135deg, #327acc, #da70d6);
+    color: var(--light-color);
 }
 
 .slide[data-feature="podcasts"] .slide-image {

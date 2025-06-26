@@ -1,4 +1,4 @@
-// slideshow.js
+// slideshow.js - Smooth version
 
 let currentSlide = 0;
 let slideInterval;
@@ -36,23 +36,48 @@ function pauseSlideshow() {
     clearInterval(slideInterval);
 }
 
-// Go to specific slide
+// Go to specific slide with smooth transitions
 function goToSlide(slideIndex) {
     if (slideIndex < 0 || slideIndex >= totalSlides) return;
     
-    // Remove active class from current slide and dot
-    slides[currentSlide].classList.remove('active');
-    dots[currentSlide].classList.remove('active');
+    // Fade out current slide content first
+    const currentOverlay = slides[currentSlide].querySelector('.slide-overlay');
+    if (currentOverlay) {
+        currentOverlay.style.opacity = '0';
+        currentOverlay.style.transform = 'translateY(20px)';
+    }
     
-    // Update current slide
-    currentSlide = slideIndex;
-    
-    // Add active class to new slide and dot
-    slides[currentSlide].classList.add('active');
-    dots[currentSlide].classList.add('active');
-    
-    // Track analytics
-    trackSlideView(currentSlide);
+    // Wait a bit before switching slides
+    setTimeout(() => {
+        // Remove active class from current slide and dot
+        slides[currentSlide].classList.remove('active');
+        dots[currentSlide].classList.remove('active');
+        
+        // Update current slide
+        currentSlide = slideIndex;
+        
+        // Add active class to new slide and dot
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+        
+        // Fade in new slide content
+        const newOverlay = slides[currentSlide].querySelector('.slide-overlay');
+        if (newOverlay) {
+            // Reset position first
+            newOverlay.style.opacity = '0';
+            newOverlay.style.transform = 'translateY(20px)';
+            
+            // Then animate in smoothly
+            setTimeout(() => {
+                newOverlay.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                newOverlay.style.opacity = '1';
+                newOverlay.style.transform = 'translateY(0)';
+            }, 50);
+        }
+        
+        // Track analytics
+        trackSlideView(currentSlide);
+    }, 200);
 }
 
 // Next slide
@@ -143,38 +168,56 @@ function setupKeyboardNavigation() {
     });
 }
 
-// Add slide transition effects
+// Add smooth slide transitions with better CSS
 function addSlideTransitions() {
-    const slides = document.querySelectorAll('.slide');
-    
-    slides.forEach(slide => {
-        slide.addEventListener('transitionend', function() {
-            if (this.classList.contains('active')) {
-                // Slide is now active - add entrance animation to content
-                const overlay = this.querySelector('.slide-overlay');
-                if (overlay) {
-                    overlay.style.animation = 'slideIn 0.6s ease-out';
-                    setTimeout(() => {
-                        overlay.style.animation = '';
-                    }, 600);
-                }
-            }
-        });
-    });
-    
-    // Add CSS for slide content animation
+    // Add CSS for smooth slide transitions
     if (!document.getElementById('slideshow-animations')) {
         const style = document.createElement('style');
         style.id = 'slideshow-animations';
         style.textContent = `
-            @keyframes slideIn {
-                0% {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translateY(0);
+            .slide {
+                transition: opacity 0.5s ease-in-out;
+            }
+            
+            .slide-overlay {
+                transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+                will-change: opacity, transform;
+            }
+            
+            .slide:not(.active) .slide-overlay {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            
+            .slide.active .slide-overlay {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
+            /* Smooth fade transitions for slides */
+            .slide-wrapper {
+                position: relative;
+            }
+            
+            .slide {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+            }
+            
+            .slide.active {
+                opacity: 1;
+            }
+            
+            /* Reduce motion for users who prefer it */
+            @media (prefers-reduced-motion: reduce) {
+                .slide,
+                .slide-overlay {
+                    transition: none !important;
                 }
             }
         `;
@@ -195,7 +238,7 @@ function preloadFeaturePages() {
     });
 }
 
-// Handle slide click to navigate to feature - FIXED VERSION
+// Handle slide click to navigate to feature
 function setupSlideNavigation() {
     slides.forEach(slide => {
         slide.addEventListener('click', function(e) {
@@ -221,7 +264,7 @@ function setupSlideNavigation() {
     });
 }
 
-// Also fix the button clicks in slide overlays
+// Handle button clicks in slide overlays
 function setupSlideButtonNavigation() {
     // Target buttons more specifically and override their onclick behavior
     const slideButtons = document.querySelectorAll('.slide .btn, .slide button');
@@ -285,6 +328,22 @@ document.addEventListener('DOMContentLoaded', function() {
         preloadFeaturePages();
         setupSlideNavigation();
         setupSlideButtonNavigation();
+        
+        // Set initial state for slide overlays
+        slides.forEach((slide, index) => {
+            const overlay = slide.querySelector('.slide-overlay');
+            if (overlay) {
+                if (index === 0) {
+                    // First slide should be visible
+                    overlay.style.opacity = '1';
+                    overlay.style.transform = 'translateY(0)';
+                } else {
+                    // Other slides should be hidden initially
+                    overlay.style.opacity = '0';
+                    overlay.style.transform = 'translateY(20px)';
+                }
+            }
+        });
     }, 100);
 });
 

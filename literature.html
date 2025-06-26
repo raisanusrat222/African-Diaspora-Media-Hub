@@ -1,1 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Literature - Voices of the Diaspora</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/navigation.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/literature.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,es,fr,pt'
+        }, 'google_translate_element');
+    }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="fas fa-globe-africa"></i>
+                <span>Voices of the Diaspora</span>
+            </div>
+            
+            <div class="nav-center">
+                <!-- Mobile Search -->
+                <div class="mobile-search-container">
+                    <div class="mobile-search-box">
+                        <input type="text" id="mobile-search-input" placeholder="Search..." autocomplete="off">
+                        <button class="mobile-search-btn" id="mobile-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="mobile-search-results" id="mobile-search-results"></div>
+                </div>
+
+                <!-- Mobile Google Translate -->
+                <div class="mobile-translate-container">
+                    <div id="mobile_google_translate_element"></div>
+                </div>
+
+                <div class="nav-menu" id="nav-menu">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="nav-text">Learning</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Learning Resources</div>
+                            <a href="educational-content.html">
+                                <i class="fas fa-book-open"></i>Educational Content
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-laptop"></i>Online Courses
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-file-alt"></i>Research Papers
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-archive"></i>Digital Archives
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span class="nav-text">Teaching</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Teaching Tools</div>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-clipboard-list"></i>Lesson Plans
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-puzzle-piece"></i>Interactive Materials
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-check-circle"></i>Assessment Tools
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-user-graduate"></i>Educator Guides
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle active">
+                            <i class="fas fa-palette"></i>
+                            <span class="nav-text">Culture</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Culture & Arts</div>
+                            <a href="visual-arts.html">
+                                <i class="fas fa-paint-brush"></i>Visual Arts
+                            </a>
+                            <a href="music-dance.html">
+                                <i class="fas fa-music"></i>Music & Dance
+                            </a>
+                            <a href="literature.html" class="active">
+                                <i class="fas fa-feather-alt"></i>Literature
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-calendar"></i>Festivals & Events
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-microphone"></i>
+                            <span class="nav-text">Voices</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Voices & Stories</div>
+                            <a href="oral-histories.html">
+                                <i class="fas fa-microphone-alt"></i>Oral Histories
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-user-edit"></i>Personal Narratives
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-users"></i>Community Voices
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-comments"></i>Interviews
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-scroll"></i>
+                            <span class="nav-text">History</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">History & Identity</div>
+                            <a href="historical-timeline.html">
+                                <i class="fas fa-clock"></i>Historical Timeline
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-sitemap"></i>Genealogy Tools
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-fingerprint"></i>Cultural Identity
+                            </a>
+                            <a href="#" onclick="alert('Page coming soon!')">
+                                <i class="fas fa-route"></i>Migration Patterns
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="news.html" class="nav-link">
+                            <i class="fas fa-newspaper"></i>
+                            <span class="nav-text">News</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="films.html" class="nav-link">
+                            <i class="fas fa-film"></i>
+                            <span class="nav-text">Films</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="podcasts.html" class="nav-link">
+                            <i class="fas fa-podcast"></i>
+                            <span class="nav-text">Podcasts</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="maps.html" class="nav-link">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span class="nav-text">Maps</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+                        <button class="search-btn" id="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="search-results"></div>
+                </div>
+
+                <div class="google-translate-container">
+                    <div id="google_translate_element"></div>
+                </div>
+                
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="literature-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Literature & Stories</h1>
+                    <p>Discover powerful voices from the African diaspora - from groundbreaking novels and memoirs to research papers and poetry. Get AI-powered insights that make complex works accessible and engaging.</p>
+                    
+                    <!-- Smart Search Bar -->
+                    <div class="smart-search-container">
+                        <div class="smart-search-box">
+                            <i class="fas fa-comments search-icon" title="Ask me anything about literature"></i>
+                            <input type="text" id="literature-search" placeholder="Ask me about any topic - identity, migration, resistance..." autocomplete="off">
+                            <button class="ai-search-btn" id="ai-search-btn" title="Get personalized insights">
+                                <i class="fas fa-robot"></i>
+                                Ask AI
+                            </button>
+                        </div>
+                        <div class="search-suggestions">
+                            <div class="suggestion-chip" data-query="identity crisis">Identity & Belonging</div>
+                            <div class="suggestion-chip" data-query="migration stories">Migration Stories</div>
+                            <div class="suggestion-chip" data-query="resistance literature">Resistance & Freedom</div>
+                            <div class="suggestion-chip" data-query="family heritage">Family & Heritage</div>
+                            <div class="suggestion-chip" data-query="women writers">Women's Voices</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Results Section (appears here when search is performed) -->
+        <section class="search-results-section" id="search-results-section" style="display: none; padding: 40px 0; background: var(--light-color);">
+            <div class="container">
+                <div id="search-results-grid" class="literature-grid">
+                    <!-- Search results will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter and Sort Controls -->
+        <section class="literature-controls">
+            <div class="container">
+                <div class="controls-wrapper">
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label for="type-filter">Type</label>
+                            <select id="type-filter" class="filter-select">
+                                <option value="all">All Types</option>
+                                <option value="novel">Novels</option>
+                                <option value="memoir">Memoirs & Autobiographies</option>
+                                <option value="poetry">Poetry</option>
+                                <option value="article">Articles & Essays</option>
+                                <option value="research">Research Papers</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="era-filter">Era</label>
+                            <select id="era-filter" class="filter-select">
+                                <option value="all">All Eras</option>
+                                <option value="pre-1800">Pre-1800</option>
+                                <option value="1800-1900">19th Century</option>
+                                <option value="1900-1950">Early 20th Century</option>
+                                <option value="1950-2000">Late 20th Century</option>
+                                <option value="2000-present">21st Century</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="region-filter">Region</label>
+                            <select id="region-filter" class="filter-select">
+                                <option value="all">All Regions</option>
+                                <option value="africa">Africa</option>
+                                <option value="north-america">North America</option>
+                                <option value="caribbean">Caribbean</option>
+                                <option value="south-america">South America</option>
+                                <option value="europe">Europe</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sort-filter">Sort By</label>
+                            <select id="sort-filter" class="filter-select">
+                                <option value="relevance">Most Relevant</option>
+                                <option value="date-new">Newest First</option>
+                                <option value="date-old">Oldest First</option>
+                                <option value="title">Title A-Z</option>
+                                <option value="author">Author A-Z</option>
+                                <option value="rating">Highest Rated</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="view-controls">
+                        <button class="view-btn active" data-view="grid" title="Grid View">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="view-btn" data-view="list" title="List View">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <button class="view-btn" data-view="timeline" title="Timeline View">
+                            <i class="fas fa-stream"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Literature -->
+        <section class="featured-literature">
+            <div class="container">
+                <h2>Must-Read Works</h2>
+                <div class="featured-carousel">
+                    <div class="featured-item">
+                        <div class="featured-image">
+                            <img src="assets/images/literature/things-fall-apart.jpg" alt="Things Fall Apart by Chinua Achebe">
+                            <div class="ai-badge">
+                                <i class="fas fa-robot"></i>
+                                AI Insights
+                            </div>
+                        </div>
+                        <div class="featured-content">
+                            <span class="featured-type">Novel</span>
+                            <h3>Things Fall Apart</h3>
+                            <p class="featured-author">by Chinua Achebe</p>
+                            <p class="featured-description">The book that changed how the world sees Africa - told from an authentic Igbo perspective.</p>
+                            <div class="featured-actions">
+                                <button class="btn-primary" onclick="showAIAnalysis('things-fall-apart')">
+                                    <i class="fas fa-lightbulb"></i>
+                                    Get Insights
+                                </button>
+                                <button class="btn-secondary" onclick="addToReadingList('things-fall-apart')">
+                                    <i class="fas fa-bookmark"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="featured-item">
+                        <div class="featured-image">
+                            <img src="assets/images/literature/narrative-douglass.jpg" alt="Narrative of Frederick Douglass">
+                            <div class="ai-badge">
+                                <i class="fas fa-robot"></i>
+                                AI Insights
+                            </div>
+                        </div>
+                        <div class="featured-content">
+                            <span class="featured-type">Memoir</span>
+                            <h3>Narrative of Frederick Douglass</h3>
+                            <p class="featured-author">by Frederick Douglass</p>
+                            <p class="featured-description">A powerful weapon against slavery disguised as a life story - literacy as liberation.</p>
+                            <div class="featured-actions">
+                                <button class="btn-primary" onclick="showAIAnalysis('douglass-narrative')">
+                                    <i class="fas fa-lightbulb"></i>
+                                    Get Insights
+                                </button>
+                                <button class="btn-secondary" onclick="addToReadingList('douglass-narrative')">
+                                    <i class="fas fa-bookmark"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Literature Collection -->
+        <section class="literature-collection">
+            <div class="container">
+                <div class="collection-header">
+                    <h2>Explore Our Collection</h2>
+                    <div class="collection-stats">
+                        <span class="stat-item">
+                            <i class="fas fa-book"></i>
+                            <span id="total-works">6</span> Works
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-user-edit"></i>
+                            <span id="total-authors">6</span> Authors
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-brain"></i>
+                            <span id="ai-enhanced">6</span> AI Enhanced
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Collection Grid/List View -->
+                <div class="literature-grid" id="literature-grid">
+                    <!-- Literature items will be dynamically populated here -->
+                </div>
+
+                <!-- Timeline View -->
+                <div class="literature-timeline" id="literature-timeline" style="display: none;">
+                    <!-- Timeline items will be dynamically populated here -->
+                </div>
+
+                <!-- Load More Button -->
+                <div class="load-more-container">
+                    <button class="btn-secondary load-more-btn" id="load-more-btn">
+                        <i class="fas fa-plus"></i>
+                        Load More Works
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Insights Panel -->
+        <div class="ai-insights-panel" id="ai-insights-panel">
+            <div class="panel-header">
+                <h3>
+                    <i class="fas fa-lightbulb"></i>
+                    Literary Insights
+                </h3>
+                <button class="panel-close" onclick="closeAIPanel()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="panel-content" id="ai-panel-content">
+                <!-- AI content will be populated here -->
+            </div>
+        </div>
+
+        <!-- Literature Modal -->
+        <div class="literature-modal" id="literature-modal">
+            <div class="modal-backdrop" onclick="closeLiteratureModal()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">Literature Details</h2>
+                    <button class="modal-close" onclick="closeLiteratureModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Modal content will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading List Sidebar -->
+        <div class="reading-list-sidebar" id="reading-list-sidebar">
+            <div class="sidebar-header">
+                <h3>
+                    <i class="fas fa-bookmark"></i>
+                    My Reading List
+                </h3>
+                <button class="sidebar-close" onclick="closeReadingList()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="sidebar-content" id="reading-list-content">
+                <div class="empty-state">
+                    <i class="fas fa-book-open"></i>
+                    <p>Your reading list is empty</p>
+                    <p class="empty-subtitle">Start adding works to build your personal collection</p>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn-primary export-btn" onclick="exportReadingList()">
+                    <i class="fas fa-download"></i>
+                    Export List
+                </button>
+            </div>
+        </div>
+
+        <!-- Reading List Toggle -->
+        <button class="reading-list-toggle" id="reading-list-toggle" onclick="toggleReadingList()" title="View your reading list">
+            <i class="fas fa-bookmark"></i>
+            <span class="badge" id="reading-list-count">0</span>
+        </button>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#" onclick="alert('Page coming soon!')">API Documentation</a></li>
+                        <li><a href="#" onclick="alert('Page coming soon!')">Contribute</a></li>
+                        <li><a href="#" onclick="alert('Page coming soon!')">Partnerships</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#" onclick="alert('Page coming soon!')">Contact Us</a></li>
+                        <li><a href="#" onclick="alert('Page coming soon!')">FAQ</a></li>
+                        <li><a href="#" onclick="alert('Page coming soon!')">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Voices of the Diaspora. Empowering communities through shared heritage.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/literature.js"></script>
+    
+    <!-- AI Enhancement Scripts -->
+    <script src="js/env-loader.js"></script>
+    <script src="js/ai-service.js"></script>
+    <script src="js/ai-config-secure.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-// js/ai-service.js - Fixed version with NaN prevention
+// js/ai-service.js - Fixed version with clean, direct responses
 class DiasporaAIService {
     constructor() {
         // Store API key securely - you'll set this via environment or config
@@ -47,7 +47,7 @@ class DiasporaAIService {
                     messages: [
                         {
                             role: "system",
-                            content: "You are an expert on African diaspora history, culture, and communities worldwide. Provide accurate, engaging, and culturally sensitive information."
+                            content: "You are an expert on African diaspora history, culture, and communities worldwide. Provide direct, engaging, and culturally sensitive information. Never start with filler words like 'certainly', 'oh', 'well', or 'indeed'. Jump straight into the content. Write in an engaging, informative style with specific details, names, and facts."
                         },
                         {
                             role: "user",
@@ -83,18 +83,17 @@ class DiasporaAIService {
         }
     }
     
-    // Generate country diaspora summary with better prompting
+    // Generate country diaspora summary with clean prompting
     async generateCountrySummary(country) {
-        const enhancedPrompt = `Write an engaging 300-word or less summary about the ${country} diaspora community. Make it interesting and informative by including:
+        const enhancedPrompt = `Write a 250-300 word summary about the ${country} diaspora community. Include:
 
-- Specific numbers and geographic spread of the diaspora
-- 2-3 notable figures who've made an impact (name them specifically)
+- Specific population numbers and where they've settled globally
+- 2-3 notable figures who've made significant impacts (name them specifically)
 - Unique cultural contributions or innovations they've brought to their new countries
 - How they maintain connections to ${country} today
-- Similarities in modern African Diaspora
 - One surprising or lesser-known fact about this diaspora community
 
-Write in a conversational, engaging tone that would captivate someone browsing a cultural website. Focus on stories and concrete examples rather than generic statements.`;
+Write in an engaging, informative tone with concrete examples and specific details. Start directly with the content - no introductory phrases.`;
         
         try {
             const summary = await this.callOpenAI(enhancedPrompt, 400, 0.8);
@@ -118,10 +117,10 @@ Write in a conversational, engaging tone that would captivate someone browsing a
     async generateCountryStats(country) {
         const prompt = `Provide realistic statistics for the ${country} diaspora in this exact format:
         Diaspora Population: [specific number like "4.2M worldwide"]
-        Main Destinations: [top 3-4 countries like "USA, UK, Canada, Germany that the diaspora migrated to"]
+        Main Destinations: [top 3-4 countries like "USA, UK, Canada, Germany"]
         Cultural Centers: [number like "300+ globally"]
         
-        Be specific with actual numbers, not vague ranges.`;
+        Be specific with actual numbers, not vague ranges. Start with the data immediately.`;
         
         try {
             const stats = await this.callOpenAI(prompt, 150, 0.3);
@@ -147,6 +146,55 @@ Write in a conversational, engaging tone that would captivate someone browsing a
         }
     }
     
+    // Enhanced literature search with topic-based recommendations
+    async enhanceLiteratureSearch(query, works) {
+        const searchPrompt = `I'm searching for "${query}" in African diaspora literature. Here are some works in our collection: ${works.map(w => `${w.title} by ${w.author}`).slice(0, 5).join(', ')}.
+
+Explain what connects "${query}" to African diaspora literature. What themes, experiences, or perspectives should readers expect when exploring this topic? Write 2-3 sentences that help readers understand why this topic matters in diaspora storytelling.
+
+Start directly with the explanation - no introductory phrases.`;
+        
+        try {
+            const insight = await this.callOpenAI(searchPrompt, 200, 0.7);
+            this.trackUserInterest('topic', query);
+            return insight;
+        } catch (error) {
+            console.error('Error enhancing literature search:', error);
+            return this.getFallbackSearchInsight(query);
+        }
+    }
+    
+    // Generate work analysis with clean, direct responses
+    async generateWorkAnalysis(work) {
+        const analysisPrompt = `Analyze "${work.title}" by ${work.author}. Write 150-200 words covering:
+
+- Why this ${work.type} is significant in African diaspora literature
+- What makes it compelling for modern readers
+- How it explores themes like ${work.themes.slice(0, 3).join(', ')}
+- Its lasting impact or relevance
+
+Write in an engaging, informative style. Start directly with the analysis - no introductory phrases.`;
+        
+        try {
+            const analysis = await this.callOpenAI(analysisPrompt, 300, 0.7);
+            
+            const recommendationsPrompt = `Based on "${work.title}" by ${work.author}, recommend 3 similar works from African diaspora literature. For each recommendation:
+
+- Title and author
+- 2-3 sentences explaining why it's similar and worth reading
+
+Focus on works that share themes like ${work.themes.slice(0, 2).join(' and ')} or similar narrative approaches. Format as a clear list.`;
+            
+            const recommendations = await this.callOpenAI(recommendationsPrompt, 300, 0.6);
+            
+            return { analysis, recommendations };
+            
+        } catch (error) {
+            console.error('Error generating work analysis:', error);
+            return this.getPreGeneratedAnalysis(work.id);
+        }
+    }
+    
     // Generate personalized recommendations
     async generatePersonalizedRecommendations() {
         if (this.userProfile.countries.length === 0) {
@@ -163,7 +211,7 @@ Write in a conversational, engaging tone that would captivate someone browsing a
         - Cultural expressions (music, art, literature)
         - Notable figures or movements
         
-        Format as a brief, engaging list with explanations why each recommendation connects to their interests.`;
+        Format as a brief, engaging list with explanations why each recommendation connects to their interests. Start directly with the recommendations.`;
         
         try {
             return await this.callOpenAI(prompt, 300);
@@ -172,15 +220,15 @@ Write in a conversational, engaging tone that would captivate someone browsing a
         }
     }
     
-    // Smart search suggestions
+    // Smart search suggestions for literature topics
     async generateSearchSuggestions(query) {
-        const prompt = `For someone searching "${query}" on a diaspora platform, suggest 3-5 related search terms that would help them discover more relevant content. Focus on:
-        - Related countries or regions
+        const prompt = `For someone searching "${query}" on a diaspora literature platform, suggest 5 related search terms that would help them discover more relevant works. Focus on:
+        - Related themes or concepts
         - Cultural topics
         - Historical periods
-        - Notable figures
+        - Literary movements
         
-        Return only the search terms, separated by commas.`;
+        Return only the search terms, separated by commas. No explanations.`;
         
         try {
             const suggestions = await this.callOpenAI(prompt, 100, 0.5);
@@ -358,11 +406,48 @@ Write in a conversational, engaging tone that would captivate someone browsing a
             'ethiopia': ['orthodox christianity', 'coffee culture', 'haile selassie', 'traditional music'],
             'ghana': ['kente cloth', 'ashanti kingdom', 'highlife music', 'akan culture'],
             'music': ['afrobeats', 'reggae', 'jazz', 'blues', 'highlife'],
-            'history': ['slave trade', 'great migration', 'independence movements', 'civil rights']
+            'history': ['slave trade', 'great migration', 'independence movements', 'civil rights'],
+            'identity': ['cultural heritage', 'belonging', 'roots', 'home'],
+            'migration': ['displacement', 'settlement', 'adaptation', 'diaspora'],
+            'poetry': ['spoken word', 'harlem renaissance', 'contemporary poetry', 'oral traditions'],
+            'novels': ['african fiction', 'caribbean literature', 'contemporary narratives', 'coming of age']
         };
         
         const key = Object.keys(suggestions).find(k => query.toLowerCase().includes(k));
-        return key ? suggestions[key] : ['african culture', 'diaspora history', 'cultural heritage'];
+        return key ? suggestions[key] : ['cultural heritage', 'diaspora stories', 'identity', 'migration'];
+    }
+    
+    // Enhanced pre-generated analysis with clean, direct content
+    getPreGeneratedAnalysis(itemId) {
+        const analyses = {
+            'things-fall-apart': {
+                analysis: "Achebe's masterpiece fundamentally changed how the world sees Africa in literature. Instead of colonial stereotypes, he presents a complex Igbo society with sophisticated justice systems, spiritual beliefs, and social structures. The novel's power lies in showing colonialism's impact through African eyes - not as 'civilization' arriving, but as a destructive force that shattered functioning communities. Essential reading for understanding how storytelling can reclaim narrative power and challenge dominant perspectives.",
+                recommendations: "Arrow of God by Chinua Achebe - Continues exploring colonial impact on Igbo communities with deeper character development. Nervous Conditions by Tsitsi Dangarembga - Examines similar themes of tradition vs. modernity in colonial Zimbabwe through a young woman's perspective. So Long a Letter by Mariama Bâ - Explores tradition and change in post-colonial Senegal through intimate correspondence."
+            },
+            'douglass-narrative': {
+                analysis: "Douglass transformed his life story into a powerful weapon against slavery, proving enslaved people's full humanity through brilliant prose and moral reasoning. The narrative's genius lies in showing education as both liberation and torment - literacy revealed slavery's full horror while providing tools for resistance. This bestseller demolished racist justifications for slavery through lived experience, establishing the template for resistance literature that influenced generations of writers.",
+                recommendations: "Incidents in the Life of a Slave Girl by Harriet Jacobs - Provides crucial female perspective on slavery with similar literary power and moral clarity. Beloved by Toni Morrison - Explores slavery's psychological aftermath through innovative narrative techniques. Up From Slavery by Booker T. Washington - Offers contrasting post-emancipation perspective on African American progress and education."
+            }
+        };
+        
+        return analyses[itemId] || {
+            analysis: "This work represents an important contribution to African diaspora literature, exploring themes of identity, culture, and the human experience through a unique lens that challenges conventional narratives and offers fresh perspectives on the diaspora experience.",
+            recommendations: "Related works in our collection explore similar themes of migration, identity, and cultural adaptation. Contemporary authors continue these conversations in modern contexts. Historical narratives provide important background to current diaspora experiences."
+        };
+    }
+    
+    getFallbackSearchInsight(query) {
+        const insights = {
+            'identity': "Identity in diaspora literature explores the complex experience of belonging to multiple worlds simultaneously, examining how individuals navigate between heritage and adaptation.",
+            'migration': "Migration narratives in diaspora literature capture both loss and discovery, showing how people carry entire cultures while creating new forms of home.",
+            'colonialism': "Post-colonial literature gives voice to experiences often marginalized in mainstream narratives, revealing colonialism's lasting impact on communities and individuals.",
+            'resistance': "Resistance literature celebrates the countless ways people fight back against oppression, from armed rebellion to cultural preservation.",
+            'family': "Family narratives explore how traditions, trauma, and love travel across generations and continents in diaspora communities.",
+            'memory': "Memory in diaspora writing preserves languages, customs, and stories that might otherwise be lost to time and displacement."
+        };
+        
+        const key = Object.keys(insights).find(k => query.toLowerCase().includes(k));
+        return key ? insights[key] : "This topic reveals important aspects of diaspora experience, from cultural preservation to adaptation in new environments.";
     }
 }
 
