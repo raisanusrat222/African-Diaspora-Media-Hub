@@ -50,6 +50,7 @@
 
 .smart-search-box {
     display: flex;
+    align-items: center;
     background: rgba(255,255,255,0.95);
     border-radius: 50px;
     padding: 8px;
@@ -57,6 +58,7 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.2);
     transition: all 0.3s ease;
+    min-height: 60px;
 }
 
 .smart-search-box:focus-within {
@@ -69,8 +71,10 @@
     align-items: center;
     justify-content: center;
     width: 50px;
+    height: 100%;
     color: var(--primary-color);
     font-size: 1.2rem;
+    flex-shrink: 0;
 }
 
 #literature-search {
@@ -81,6 +85,7 @@
     font-size: 1.1rem;
     color: var(--dark-color);
     outline: none;
+    height: 100%;
 }
 
 #literature-search::placeholder {
@@ -119,7 +124,7 @@
 
 .suggestion-chip {
     background: rgba(255,255,255,0.15);
-    color: var(--dark-color);
+    color: var(--light-color);
     padding: 8px 16px;
     border-radius: 20px;
     cursor: pointer;
@@ -694,7 +699,7 @@
 
 .panel-header {
     background: var(--primary-color);
-    color: var(--dark-color);
+    color: var(--light-color);
     padding: 20px;
     display: flex;
     justify-content: space-between;
@@ -737,6 +742,11 @@
     padding: 25px;
     overflow-y: auto;
     line-height: 1.6;
+    color: var(--dark-color) !important;
+}
+
+.panel-content p {
+    color: var(--dark-color) !important;
 }
 
 .panel-content::-webkit-scrollbar {
@@ -767,14 +777,14 @@
 
 .ai-summary h4 {
     margin: 0 0 10px 0;
-    color: var(--light-color);
+    color: var(--dark-color);
     font-size: 1.1rem;
 }
 
 .ai-summary p {
     margin: 0;
     line-height: 1.6;
-    color: var(--light-color);
+    color: var(--dark-color) !important; 
 }
 
 .ai-themes {
@@ -1331,6 +1341,7 @@
     font-size: 1rem;
     border-radius: 10px;
     transition: all 0.3s ease;
+    color: var(--light-color)
 }
 
 .load-more-btn:hover {
