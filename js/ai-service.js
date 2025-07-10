@@ -4,7 +4,7 @@ class DiasporaAIService {
         // Store API key securely - you'll set this via environment or config
         this.apiKey = null;
         this.baseURL = 'https://api.openai.com/v1/chat/completions';
-        this.model = 'gpt-4.1-nano';
+        this.model = 'gpt-4.1';
         this.isInitialized = false;
         
         // User tracking for personalization
@@ -348,7 +348,7 @@ Focus on works that share themes like ${work.themes.slice(0, 2).join(' and ')} o
     // Fallback content when API is unavailable
     getFallbackContent(prompt) {
         if (prompt.toLowerCase().includes('country') || prompt.toLowerCase().includes('diaspora')) {
-            return "This diaspora community has a rich history spanning multiple continents, with vibrant cultural expressions and significant contributions to their host countries. Cultural centers and organizations worldwide help preserve traditions while fostering new connections.";
+            return "Content Unavailable";
         }
         return "Exploring the rich tapestry of diaspora communities reveals fascinating stories of migration, cultural preservation, and adaptation across the globe.";
     }
@@ -361,7 +361,7 @@ Focus on works that share themes like ${work.themes.slice(0, 2).join(' and ')} o
         };
     }
     
-    // FIXED: Enhanced fallback stats with guaranteed valid structure
+    // FIXED: Fallback stats with valid structure
     getFallbackStats(country) {
         const fallbackData = {
             'Nigeria': { population: "17M+", destinations: "USA, UK, Canada", centers: "450+" },
