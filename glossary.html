@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voices of the Diaspora</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/navigation.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/ai-features.css">
+    <link rel="stylesheet" href="styles/glossary.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,es,fr,pt,sw,ar'
+        }, 'google_translate_element');
+}
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="goToHomePage()" style="cursor: pointer;">
+                <i class="fas fa-globe-africa"></i>
+                <span>Voices of the Diaspora</span>
+            </div>
+            
+            <div class="nav-center">
+                <!-- Mobile Search (hidden by default, shown in mobile menu) -->
+                <div class="mobile-search-container">
+                    <div class="mobile-search-box">
+                        <input type="text" id="mobile-search-input" placeholder="Search..." autocomplete="off">
+                        <button class="mobile-search-btn" id="mobile-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="mobile-search-results" id="mobile-search-results"></div>
+                </div>
+
+                <!-- Mobile Google Translate -->
+                <div class="mobile-translate-container">
+                    <div id="mobile_google_translate_element"></div>
+                </div>
+
+                <div class="nav-menu" id="nav-menu">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="nav-text">Learning</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Learning Resources</div>
+                            <a href="#" onclick="loadPage('educational-content')">
+                                <i class="fas fa-book-open"></i>Educational Content
+                            </a>
+                            <a href="#" onclick="loadPage('online-courses')">
+                                <i class="fas fa-laptop"></i>Online Courses
+                            </a>
+                            <a href="#" onclick="loadPage('research-papers')">
+                                <i class="fas fa-file-alt"></i>Research Papers
+                            </a>
+                            <a href="#" onclick="loadPage('digital-archives')">
+                                <i class="fas fa-archive"></i>Digital Archives
+                            </a>
+                            <a href="glossary.html" onclick="loadPage('glossary')">
+                                <i class="fas fa-spell-check""></i>Glossary
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span class="nav-text">Teaching</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Teaching Tools</div>
+                            <a href="#" onclick="loadPage('lesson-plans')">
+                                <i class="fas fa-clipboard-list"></i>Lesson Plans
+                            </a>
+                            <a href="#" onclick="loadPage('interactive-materials')">
+                                <i class="fas fa-puzzle-piece"></i>Interactive Materials
+                            </a>
+                            <a href="#" onclick="loadPage('assessment-tools')">
+                                <i class="fas fa-check-circle"></i>Assessment Tools
+                            </a>
+                            <a href="#" onclick="loadPage('educator-guides')">
+                                <i class="fas fa-user-graduate"></i>Educator Guides
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-palette"></i>
+                            <span class="nav-text">Culture</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Culture & Arts</div>
+                            <a href="#" onclick="loadPage('visual-arts')">
+                                <i class="fas fa-paint-brush"></i>Visual Arts
+                            </a>
+                            <a href="#" onclick="loadPage('music-dance')">
+                                <i class="fas fa-music"></i>Music & Dance
+                            </a>
+                            <a href="literature.html" onclick="loadPage('literature')">
+                                <i class="fas fa-feather-alt"></i>Literature
+                            </a>
+                            <a href="festivals-events.html" onclick="loadPage('festivals-events')">
+                                <i class="fas fa-calendar"></i>Festivals & Events
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-microphone"></i>
+                            <span class="nav-text">Voices</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Voices & Stories</div>
+                            <a href="#" onclick="loadPage('oral-histories')">
+                                <i class="fas fa-microphone-alt"></i>Oral Histories
+                            </a>
+                            <a href="#" onclick="loadPage('personal-narratives')">
+                                <i class="fas fa-user-edit"></i>Personal Narratives
+                            </a>
+                            <a href="#" onclick="loadPage('community-voices')">
+                                <i class="fas fa-users"></i>Community Voices
+                            </a>
+                            <a href="#" onclick="loadPage('interviews')">
+                                <i class="fas fa-comments"></i>Interviews
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-scroll"></i>
+                            <span class="nav-text">History</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">History & Identity</div>
+                            <a href="historical-timeline.html" onclick="loadPage('historical-timeline')">
+                                <i class="fas fa-clock"></i>Historical Timeline
+                            </a>
+                            <a href="#" onclick="loadPage('genealogy-tools')">
+                                <i class="fas fa-sitemap"></i>Genealogy Tools
+                            </a>
+                            <a href="#" onclick="loadPage('cultural-identity')">
+                                <i class="fas fa-fingerprint"></i>Cultural Identity
+                            </a>
+                            <a href="#" onclick="loadPage('migration-patterns')">
+                                <i class="fas fa-route"></i>Migration Patterns
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="news.html" class="nav-link" onclick="loadPage('news')" title="News">
+                            <i class="fas fa-newspaper"></i>
+                            <span class="nav-text">News</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadPage('films')" title="Films">
+                            <i class="fas fa-film"></i>
+                            <span class="nav-text">Films</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadPage('podcasts')" title="Podcasts">
+                            <i class="fas fa-podcast"></i>
+                            <span class="nav-text">Podcasts</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="maps.html" class="nav-link" onclick="loadPage('maps')" title="Maps">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span class="nav-text">Maps</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+                        <button class="search-btn" id="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="search-results"></div>
+                </div>
+
+                <div class="google-translate-container">
+                    <div id="google_translate_element"></div>
+                </div>
+
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Page Header -->
+        <section class="page-header">
+            <div class="container">
+                <h1>Diaspora Glossary</h1>
+                <p>Comprehensive definitions, cultural terms, and pronunciation guides enhanced with AI insights</p>
+            </div>
+        </section>
+
+        <!-- Glossary Controls -->
+        <section class="glossary-controls">
+            <div class="container">
+                <div class="controls-row">
+                    <!-- Search Bar -->
+                    <div class="glossary-search-container">
+                        <div class="glossary-search-box">
+                            <input type="text" id="glossary-search-input" placeholder="Search terms (e.g., diaspora, griot, ubuntu)..." autocomplete="off">
+                            <button class="glossary-search-btn" id="glossary-search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button class="voice-search-btn" id="voice-search-btn" title="Voice Search">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        <div class="search-suggestions" id="search-suggestions"></div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="glossary-filters">
+                        <div class="filter-group">
+                            <label>Category:</label>
+                            <select id="category-filter">
+                                <option value="all">All Categories</option>
+                                <option value="cultural">Cultural Terms</option>
+                                <option value="historical">Historical</option>
+                                <option value="geographical">Geographical</option>
+                                <option value="linguistic">Linguistic</option>
+                                <option value="spiritual">Spiritual/Religious</option>
+                                <option value="musical">Music & Arts</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Origin:</label>
+                            <select id="origin-filter">
+                                <option value="all">All Origins</option>
+                                <option value="west-africa">West Africa</option>
+                                <option value="east-africa">East Africa</option>
+                                <option value="central-africa">Central Africa</option>
+                                <option value="southern-africa">Southern Africa</option>
+                                <option value="caribbean">Caribbean</option>
+                                <option value="north-america">North America</option>
+                                <option value="south-america">South America</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>View:</label>
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="cards">
+                                    <i class="fas fa-th-large"></i>
+                                </button>
+                                <button class="view-btn" data-view="list">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button class="view-btn" data-view="alphabet">
+                                    <i class="fas fa-sort-alpha-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Tools -->
+                <div class="learning-tools">
+                    <button class="tool-btn" id="flashcard-mode-btn">
+                        <i class="fas fa-layer-group"></i>
+                        Flashcard Mode
+                    </button>
+                    <button class="tool-btn" id="quiz-mode-btn">
+                        <i class="fas fa-question-circle"></i>
+                        Quiz Mode
+                    </button>
+                    <button class="tool-btn" id="favorites-btn">
+                        <i class="fas fa-star"></i>
+                        My Favorites (<span id="favorites-count">0</span>)
+                    </button>
+                    <button class="tool-btn" id="progress-btn">
+                        <i class="fas fa-chart-line"></i>
+                        Learning Progress
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alphabet Navigation -->
+        <section class="alphabet-nav" id="alphabet-nav">
+            <div class="container">
+                <div class="alphabet-letters">
+                    <button class="letter-btn active" data-letter="all">All</button>
+                    <button class="letter-btn" data-letter="A">A</button>
+                    <button class="letter-btn" data-letter="B">B</button>
+                    <button class="letter-btn" data-letter="C">C</button>
+                    <button class="letter-btn" data-letter="D">D</button>
+                    <button class="letter-btn" data-letter="E">E</button>
+                    <button class="letter-btn" data-letter="F">F</button>
+                    <button class="letter-btn" data-letter="G">G</button>
+                    <button class="letter-btn" data-letter="H">H</button>
+                    <button class="letter-btn" data-letter="I">I</button>
+                    <button class="letter-btn" data-letter="J">J</button>
+                    <button class="letter-btn" data-letter="K">K</button>
+                    <button class="letter-btn" data-letter="L">L</button>
+                    <button class="letter-btn" data-letter="M">M</button>
+                    <button class="letter-btn" data-letter="N">N</button>
+                    <button class="letter-btn" data-letter="O">O</button>
+                    <button class="letter-btn" data-letter="P">P</button>
+                    <button class="letter-btn" data-letter="Q">Q</button>
+                    <button class="letter-btn" data-letter="R">R</button>
+                    <button class="letter-btn" data-letter="S">S</button>
+                    <button class="letter-btn" data-letter="T">T</button>
+                    <button class="letter-btn" data-letter="U">U</button>
+                    <button class="letter-btn" data-letter="V">V</button>
+                    <button class="letter-btn" data-letter="W">W</button>
+                    <button class="letter-btn" data-letter="X">X</button>
+                    <button class="letter-btn" data-letter="Y">Y</button>
+                    <button class="letter-btn" data-letter="Z">Z</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Glossary Content -->
+        <section class="glossary-content">
+            <div class="container">
+                <div class="glossary-header">
+                    <h2 id="results-title">All Terms</h2>
+                    <div class="results-info">
+                        <span id="results-count">Loading terms...</span>
+                        <div class="sort-options">
+                            <label>Sort by:</label>
+                            <select id="sort-select">
+                                <option value="alphabetical">A-Z</option>
+                                <option value="popularity">Most Popular</option>
+                                <option value="recent">Recently Added</option>
+                                <option value="difficulty">Difficulty</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms Container -->
+                <div class="terms-container" id="terms-container">
+                    <!-- Terms will be loaded here dynamically -->
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading-state" id="loading-state">
+                    <div class="loading-animation">
+                        <div class="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <p>Loading glossary terms...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Enhancement Panel -->
+        <div class="ai-enhancement-panel" id="ai-enhancement-panel">
+            <div class="ai-panel-header">
+                <h3>AI Enhanced Definition</h3>
+                <button class="close-panel-btn" id="close-ai-panel">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="ai-panel-content">
+                <div class="ai-loading" id="ai-loading">
+                    <i class="fas fa-robot fa-spin"></i>
+                    <p>AI is analyzing this term...</p>
+                </div>
+                <div class="ai-content" id="ai-content" style="display: none;">
+                    <!-- AI content will be populated here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Flashcard Modal -->
+    <div class="flashcard-modal" id="flashcard-modal">
+        <div class="modal-overlay" onclick="closeFlashcardModal()"></div>
+        <div class="flashcard-container">
+            <div class="flashcard-header">
+                <h3>Flashcard Study Mode</h3>
+                <div class="flashcard-controls">
+                    <span class="card-counter" id="card-counter">1 / 10</span>
+                    <button class="close-btn" onclick="closeFlashcardModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flashcard">
+                <div class="flashcard-inner" id="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="term-display" id="flashcard-term">Term</div>
+                        <p class="flip-instruction">Click to reveal definition</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="definition-display" id="flashcard-definition">Definition</div>
+                        <button class="pronunciation-btn" id="flashcard-pronunciation">
+                            <i class="fas fa-volume-up"></i>
+                            Hear Pronunciation
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard-navigation">
+                <button class="nav-btn" id="prev-card">
+                    <i class="fas fa-chevron-left"></i>
+                    Previous
+                </button>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn easy" onclick="markDifficulty('easy')">Easy</button>
+                    <button class="difficulty-btn medium" onclick="markDifficulty('medium')">Medium</button>
+                    <button class="difficulty-btn hard" onclick="markDifficulty('hard')">Hard</button>
+                </div>
+                <button class="nav-btn" id="next-card">
+                    Next
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#" onclick="loadPage('api-docs')">API Documentation</a></li>
+                        <li><a href="#" onclick="loadPage('contribute')">Contribute</a></li>
+                        <li><a href="partnerships.html" onclick="loadPage('partnerships')">Partnerships</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#" onclick="loadPage('contact')">Contact Us</a></li>
+                        <li><a href="#" onclick="loadPage('faq')">FAQ</a></li>
+                        <li><a href="#" onclick="loadPage('privacy')">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Voices of the Diaspora. Empowering communities through shared heritage.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/glossary.js"></script>
+    
+    <!-- AI Enhancement Scripts -->
+    <script src="js/env-loader.js"></script>
+    <script src="js/ai-service.js"></script>
+    <script src="js/ai-config-secure.js"></script>
+    <script src="js/dynamic-terms.js"></script>
+</body>
+</html>

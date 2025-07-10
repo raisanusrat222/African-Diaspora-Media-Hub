@@ -15,7 +15,7 @@ function initializeApp() {
     initializePageSpecificFeatures();
 }
 
-// Go to home page function - defined globally
+// Go to home page function 
 function goToHomePage() {
     window.location.href = 'index.html';
 }
@@ -587,6 +587,7 @@ function setupHoverEffects() {
         });
     });
 }
+
 
 // Error handling
 window.addEventListener('error', function(e) {
