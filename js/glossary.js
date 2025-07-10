@@ -1,5 +1,3 @@
-// glossary.js - Interactive Glossary with AI Enhancement
-
 class GlossaryApp {
     constructor() {
         this.terms = [];
@@ -543,14 +541,14 @@ class GlossaryApp {
                 btn.style.display = 'flex';
                 btn.title = 'AI Enhancement Available';
             });
-            console.log('✅ AI enhancement available for glossary');
+            console.log('AI enhancement available for glossary');
         } else {
             aiButtons.forEach(btn => {
                 btn.style.opacity = '0.5';
                 btn.title = 'AI Enhancement Unavailable';
                 btn.onclick = () => alert('AI enhancement is currently unavailable');
             });
-            console.log('❌ AI enhancement unavailable for glossary');
+            console.log('AI enhancement unavailable for glossary');
         }
     }
 
@@ -960,11 +958,8 @@ class GlossaryApp {
         // Re-apply current filters to include new term if it matches
         this.applyFilters();
         
-        console.log(`✅ Added dynamic term: ${newTerm.name}`);
-        
-        // Show subtle notification to user
-        this.showDynamicTermNotification(newTerm);
-        
+        console.log(`Added dynamic term: ${newTerm.name}`);
+
         return true;
     }
     

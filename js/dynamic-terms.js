@@ -1,5 +1,3 @@
-// dynamic-terms.js - AI-Powered Dynamic Term Extraction System
-
 class DynamicTermsManager {
     constructor(glossaryApp) {
         this.glossaryApp = glossaryApp;
@@ -44,11 +42,11 @@ class DynamicTermsManager {
     // ===== AI-POWERED EXTRACTION =====
     async extractTermsWithAI(content, sourceContext = '') {
         if (!window.DiasporaAI || !window.DiasporaAI.isInitialized) {
-            console.log('❌ AI not available for term extraction');
+            console.log('AI not available for term extraction');
             return [];
         }
 
-        console.log('🔍 AI extracting terms from content...');
+        console.log('AI extracting terms from content...');
 
         const prompt = `Analyze this content about African diaspora and extract important cultural, historical, and linguistic terms. 
 
@@ -69,11 +67,11 @@ Return as JSON array. Only include terms specifically relevant to African diaspo
             const response = await window.DiasporaAI.callOpenAI(prompt, 800, 0.3);
             const extractedTerms = this.parseAIResponse(response);
             
-            console.log(`✅ AI extracted ${extractedTerms.length} terms`);
+            console.log(`AI extracted ${extractedTerms.length} terms`);
             return extractedTerms.filter(term => term.confidence >= this.config.confidenceThreshold);
             
         } catch (error) {
-            console.error('❌ AI term extraction failed:', error);
+            console.error('AI term extraction failed:', error);
             return this.fallbackExtraction(content);
         }
     }
@@ -90,7 +88,7 @@ Return as JSON array. Only include terms specifically relevant to African diaspo
             return this.parseStructuredResponse(response);
             
         } catch (error) {
-            console.log('⚠️ Failed to parse AI response, using fallback');
+            console.log('Failed to parse AI response, using fallback');
             return [];
         }
     }
@@ -368,7 +366,7 @@ Return as JSON array. Only include terms specifically relevant to African diaspo
                         { 
                 url: 'index.html', 
                 type: 'general',
-                priority: 'medium',
+                priority: 'low',
                 context: 'Landing page for diaspora content'
             }
         ];
@@ -406,10 +404,10 @@ Return as JSON array. Only include terms specifically relevant to African diaspo
             });
             
             this.processedPages.add(source.url);
-            console.log(`✅ Added ${curatedTerms.length} terms from ${source.url}`);
+            console.log(`Added ${curatedTerms.length} terms from ${source.url}`);
             
         } catch (error) {
-            console.error(`❌ Failed to extract from ${source.url}:`, error);
+            console.error(`Failed to extract from ${source.url}:`, error);
         }
     }
 
