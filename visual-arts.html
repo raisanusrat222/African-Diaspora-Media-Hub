@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Arts - Voices of the Diaspora</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/navigation.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/visual-arts.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- D3.js and Animation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- CSV Processing Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,es,fr,pt,sw,ar'
+        }, 'google_translate_element');
+    }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="goToHomePage()" style="cursor: pointer;">
+                <i class="fas fa-globe-africa"></i>
+                <span>Voices of the Diaspora</span>
+            </div>
+            
+            <div class="nav-center">
+                <!-- Mobile Search (hidden by default, shown in mobile menu) -->
+                <div class="mobile-search-container">
+                    <div class="mobile-search-box">
+                        <input type="text" id="mobile-search-input" placeholder="Search..." autocomplete="off">
+                        <button class="mobile-search-btn" id="mobile-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="mobile-search-results" id="mobile-search-results"></div>
+                </div>
+
+                <!-- Mobile Google Translate -->
+                <div class="mobile-translate-container">
+                    <div id="mobile_google_translate_element"></div>
+                </div>
+
+                <div class="nav-menu" id="nav-menu">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="nav-text">Learning</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Learning Resources</div>
+                            <a href="#" onclick="loadPage('educational-content')">
+                                <i class="fas fa-book-open"></i>Educational Content
+                            </a>
+                            <a href="#" onclick="loadPage('online-courses')">
+                                <i class="fas fa-laptop"></i>Online Courses
+                            </a>
+                            <a href="#" onclick="loadPage('research-papers')">
+                                <i class="fas fa-file-alt"></i>Research Papers
+                            </a>
+                            <a href="#" onclick="loadPage('digital-archives')">
+                                <i class="fas fa-archive"></i>Digital Archives
+                            </a>
+                            <a href="glossary.html" onclick="loadPage('glossary')">
+                                <i class="fas fa-spell-check"></i>Glossary
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span class="nav-text">Teaching</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Teaching Tools</div>
+                            <a href="#" onclick="loadPage('lesson-plans')">
+                                <i class="fas fa-clipboard-list"></i>Lesson Plans
+                            </a>
+                            <a href="#" onclick="loadPage('interactive-materials')">
+                                <i class="fas fa-puzzle-piece"></i>Interactive Materials
+                            </a>
+                            <a href="#" onclick="loadPage('assessment-tools')">
+                                <i class="fas fa-check-circle"></i>Assessment Tools
+                            </a>
+                            <a href="#" onclick="loadPage('educator-guides')">
+                                <i class="fas fa-user-graduate"></i>Educator Guides
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle active">
+                            <i class="fas fa-palette"></i>
+                            <span class="nav-text">Culture</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Culture & Arts</div>
+                            <a href="visual-arts.html" class="active">
+                                <i class="fas fa-paint-brush"></i>Visual Arts
+                            </a>
+                            <a href="#" onclick="loadPage('music-dance')">
+                                <i class="fas fa-music"></i>Music & Dance
+                            </a>
+                            <a href="literature.html" onclick="loadPage('literature')">
+                                <i class="fas fa-feather-alt"></i>Literature
+                            </a>
+                            <a href="festivals-events.html" onclick="loadPage('festivals-events')">
+                                <i class="fas fa-calendar"></i>Festivals & Events
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-microphone"></i>
+                            <span class="nav-text">Voices</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Voices & Stories</div>
+                            <a href="#" onclick="loadPage('oral-histories')">
+                                <i class="fas fa-microphone-alt"></i>Oral Histories
+                            </a>
+                            <a href="#" onclick="loadPage('personal-narratives')">
+                                <i class="fas fa-user-edit"></i>Personal Narratives
+                            </a>
+                            <a href="#" onclick="loadPage('community-voices')">
+                                <i class="fas fa-users"></i>Community Voices
+                            </a>
+                            <a href="#" onclick="loadPage('interviews')">
+                                <i class="fas fa-comments"></i>Interviews
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-scroll"></i>
+                            <span class="nav-text">History</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">History & Identity</div>
+                            <a href="historical-timeline.html" onclick="loadPage('historical-timeline')">
+                                <i class="fas fa-clock"></i>Historical Timeline
+                            </a>
+                            <a href="#" onclick="loadPage('genealogy-tools')">
+                                <i class="fas fa-sitemap"></i>Genealogy Tools
+                            </a>
+                            <a href="#" onclick="loadPage('cultural-identity')">
+                                <i class="fas fa-fingerprint"></i>Cultural Identity
+                            </a>
+                            <a href="#" onclick="loadPage('migration-patterns')">
+                                <i class="fas fa-route"></i>Migration Patterns
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="news.html" class="nav-link" onclick="loadPage('news')" title="News">
+                            <i class="fas fa-newspaper"></i>
+                            <span class="nav-text">News</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadPage('films')" title="Films">
+                            <i class="fas fa-film"></i>
+                            <span class="nav-text">Films</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadPage('podcasts')" title="Podcasts">
+                            <i class="fas fa-podcast"></i>
+                            <span class="nav-text">Podcasts</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="maps.html" class="nav-link" onclick="loadPage('maps')" title="Maps">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span class="nav-text">Maps</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+                        <button class="search-btn" id="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="search-results"></div>
+                </div>
+
+                <div class="google-translate-container">
+                    <div id="google_translate_element"></div>
+                </div>
+
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Page Header -->
+        <section class="page-header visual-arts-header">
+            <div class="container">
+                <h1>Visual Arts Evolution</h1>
+                <p>Discover how traditional African art transformed and flourished across the diaspora</p>
+            </div>
+        </section>
+
+        <!-- Art Evolution Tracker -->
+        <section class="art-evolution-section">
+            <div class="container">
+                <div class="evolution-intro">
+                    <h2>Interactive Art Evolution Tracker</h2>
+                    <p>Click on an African country (golden), then an Americas country (silver) to explore artistic evolution</p>
+                </div>
+
+                <!-- Interactive Map Container -->
+                <div class="evolution-map-container">
+                    <div class="map-wrapper">
+                        <svg id="world-map" class="evolution-map"></svg>
+                        <div class="evolution-paths-overlay"></div>
+                    </div>
+                    
+                    <!-- Map Legend -->
+                    <div class="map-legend">
+                        <h4>Map Legend</h4>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-color origin-country-legend"></div>
+                                <span>African Origin Countries</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color destination-country-legend"></div>
+                                <span>Diaspora Destination Countries</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-line evolution-path-legend"></div>
+                                <span>Art Evolution Path</span>
+                            </div>
+                        </div>
+                        
+                        <div class="interaction-guide">
+                            <h5>How to Use:</h5>
+                            <ol>
+                                <li>Click a golden African country</li>
+                                <li>Click a silver Americas country</li>
+                                <li>Explore the artistic evolution story</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Country Info Panel -->
+                <div class="country-info-panel" id="country-info-panel" style="display: none;">
+                    <button class="close-panel" onclick="closeCountryPanel()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="country-info-content">
+                        <div class="country-header">
+                            <div class="country-flag-placeholder">
+                                <i class="fas fa-flag"></i>
+                            </div>
+                            <div class="country-details">
+                                <h3 id="selected-country-name">Country Name</h3>
+                                <span id="selected-country-region">Region</span>
+                            </div>
+                        </div>
+                        <div class="country-art-info" id="country-art-info">
+                            <p>Click to select this country and explore its artistic traditions...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evolution Analysis Panel -->
+        <section class="evolution-analysis-section" id="evolution-analysis-section" style="display: none;">
+            <div class="container">
+                <div class="evolution-story-container">
+                    <div class="evolution-header">
+                        <div class="countries-selected">
+                            <div class="origin-country">
+                                <div class="country-badge origin">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span id="origin-country-name">Origin</span>
+                                </div>
+                            </div>
+                            <div class="evolution-arrow">
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                                <span>Artistic Evolution</span>
+                            </div>
+                            <div class="destination-country">
+                                <div class="country-badge destination">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span id="destination-country-name">Destination</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-badge-evolution">
+                            <i class="fas fa-robot"></i>
+                            <span>AI-Generated Analysis</span>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div class="evolution-loading" id="evolution-loading">
+                        <div class="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <p>Analyzing artistic evolution...</p>
+                    </div>
+
+                    <!-- Evolution Content -->
+                    <div class="evolution-content" id="evolution-content" style="display: none;">
+                        <div class="evolution-story">
+                            <h3>Artistic Evolution Story</h3>
+                            <div class="story-text" id="evolution-story-text">
+                                <!-- AI-generated evolution story will appear here -->
+                            </div>
+                        </div>
+
+                        <div class="evolution-timeline" id="evolution-timeline">
+                            <h4>Evolution Timeline</h4>
+                            <div class="timeline-container">
+                                <!-- AI-generated timeline will appear here -->
+                            </div>
+                        </div>
+
+                        <div class="art-examples" id="art-examples">
+                            <h4>Art Examples</h4>
+                            <div class="examples-grid">
+                                <div class="art-example traditional">
+                                    <div class="example-image">
+                                        <i class="fas fa-image"></i>
+                                        <span>Traditional Form</span>
+                                    </div>
+                                    <div class="example-info">
+                                        <h5 id="traditional-art-name">Traditional Art</h5>
+                                        <p id="traditional-art-desc">Original cultural expression</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="evolution-arrow-examples">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                                
+                                <div class="art-example contemporary">
+                                    <div class="example-image">
+                                        <i class="fas fa-image"></i>
+                                        <span>Contemporary Form</span>
+                                    </div>
+                                    <div class="example-info">
+                                        <h5 id="contemporary-art-name">Contemporary Art</h5>
+                                        <p id="contemporary-art-desc">Evolved diaspora expression</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="evolution-actions">
+                        <button class="btn btn-small" onclick="exploreMoreEvolution()">
+                            <i class="fas fa-compass"></i>
+                            Explore Another Path
+                        </button>
+                        <button class="btn btn-outline btn-small" onclick="shareEvolution()">
+                            <i class="fas fa-share"></i>
+                            Share Story
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cultural Symbols Section -->
+        <section class="cultural-symbols-section">
+            <div class="container">
+                <h2>Cultural Symbols Recognition</h2>
+                <p>Discover the meanings behind traditional symbols and how they evolved across cultures</p>
+                
+                <div class="symbols-interface">
+                    <div class="symbol-search">
+                        <div class="search-box-symbols">
+                            <input type="text" id="symbol-search-input" placeholder="Search for symbols, countries, or meanings..." autocomplete="off">
+                            <button class="search-btn-symbols" id="symbol-search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="symbols-grid" id="symbols-grid">
+                        <!-- Symbol cards will be populated by JavaScript -->
+                    </div>
+
+                    <!-- Symbol Detail Modal (initially hidden) -->
+                    <div class="symbol-modal" id="symbol-modal" style="display: none;">
+                        <div class="modal-content">
+                            <button class="close-modal" onclick="closeSymbolModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="symbol-detail">
+                                <div class="symbol-visual">
+                                    <div class="symbol-icon" id="modal-symbol-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <h3 id="modal-symbol-name">Symbol Name</h3>
+                                </div>
+                                <div class="symbol-info">
+                                    <div class="symbol-meaning">
+                                        <h4>Traditional Meaning</h4>
+                                        <p id="modal-symbol-meaning">Symbol meaning will appear here</p>
+                                    </div>
+                                    <div class="symbol-origin">
+                                        <h4>Cultural Origin</h4>
+                                        <p id="modal-symbol-origin">Origin information</p>
+                                    </div>
+                                    <div class="symbol-evolution">
+                                        <h4>Diaspora Evolution</h4>
+                                        <p id="modal-symbol-evolution">Evolution information</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Art Section -->
+        <section class="featured-art-section">
+            <div class="container">
+                <h2>Featured Artworks</h2>
+                <div class="featured-art-grid">
+                    <div class="art-card" data-origin="Ghana" data-destination="Jamaica">
+                        <div class="art-image">
+                            <i class="fas fa-palette"></i>
+                            <div class="art-overlay">
+                                <h4>Adinkra to Maroon Symbols</h4>
+                                <p>Akan spiritual symbols in Jamaican Maroon art</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="art-card" data-origin="Nigeria" data-destination="Brazil">
+                        <div class="art-image">
+                            <i class="fas fa-mask"></i>
+                            <div class="art-overlay">
+                                <h4>Yoruba to Candomblé</h4>
+                                <p>Religious iconography in Brazilian spiritual art</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="art-card" data-origin="Senegal" data-destination="United States">
+                        <div class="art-image">
+                            <i class="fas fa-th"></i>
+                            <div class="art-overlay">
+                                <h4>Islamic Patterns to Quilts</h4>
+                                <p>Geometric designs in African American quilting</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#" onclick="loadPage('api-docs')">API Documentation</a></li>
+                        <li><a href="#" onclick="loadPage('contribute')">Contribute</a></li>
+                        <li><a href="partnerships.html" onclick="loadPage('partnerships')">Partnerships</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#" onclick="loadPage('contact')">Contact Us</a></li>
+                        <li><a href="#" onclick="loadPage('faq')">FAQ</a></li>
+                        <li><a href="#" onclick="loadPage('privacy')">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Voices of the Diaspora. Empowering communities through shared heritage.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/page-loader.js"></script>
+    
+    <!-- Visual Arts Specific Scripts -->
+    <script src="js/adinkra-csv-processor.js"></script>
+    <script src="js/cultural-symbols-db.js"></script>
+    <script src="js/art-evolution-tracker.js"></script>
+    <script src="js/art-map-interactive.js"></script>
+    <script src="js/art-animation.js"></script>
+    <script src="js/visual-arts.js"></script>
+    
+    <!-- AI Enhancement Scripts -->
+    <script src="js/env-loader.js"></script>
+    <script src="js/ai-service.js"></script>
+    <script src="js/ai-config-secure.js"></script>
+</body>
+</html>

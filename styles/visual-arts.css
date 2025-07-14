@@ -1,0 +1,1622 @@
+/* Enhanced symbol display with SVG patterns */
+.symbol-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: var(--dark-color);
+    font-size: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.symbol-icon.has-svg {
+    background: linear-gradient(135deg, #f8f8f8, #ffffff);
+    border: 3px solid var(--primary-color);
+    padding: 15px;
+}
+
+.symbol-icon svg {
+    width: 100%;
+    height: 100%;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.symbol-card:hover .symbol-icon svg {
+    color: var(--secondary-color);
+    transform: scale(1.1);
+}
+
+/* Modal symbol display */
+.symbol-visual .symbol-icon {
+    width: 120px;
+    height: 120px;
+    font-size: 3rem;
+    margin: 0 auto 20px;
+}
+
+.symbol-visual .symbol-icon.has-svg {
+    padding: 20px;
+}
+
+/* AI enhancement indicator */
+.ai-enhanced-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 8px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.ai-enhanced-badge i {
+    font-size: 0.5rem;
+}
+
+/* CSV source indicator */
+.csv-source-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 8px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 2px 8px rgba(17, 153, 142, 0.3);
+}
+
+/* Enhanced symbol cards with multiple badges */
+.symbol-card {
+    position: relative;
+    overflow: visible; /* Allow badges to show outside */
+}
+
+/* Enhanced modal content for symbols with SVG */
+.symbol-detail.has-svg .symbol-visual {
+    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+/* Visual elements description */
+.visual-elements-section {
+    background: rgba(212, 175, 55, 0.05);
+    border-left: 4px solid var(--primary-color);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 0 10px 10px 0;
+}
+
+.visual-elements-section h5 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.visual-elements-section h5::before {
+    content: "👁️";
+}
+
+.visual-elements-section p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--dark-color);
+}
+
+/* Loading state for CSV processing */
+.csv-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--dark-color);
+}
+
+.csv-loading .loading-text {
+    margin-top: 15px;
+    font-size: 1rem;
+}
+
+.csv-loading .progress-bar {
+    width: 200px;
+    height: 4px;
+    background: #f0f0f0;
+    border-radius: 2px;
+    margin: 20px auto;
+    overflow: hidden;
+}
+
+.csv-loading .progress-fill {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 2px;
+    animation: progressFill 3s ease-in-out infinite;
+}
+
+@keyframes progressFill {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}
+
+/* Enhanced error states */
+.csv-error {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(220, 53, 69, 0.05);
+    border: 2px dashed rgba(220, 53, 69, 0.3);
+    border-radius: 15px;
+    color: var(--dark-color);
+}
+
+.csv-error i {
+    font-size: 2.5rem;
+    color: #dc3545;
+    margin-bottom: 15px;
+}
+
+.csv-error h4 {
+    color: var(--dark-color);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.csv-error p {
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* Symbol count indicator */
+.symbols-count {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+    border-radius: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.symbols-count .count-text {
+    font-size: 1rem;
+    color: var(--dark-color);
+    margin: 0;
+}
+
+.symbols-count .count-number {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.symbols-count .source-info {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Enhanced symbol grid for different symbol types */
+.symbol-card[data-source="csv-ai"] {
+    border-top: 3px solid #667eea;
+}
+
+.symbol-card[data-source="csv-basic"] {
+    border-top: 3px solid #11998e;
+}
+
+.symbol-card[data-source="fallback"] {
+    border-top: 3px solid #ffc107;
+}
+
+/* Symbol pattern preview */
+.symbol-pattern-preview {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 30px;
+    height: 30px;
+    background: white;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+}
+
+.symbol-card:hover .symbol-pattern-preview {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.symbol-pattern-preview svg {
+    width: 18px;
+    height: 18px;
+    color: var(--primary-color);
+}
+
+/* Unicode display */
+.unicode-display {
+    font-family: 'Segoe UI Symbol', 'Symbola', sans-serif;
+    font-size: 1.5rem;
+    margin: 10px 0;
+    text-align: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+/* Responsive enhancements */
+@media (max-width: 768px) {
+    .symbol-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .symbol-visual .symbol-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+
+    .quality-badge,
+    .ai-enhanced-badge,
+    .csv-source-badge {
+        font-size: 0.55rem;
+        padding: 2px 4px;
+    }
+
+    .symbols-count {
+        margin-bottom: 20px;
+        padding: 12px;
+    }
+
+    .visual-elements-section {
+        margin: 15px 0;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .symbol-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .symbol-visual .symbol-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+    }
+
+    .symbol-pattern-preview {
+        width: 25px;
+        height: 25px;
+    }
+
+    .symbol-pattern-preview svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    .visual-elements-section h5 {
+        font-size: 0.9rem;
+    }
+
+    .visual-elements-section p {
+        font-size: 0.85rem;
+    }
+}/* styles/visual-arts.css */
+
+/* Visual Arts Page Header */
+.visual-arts-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: var(--dark-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.visual-arts-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(0,0,0,0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Art Evolution Section */
+.art-evolution-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #fafafa, #ffffff);
+    position: relative;
+}
+
+.evolution-intro {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.evolution-intro h2 {
+    font-size: 2.5rem;
+    color: var(--dark-color);
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.evolution-intro p {
+    font-size: 1.2rem;
+    color: var(--dark-color);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Evolution Map Container */
+.evolution-map-container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 40px;
+    margin-bottom: 60px;
+    position: relative;
+}
+
+.map-wrapper {
+    position: relative;
+    background: var(--light-color);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-hover);
+    min-height: 500px;
+}
+
+.evolution-map {
+    width: 100%;
+    height: 500px;
+    display: block;
+}
+
+.evolution-paths-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* Map Countries Styling */
+.country {
+    fill: #e8e8e8;
+    stroke: #ffffff;
+    stroke-width: 0.5;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.country:hover {
+    stroke-width: 1;
+    stroke: var(--primary-color);
+}
+
+.origin-country {
+    fill: var(--primary-color);
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
+    animation: pulse-gold 2s infinite;
+}
+
+.destination-country {
+    fill: #c0c0c0;
+    filter: drop-shadow(0 0 6px rgba(192, 192, 192, 0.4));
+}
+
+.selected-origin {
+    fill: var(--secondary-color) !important;
+    filter: drop-shadow(0 0 12px rgba(139, 0, 0, 0.8)) !important;
+    transform: scale(1.02);
+}
+
+.selected-destination {
+    fill: var(--accent-color) !important;
+    filter: drop-shadow(0 0 12px rgba(34, 139, 34, 0.8)) !important;
+    transform: scale(1.02);
+}
+
+/* Evolution Path Animation */
+.evolution-path {
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-width: 3;
+    stroke-dasharray: 10, 5;
+    animation: pathFlow 3s linear infinite;
+    filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.6));
+}
+
+@keyframes pulse-gold {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6)); }
+    50% { filter: drop-shadow(0 0 16px rgba(212, 175, 55, 1)); }
+}
+
+@keyframes pathFlow {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 45; }
+}
+
+/* Map Legend */
+.map-legend {
+    background: var(--light-color);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    height: fit-content;
+}
+
+.map-legend h4 {
+    color: var(--dark-color);
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.legend-items {
+    margin-bottom: 30px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 12px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.origin-country-legend {
+    background: var(--primary-color);
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+}
+
+.destination-country-legend {
+    background: #c0c0c0;
+}
+
+.legend-line {
+    width: 20px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 2px;
+    position: relative;
+}
+
+.evolution-path-legend::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.legend-item span {
+    font-size: 0.9rem;
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+.interaction-guide {
+    border-top: 2px solid #f0f0f0;
+    padding-top: 20px;
+}
+
+.interaction-guide h5 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.interaction-guide ol {
+    padding-left: 20px;
+    color: var(--dark-color);
+}
+
+.interaction-guide li {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Country Info Panel */
+.country-info-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background: var(--light-color);
+    border-radius: 15px;
+    box-shadow: var(--shadow-hover);
+    padding: 25px;
+    z-index: 200;
+    transform: translateX(320px);
+    transition: transform 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.country-info-panel.show {
+    transform: translateX(0);
+}
+
+.close-panel {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: var(--dark-color);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.close-panel:hover {
+    color: var(--secondary-color);
+}
+
+.country-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.country-flag-placeholder {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark-color);
+}
+
+.country-details h3 {
+    margin: 0;
+    color: var(--dark-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.country-details span {
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.country-art-info {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--dark-color);
+}
+
+/* Evolution Analysis Section */
+.evolution-analysis-section {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #f8f8f8, #ffffff);
+    border-top: 3px solid var(--primary-color);
+}
+
+.evolution-story-container {
+    background: var(--light-color);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: var(--shadow-hover);
+    position: relative;
+    overflow: hidden;
+}
+
+.evolution-story-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.evolution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.countries-selected {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.country-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.country-badge.origin {
+    background: var(--gradient-primary);
+    color: var(--dark-color);
+}
+
+.country-badge.destination {
+    background: var(--gradient-secondary);
+    color: var(--light-color);
+}
+
+.evolution-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    color: var(--primary-color);
+}
+
+.evolution-arrow i {
+    font-size: 1.5rem;
+}
+
+.evolution-arrow span {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.ai-badge-evolution {
+    background: rgba(26, 26, 26, 0.1);
+    padding: 10px 20px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.ai-badge-evolution i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.ai-badge-evolution span {
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Loading State */
+.evolution-loading {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.loading-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.loading-dots span {
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    animation: loadingDots 1.4s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+.loading-dots span:nth-child(3) { animation-delay: 0s; }
+
+@keyframes loadingDots {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+    40% { transform: scale(1.2); opacity: 1; }
+}
+
+.evolution-loading p {
+    color: var(--dark-color);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Evolution Content */
+.evolution-content {
+    animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.evolution-story {
+    margin-bottom: 40px;
+}
+
+.evolution-story h3 {
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.story-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--dark-color);
+}
+
+.story-text p {
+    margin-bottom: 20px;
+}
+
+/* Evolution Timeline */
+.evolution-timeline {
+    margin-bottom: 40px;
+    padding: 30px;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.evolution-timeline h4 {
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.timeline-container {
+    position: relative;
+}
+
+.timeline-period {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.timeline-period:last-child {
+    border-bottom: none;
+}
+
+.timeline-date {
+    font-weight: 700;
+    color: var(--secondary-color);
+    min-width: 120px;
+    font-size: 0.9rem;
+}
+
+.timeline-content {
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--dark-color);
+}
+
+/* Art Examples */
+.art-examples {
+    margin-bottom: 40px;
+}
+
+.art-examples h4 {
+    color: var(--accent-color);
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.examples-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 30px;
+    align-items: center;
+}
+
+.art-example {
+    background: rgba(255,255,255,0.8);
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.art-example:hover {
+    transform: translateY(-5px);
+}
+
+.art-example.traditional {
+    border-top: 4px solid var(--primary-color);
+}
+
+.art-example.contemporary {
+    border-top: 4px solid var(--accent-color);
+}
+
+.example-image {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    color: var(--primary-color);
+}
+
+.example-image i {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.example-image span {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.example-info h5 {
+    margin: 0 0 10px 0;
+    color: var(--dark-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.example-info p {
+    margin: 0;
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.evolution-arrow-examples {
+    color: var(--primary-color);
+    font-size: 2rem;
+    text-align: center;
+}
+
+/* Evolution Actions */
+.evolution-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+/* Cultural Symbols Section */
+.cultural-symbols-section {
+    padding: 80px 0;
+    background: var(--light-color);
+}
+
+.cultural-symbols-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--dark-color);
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.cultural-symbols-section > .container > p {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--dark-color);
+    max-width: 600px;
+    margin: 0 auto 60px;
+}
+
+.symbols-interface {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Symbol Search */
+.symbol-search {
+    margin-bottom: 50px;
+}
+
+.search-box-symbols {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--light-color);
+    border-radius: 50px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    max-width: 600px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.search-box-symbols:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+#symbol-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 16px 24px;
+    font-size: 1.1rem;
+    background: transparent;
+    color: var(--dark-color);
+}
+
+#symbol-search-input::placeholder {
+    color: rgba(51, 51, 51, 0.5);
+}
+
+.search-btn-symbols {
+    background: var(--gradient-primary);
+    border: none;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-btn-symbols:hover {
+    background: linear-gradient(135deg, #ffd700, #e6c200);
+    transform: scale(1.05);
+}
+
+.search-btn-symbols i {
+    font-size: 1.1rem;
+    color: var(--dark-color);
+}
+
+/* Symbols Grid */
+.symbols-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.symbol-card {
+    background: var(--light-color);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-top: 4px solid var(--primary-color);
+}
+
+.symbol-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.symbol-card:hover::before {
+    left: 100%;
+}
+
+.symbol-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+.symbol-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: var(--dark-color);
+    font-size: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.symbol-icon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+}
+
+.symbol-card h3 {
+    color: var(--dark-color);
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.symbol-card p {
+    color: var(--dark-color);
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.symbol-origin {
+    background: rgba(212, 175, 55, 0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Symbol Modal */
+.symbol-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.symbol-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--light-color);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+.symbol-modal.show .modal-content {
+    transform: scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--dark-color);
+    cursor: pointer;
+    font-size: 1.3rem;
+    padding: 8px;
+    transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+    color: var(--secondary-color);
+}
+
+.symbol-detail {
+    text-align: center;
+}
+
+.symbol-visual {
+    margin-bottom: 30px;
+}
+
+.symbol-visual .symbol-icon {
+    width: 120px;
+    height: 120px;
+    font-size: 3rem;
+    margin: 0 auto 20px;
+}
+
+.symbol-visual h3 {
+    font-size: 2rem;
+    color: var(--dark-color);
+    margin: 0;
+    font-weight: 700;
+}
+
+.symbol-info {
+    text-align: left;
+}
+
+.symbol-meaning,
+.symbol-origin,
+.symbol-evolution {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.symbol-info h4 {
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.symbol-info p {
+    color: var(--dark-color);
+    line-height: 1.7;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Featured Art Section */
+.featured-art-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f8f8f8, #ffffff);
+}
+
+.featured-art-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--dark-color);
+    margin-bottom: 60px;
+    font-weight: 700;
+}
+
+.featured-art-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.art-card {
+    background: var(--light-color);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.art-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-hover);
+}
+
+.art-image {
+    height: 250px;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.art-image i {
+    font-size: 4rem;
+    color: var(--dark-color);
+    opacity: 0.3;
+    position: absolute;
+    z-index: 1;
+}
+
+.art-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: var(--light-color);
+    padding: 30px 25px 25px;
+    z-index: 10;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.art-card:hover .art-overlay {
+    transform: translateY(0);
+}
+
+.art-overlay h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.art-overlay p {
+    margin: 0;
+    font-size: 0.95rem;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .evolution-map-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .map-wrapper {
+        min-height: 400px;
+    }
+    
+    .evolution-map {
+        height: 400px;
+    }
+    
+    .map-legend {
+        order: -1;
+    }
+    
+    .country-info-panel {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        transform: none;
+        margin-top: 20px;
+    }
+    
+    .country-info-panel.show {
+        transform: none;
+    }
+    
+    .countries-selected {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .evolution-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .evolution-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .examples-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .evolution-arrow-examples {
+        transform: rotate(90deg);
+    }
+    
+    .symbols-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .featured-art-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+}
+
+/* Quality badge for authentic symbols */
+.quality-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.quality-badge i {
+    font-size: 0.6rem;
+}
+
+/* Enhanced symbol cards */
+.symbol-card {
+    position: relative; /* For quality badge positioning */
+}
+
+/* Error action buttons */
+.error-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.error-actions .btn {
+    min-width: 120px;
+}
+
+/* Refresh notifications */
+.refresh-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: var(--light-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow-hover);
+    padding: 15px 20px;
+    animation: slideInRight 0.3s ease;
+}
+
+.refresh-notification.success {
+    border-left: 4px solid #28a745;
+}
+
+.refresh-notification.error {
+    border-left: 4px solid #dc3545;
+}
+
+.refresh-notification .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.refresh-notification.success i {
+    color: #28a745;
+}
+
+.refresh-notification.error i {
+    color: #dc3545;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Enhanced no symbols message */
+.no-symbols-message {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--dark-color);
+    background: rgba(0,0,0,0.02);
+    border-radius: 15px;
+    border: 2px dashed #ddd;
+}
+
+.no-symbols-message i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.no-symbols-message h3 {
+    color: var(--dark-color);
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.no-symbols-message p {
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* Enhanced error messages */
+.symbols-error,
+.search-error {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--dark-color);
+    background: rgba(220, 53, 69, 0.05);
+    border-radius: 15px;
+    border: 2px solid rgba(220, 53, 69, 0.2);
+}
+
+.symbols-error i,
+.search-error i {
+    font-size: 3rem;
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+
+.symbols-error h3,
+.search-error h3 {
+    color: var(--dark-color);
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.symbols-error p,
+.search-error p {
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* Live data indicator in symbol origin */
+.symbol-origin {
+    position: relative;
+}
+
+.symbol-card[data-live="true"] .symbol-origin::before {
+    content: "🌐";
+    margin-right: 5px;
+}
+
+/* Enhanced modal for live data */
+.symbol-modal .modal-content {
+    max-width: 700px;
+}
+
+.symbol-detail .symbol-visual {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+}
+
+.symbol-info .symbol-meaning,
+.symbol-info .symbol-origin,
+.symbol-info .symbol-evolution {
+    position: relative;
+}
+
+.symbol-info .symbol-meaning::before {
+    content: "💭";
+    position: absolute;
+    left: -25px;
+    top: 0;
+}
+
+.symbol-info .symbol-origin::before {
+    content: "🏛️";
+    position: absolute;
+    left: -25px;
+    top: 0;
+}
+
+.symbol-info .symbol-evolution::before {
+    content: "🌍";
+    position: absolute;
+    left: -25px;
+    top: 0;
+}
+
+/* Loading state for symbol grid */
+.symbols-loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--dark-color);
+}
+
+.symbols-loading .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Source attribution */
+.symbol-source {
+    font-size: 0.8rem;
+    color: #666;
+    text-align: center;
+    margin-top: 15px;
+    font-style: italic;
+}
+
+.symbol-source a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.symbol-source a:hover {
+    text-decoration: underline;
+}
