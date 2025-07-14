@@ -1,8 +1,6 @@
-// js/adinkra-csv-processor.js - CSV-based Adinkra Symbols with AI Enhancement
-
 /**
  * CSV-based Adinkra symbol processor with AI enhancement
- * Reads symbols from CSV and uses AI to generate rich descriptions
+ * Reads symbols from CSV and uses AI to generate descriptions
  */
 class AdinkraCsvProcessor {
     constructor() {
