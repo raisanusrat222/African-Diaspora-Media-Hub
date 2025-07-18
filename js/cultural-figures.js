@@ -19,35 +19,44 @@ class CulturalFiguresManager {
         this.init();
     }
 
-    async init() {
-        try {
-            console.log('🎭 Initializing Cultural Figures Manager...');
-            
-            // Wait for CSV processor to be available
-            await this.waitForProcessor();
-            console.log('✅ CSV processor ready');
-            
-            // Load figures data - get more for smooth scrolling
-            await this.loadFigures();
-            console.log(`✅ Loaded ${this.figures.length} figures`);
-            
-            // Create carousel if on homepage
-            if (this.isHomepage()) {
-                console.log('✅ Homepage detected, creating carousel');
-                this.createCarousel();
+async init() {
+    try {
+        console.log('🎭 Initializing Cultural Figures Manager...');
+
+        // Wait for CSV processor to be ready
+        await this.waitForProcessor();
+        console.log('✅ CSV processor ready');
+
+        // Load figures data
+        await this.loadFigures();
+        console.log(`✅ Loaded ${this.figures.length} figures`);
+
+        // Only set up if on homepage
+        if (this.isHomepage()) {
+            console.log('✅ Homepage detected, using existing cultural figures section');
+
+            // Check if the section exists in DOM
+            const existingSection = document.getElementById('cultural-figures-section');
+            if (existingSection) {
+                this.renderFigures();
                 this.setupEventHandlers();
                 this.startAutoRotation();
+                console.log('✅ Carousel initialized in existing section');
             } else {
-                console.log('ℹ️ Not on homepage, skipping carousel creation');
+                console.warn('⚠️ No cultural figures section found in HTML. Skipping setup.');
             }
-            
-            console.log('🎭 Cultural Figures Manager initialized successfully');
-            
-        } catch (error) {
-            console.error('❌ Error initializing Cultural Figures Manager:', error);
-            this.showError();
+        } else {
+            console.log('ℹ️ Not on homepage, skipping cultural figures setup');
         }
+
+        console.log('🎭 Cultural Figures Manager initialized successfully');
+    } catch (error) {
+        console.error('❌ Error initializing Cultural Figures Manager:', error);
+        this.showError();
     }
+}
+
+
 
     /**
      * Wait for CSV processor to be ready
@@ -116,39 +125,6 @@ class CulturalFiguresManager {
                window.location.pathname.endsWith('/');
     }
 
-    /**
-     * Create the carousel HTML structure
-     */
-    createCarousel() {
-        console.log('🎭 Creating smooth cultural figures carousel...');
-        
-        const targetSection = this.findInsertionPoint();
-        if (!targetSection) {
-            console.error('❌ Could not find insertion point for cultural figures carousel');
-            return;
-        }
-
-        console.log('📍 Insertion point found:', targetSection.className);
-
-        const carouselSection = document.createElement('section');
-        carouselSection.className = 'cultural-figures-preview';
-        carouselSection.innerHTML = this.getCarouselHTML();
-
-        // Insert after the target section
-        if (targetSection.nextSibling) {
-            targetSection.parentNode.insertBefore(carouselSection, targetSection.nextSibling);
-        } else {
-            targetSection.parentNode.appendChild(carouselSection);
-        }
-
-        console.log('✅ Smooth carousel HTML structure created');
-
-        // Wait a moment for DOM to settle, then populate with figures
-        setTimeout(() => {
-            this.renderFigures();
-            this.updateResponsiveSettings();
-        }, 100);
-    }
 
     /**
      * Find the best insertion point on the homepage

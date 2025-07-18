@@ -752,7 +752,7 @@ body {
 }
 
 .featured-card p {
-    color: var(--text-color);
+    color: var(--dark-color);
     margin-bottom: 25px;
     line-height: 1.6;
 }
