@@ -1,4 +1,4 @@
-// js/cultural-figures.js - Smooth Interactive Cultural Figures Component
+// js/cultural-figures.js - Fixed Smooth Interactive Cultural Figures Component
 
 /**
  * Cultural Figures Manager - Optimized for 4-card display
@@ -240,7 +240,7 @@ class CulturalFiguresManager {
     }
 
     /**
-     * Create individual figure card with smooth animations
+     * Create individual figure card with improved image handling
      */
     createFigureCard(figure, index) {
         const card = document.createElement('div');
@@ -249,15 +249,8 @@ class CulturalFiguresManager {
         card.dataset.index = index;
         card.dataset.figureId = figure.id;
 
-        // Create portrait or placeholder
-        const portraitHTML = figure.imageFilename && figure.imageFilename !== 'placeholder.jpg' 
-            ? `<div class="figure-portrait">
-                 <img src="${figure.imagePath}" alt="${figure.name}" loading="lazy" 
-                      onerror="this.parentElement.outerHTML = this.parentElement.dataset.fallback">
-               </div>`
-            : `<div class="figure-portrait-placeholder" title="${figure.name}">
-                 ${this.getInitials(figure.name)}
-               </div>`;
+        // Create portrait with better error handling
+        const portraitHTML = this.createPortraitHTML(figure);
 
         card.innerHTML = `
             ${portraitHTML}
@@ -288,13 +281,32 @@ class CulturalFiguresManager {
             </div>
         `;
 
-        // Store fallback for image errors
-        if (portraitHTML.includes('img')) {
-            const portraitDiv = card.querySelector('.figure-portrait');
-            portraitDiv.dataset.fallback = `<div class="figure-portrait-placeholder">${this.getInitials(figure.name)}</div>`;
-        }
-
         return card;
+    }
+
+    /**
+     * Create portrait HTML with improved fallback handling
+     */
+    createPortraitHTML(figure) {
+        // Check if we have a valid image path
+        if (figure.imagePath && figure.imagePath !== 'assets/images/figures/placeholder.jpg') {
+            return `
+                <div class="figure-portrait">
+                    <img src="${figure.imagePath}" 
+                         alt="${figure.name}" 
+                         loading="lazy" 
+                         onload="this.style.opacity = '1';"
+                         onerror="this.parentElement.outerHTML = '<div class=\\"figure-portrait-placeholder\\">${this.getInitials(figure.name)}</div>'">
+                </div>
+            `;
+        } else {
+            // Use placeholder directly
+            return `
+                <div class="figure-portrait-placeholder" title="${figure.name}">
+                    ${this.getInitials(figure.name)}
+                </div>
+            `;
+        }
     }
 
     /**
@@ -770,14 +782,11 @@ class CulturalFiguresManager {
     }
 
     getFigureDetailsHTML(figure, biography, aiInsights) {
+        const portraitHTML = this.createModalPortraitHTML(figure);
+        
         return `
             <div class="modal-header">
-                <div class="modal-figure-portrait">
-                    ${figure.imageFilename && figure.imageFilename !== 'placeholder.jpg' 
-                        ? `<img src="${figure.imagePath}" alt="${figure.name}" onerror="this.style.display='none'">`
-                        : `<div class="modal-portrait-placeholder">${this.getInitials(figure.name)}</div>`
-                    }
-                </div>
+                ${portraitHTML}
                 <div class="modal-figure-info">
                     <h2>${figure.name}</h2>
                     <div class="modal-lifespan">${figure.lifespan}</div>
@@ -819,6 +828,27 @@ class CulturalFiguresManager {
         `;
     }
 
+    /**
+     * Create modal portrait HTML with better fallback
+     */
+    createModalPortraitHTML(figure) {
+        if (figure.imagePath && figure.imagePath !== 'assets/images/figures/placeholder.jpg') {
+            return `
+                <div class="modal-figure-portrait">
+                    <img src="${figure.imagePath}" 
+                         alt="${figure.name}" 
+                         onerror="this.style.display='none'; this.parentElement.innerHTML = '<div class=\\"modal-portrait-placeholder\\">${this.getInitials(figure.name)}</div>'">
+                </div>
+            `;
+        } else {
+            return `
+                <div class="modal-portrait-placeholder">
+                    ${this.getInitials(figure.name)}
+                </div>
+            `;
+        }
+    }
+
     getConnectionsHTML(figure, connections, aiInsights) {
         return `
             <div class="modal-header">
@@ -831,10 +861,7 @@ class CulturalFiguresManager {
                         ${connections.map(connected => `
                             <div class="connection-card" onclick="culturalFiguresManager.showFigureDetails(${connected.id})">
                                 <div class="connection-portrait">
-                                    ${connected.imageFilename && connected.imageFilename !== 'placeholder.jpg'
-                                        ? `<img src="${connected.imagePath}" alt="${connected.name}">`
-                                        : `<div class="connection-placeholder">${this.getInitials(connected.name)}</div>`
-                                    }
+                                    ${this.createConnectionPortraitHTML(connected)}
                                 </div>
                                 <div class="connection-info">
                                     <h4>${connected.name}</h4>
@@ -860,6 +887,17 @@ class CulturalFiguresManager {
                 `}
             </div>
         `;
+    }
+
+    /**
+     * Create connection portrait HTML
+     */
+    createConnectionPortraitHTML(connected) {
+        if (connected.imagePath && connected.imagePath !== 'assets/images/figures/placeholder.jpg') {
+            return `<img src="${connected.imagePath}" alt="${connected.name}" onerror="this.parentElement.innerHTML = '<div class=\\"connection-placeholder\\">${this.getInitials(connected.name)}</div>'">`;
+        } else {
+            return `<div class="connection-placeholder">${this.getInitials(connected.name)}</div>`;
+        }
     }
 
     showErrorModal(message) {
@@ -954,7 +992,7 @@ class CulturalFiguresManager {
     }
 
     /**
-     * Fallback figures if CSV fails - optimized for 4-card display
+     * Enhanced fallback figures with proper image handling
      */
     getFallbackFigures() {
         return [
@@ -964,14 +1002,14 @@ class CulturalFiguresManager {
                 birthYear: 1928,
                 deathYear: 2014,
                 isAlive: false,
-                achievement: "Poet and civil rights activist",
-                famousQuote: "Still I Rise",
-                shortBio: "Poet, memoirist, and civil rights activist known for 'I Know Why the Caged Bird Sings'",
+                achievement: "Renowned poet, memoirist, and civil rights activist",
+                famousQuote: "There is no greater agony than bearing an untold story inside you.",
+                shortBio: "Maya Angelou was an American poet, memoirist, and civil rights activist. She published seven autobiographies, three books of essays, several books of poetry, and is credited with a list of plays, movies, and television shows spanning over 50 years.",
                 era: "Modern",
                 fields: ["Literature", "Civil Rights"],
                 lifespan: "1928 - 2014",
-                imagePath: "assets/images/figures/maya-angelou.jpg",
-                imageFilename: "maya-angelou.jpg",
+                imagePath: null, // Will use placeholder
+                imageFilename: null,
                 connections: ["James Baldwin", "Martin Luther King Jr."]
             },
             {
@@ -980,14 +1018,14 @@ class CulturalFiguresManager {
                 birthYear: 1918,
                 deathYear: 2013,
                 isAlive: false,
-                achievement: "Anti-apartheid leader and South African President",
-                famousQuote: "Education is the most powerful weapon",
-                shortBio: "Anti-apartheid revolutionary who became South Africa's first Black president",
+                achievement: "Anti-apartheid revolutionary and South African President",
+                famousQuote: "Education is the most powerful weapon which you can use to change the world.",
+                shortBio: "Nelson Rolihlahla Mandela was a South African anti-apartheid revolutionary, political leader, and philanthropist who served as President of South Africa from 1994 to 1999.",
                 era: "Modern",
                 fields: ["Politics", "Human Rights"],
                 lifespan: "1918 - 2013",
-                imagePath: "assets/images/figures/nelson-mandela.jpg",
-                imageFilename: "nelson-mandela.jpg",
+                imagePath: null,
+                imageFilename: null,
                 connections: ["Desmond Tutu", "Oliver Tambo"]
             },
             {
@@ -996,14 +1034,14 @@ class CulturalFiguresManager {
                 birthYear: 1945,
                 deathYear: 1981,
                 isAlive: false,
-                achievement: "Reggae legend and Rastafarian icon",
-                famousQuote: "One love, one heart",
-                shortBio: "Reggae musician who brought Jamaican music and Rastafarian beliefs to global audiences",
+                achievement: "Reggae legend and global cultural icon",
+                famousQuote: "One love, one heart, let's get together and feel all right.",
+                shortBio: "Robert Nesta Marley was a Jamaican singer, songwriter, and musician. Considered one of the pioneers of reggae, his musical career was marked by fusing elements of reggae, ska, and rocksteady.",
                 era: "Modern",
                 fields: ["Music", "Spirituality"],
                 lifespan: "1945 - 1981",
-                imagePath: "assets/images/figures/bob-marley.jpg",
-                imageFilename: "bob-marley.jpg",
+                imagePath: null,
+                imageFilename: null,
                 connections: ["Peter Tosh", "Jimmy Cliff"]
             },
             {
@@ -1012,14 +1050,14 @@ class CulturalFiguresManager {
                 birthYear: 1930,
                 deathYear: 2013,
                 isAlive: false,
-                achievement: "Author of 'Things Fall Apart'",
-                famousQuote: "If you don't like someone's story, write your own",
-                shortBio: "Nigerian novelist who revolutionized African literature in English",
+                achievement: "Author of 'Things Fall Apart' and literary pioneer",
+                famousQuote: "If you don't like someone's story, write your own.",
+                shortBio: "Chinua Achebe was a Nigerian novelist, poet, professor, and critic. His first novel Things Fall Apart is the most widely read book in modern African literature.",
                 era: "Modern",
                 fields: ["Literature", "Education"],
                 lifespan: "1930 - 2013",
-                imagePath: "assets/images/figures/chinua-achebe.jpg",
-                imageFilename: "chinua-achebe.jpg",
+                imagePath: null,
+                imageFilename: null,
                 connections: ["Wole Soyinka", "Ngugi wa Thiong'o"]
             },
             {
@@ -1028,14 +1066,14 @@ class CulturalFiguresManager {
                 birthYear: 1940,
                 deathYear: 2011,
                 isAlive: false,
-                achievement: "First African woman Nobel Peace Prize winner",
-                famousQuote: "When we plant trees, we plant the seeds of peace",
-                shortBio: "Environmental activist and Nobel laureate who founded the Green Belt Movement",
+                achievement: "First African woman to receive the Nobel Peace Prize",
+                famousQuote: "When we plant trees, we plant the seeds of peace and seeds of hope.",
+                shortBio: "Wangari Muta Maathai was a Kenyan social, environmental, and political activist and the first African woman to win the Nobel Peace Prize.",
                 era: "Contemporary",
-                fields: ["Activism", "Environment"],
+                fields: ["Environmental Activism", "Politics"],
                 lifespan: "1940 - 2011",
-                imagePath: "assets/images/figures/wangari-maathai.jpg",
-                imageFilename: "wangari-maathai.jpg",
+                imagePath: null,
+                imageFilename: null,
                 connections: ["Vandana Shiva", "Al Gore"]
             },
             {
@@ -1044,14 +1082,14 @@ class CulturalFiguresManager {
                 birthYear: 1961,
                 deathYear: null,
                 isAlive: true,
-                achievement: "First African American U.S. President",
-                famousQuote: "Yes we can",
-                shortBio: "44th President of the United States and bestselling author",
+                achievement: "44th President of the United States",
+                famousQuote: "Yes we can.",
+                shortBio: "Barack Hussein Obama II is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017.",
                 era: "Contemporary",
                 fields: ["Politics", "Law"],
                 lifespan: "1961 - present",
-                imagePath: "assets/images/figures/barack-obama.jpg",
-                imageFilename: "barack-obama.jpg",
+                imagePath: null,
+                imageFilename: null,
                 connections: ["Michelle Obama", "Nelson Mandela"]
             },
             {
@@ -1061,13 +1099,13 @@ class CulturalFiguresManager {
                 deathYear: null,
                 isAlive: true,
                 achievement: "Media mogul and philanthropist",
-                famousQuote: "The biggest adventure you can take is to live the life of your dreams",
-                shortBio: "Media executive, actress, and philanthropist who revolutionized television",
+                famousQuote: "The biggest adventure you can take is to live the life of your dreams.",
+                shortBio: "Oprah Gail Winfrey is an American talk show host, television producer, actress, media executive, and philanthropist.",
                 era: "Contemporary",
                 fields: ["Media", "Philanthropy"],
                 lifespan: "1954 - present",
-                imagePath: "assets/images/figures/oprah-winfrey.jpg",
-                imageFilename: "oprah-winfrey.jpg",
+                imagePath: null,
+                imageFilename: null,
                 connections: ["Maya Angelou", "Gayle King"]
             },
             {
@@ -1077,13 +1115,13 @@ class CulturalFiguresManager {
                 deathYear: 1940,
                 isAlive: false,
                 achievement: "Founder of UNIA and Black nationalism leader",
-                famousQuote: "A people without knowledge of their past is like a tree without roots",
-                shortBio: "Pan-Africanist leader who promoted Black pride and economic independence",
+                famousQuote: "A people without the knowledge of their past history, origin and culture is like a tree without roots.",
+                shortBio: "Marcus Mosiah Garvey Jr. was a Jamaican political activist, publisher, journalist, entrepreneur, and orator.",
                 era: "Colonial",
                 fields: ["Activism", "Politics"],
                 lifespan: "1887 - 1940",
-                imagePath: "assets/images/figures/marcus-garvey.jpg",
-                imageFilename: "marcus-garvey.jpg",
+                imagePath: null,
+                imageFilename: null,
                 connections: ["W.E.B. Du Bois", "Amy Jacques Garvey"]
             }
         ];

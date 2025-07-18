@@ -1,4 +1,4 @@
-// js/figure-csv-processor.js - Cultural Figures CSV Data Processor
+// js/figure-csv-processor.js - Fixed Cultural Figures CSV Data Processor
 
 /**
  * Figure CSV Processor
@@ -40,7 +40,12 @@ class FigureCsvProcessor {
             
         } catch (error) {
             this.isInitializing = false;
-            throw error;
+            console.error('❌ CSV initialization failed, using fallback data:', error);
+            // Use fallback data instead of throwing
+            this.figuresData = this.getFallbackFigures();
+            this.processedFigures = this.processRawFigures(this.figuresData);
+            this.isLoaded = true;
+            this.notifyReady();
         }
         
         return this.initPromise;
@@ -65,12 +70,7 @@ class FigureCsvProcessor {
             
         } catch (error) {
             console.error('❌ Error initializing Figure CSV Processor:', error);
-            console.log('🔄 Using fallback figures...');
-            
-            this.figuresData = this.getFallbackFigures();
-            this.processedFigures = this.processRawFigures(this.figuresData);
-            
-            console.log(`✅ Loaded ${this.figuresData.length} fallback figures`);
+            throw error; // Let the init method handle fallback
         }
     }
 
@@ -104,7 +104,6 @@ class FigureCsvProcessor {
             
             if (!response.ok) {
                 console.error('❌ Fetch failed with status:', response.status);
-                console.error('❌ Response details:', await response.text());
                 throw new Error(`Failed to fetch CSV: ${response.status}`);
             }
 
@@ -131,7 +130,6 @@ class FigureCsvProcessor {
             
         } catch (error) {
             console.error('❌ Error loading figures CSV:', error);
-            console.log('🔄 Falling back to static figures...');
             throw error;
         }
     }
@@ -144,30 +142,17 @@ class FigureCsvProcessor {
             // Check if Papa Parse is available
             if (typeof Papa === 'undefined') {
                 console.error('❌ Papa Parse library not loaded');
-                console.log('🔄 Attempting basic CSV parsing fallback...');
+                console.log('🔄 Attempting robust CSV parsing fallback...');
                 
                 try {
-                    // Basic CSV parsing fallback
-                    const lines = csvText.trim().split('\n');
-                    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-                    const data = [];
-                    
-                    for (let i = 1; i < lines.length; i++) {
-                        if (lines[i].trim()) {
-                            const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
-                            const row = {};
-                            headers.forEach((header, index) => {
-                                row[header] = values[index] || '';
-                            });
-                            data.push(row);
-                        }
-                    }
-                    
-                    console.log('✅ Basic CSV parsing successful:', data.length, 'rows');
-                    resolve({ data, errors: [], meta: { fields: headers } });
+                    // Use more robust CSV parsing that handles quotes properly
+                    const result = this.parseCSVRobust(csvText);
+                    console.log('✅ Robust CSV parsing successful:', result.data.length, 'rows');
+                    console.log('Sample row:', result.data[0]);
+                    resolve(result);
                 } catch (error) {
-                    console.error('❌ Basic CSV parsing failed:', error);
-                    reject(new Error('CSV parsing failed: Papa Parse not available and fallback failed'));
+                    console.error('❌ Robust CSV parsing failed:', error);
+                    reject(new Error('CSV parsing failed: Both Papa Parse and fallback failed'));
                 }
                 return;
             }
@@ -177,9 +162,23 @@ class FigureCsvProcessor {
                 header: true,
                 dynamicTyping: true,
                 skipEmptyLines: true,
-                delimitersToGuess: [',', '\t', '|', ';'],
+                delimiter: ',',
+                quoteChar: '"',
+                escapeChar: '"',
                 complete: function(results) {
                     console.log('✅ Papa Parse completed:', results.data.length, 'rows');
+                    console.log('CSV Headers:', results.meta.fields);
+                    console.log('Sample row:', results.data[0]);
+                    
+                    // Validate the parsing
+                    if (results.data.length > 0) {
+                        const firstRow = results.data[0];
+                        console.log('🔍 Validating parsed data:');
+                        console.log('Name:', firstRow.name);
+                        console.log('Image filename:', firstRow.image_filename);
+                        console.log('Achievement:', firstRow.achievement);
+                    }
+                    
                     resolve(results);
                 },
                 error: function(error) {
@@ -191,11 +190,101 @@ class FigureCsvProcessor {
     }
 
     /**
+     * Robust CSV parser that handles quoted fields properly
+     */
+    parseCSVRobust(csvText) {
+        const lines = csvText.trim().split('\n');
+        const headers = this.parseCSVLine(lines[0]);
+        
+        console.log('📋 Parsed headers:', headers);
+        
+        const data = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+            if (lines[i].trim()) {
+                const values = this.parseCSVLine(lines[i]);
+                
+                // Skip rows that don't have the right number of columns
+                if (values.length !== headers.length) {
+                    console.warn(`Row ${i} has ${values.length} values but expected ${headers.length}:`, values);
+                    continue;
+                }
+                
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                
+                data.push(row);
+            }
+        }
+        
+        return {
+            data: data,
+            errors: [],
+            meta: { fields: headers }
+        };
+    }
+
+    /**
+     * Parse a single CSV line with proper quote handling - FIXED VERSION
+     */
+    parseCSVLine(line) {
+        const values = [];
+        let current = '';
+        let inQuotes = false;
+        let i = 0;
+        
+        while (i < line.length) {
+            const char = line[i];
+            
+            if (char === '"') {
+                if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
+                    // Escaped quote (double quote)
+                    current += '"';
+                    i += 2;
+                } else {
+                    // Toggle quote state
+                    inQuotes = !inQuotes;
+                    i++;
+                }
+            } else if (char === ',' && !inQuotes) {
+                // End of field
+                values.push(current.trim());
+                current = '';
+                i++;
+            } else {
+                current += char;
+                i++;
+            }
+        }
+        
+        // Add the last field
+        values.push(current.trim());
+        
+        // Clean up quotes from values
+        return values.map(value => {
+            // Remove surrounding quotes if present
+            if (value.startsWith('"') && value.endsWith('"')) {
+                return value.slice(1, -1);
+            }
+            return value;
+        });
+    }
+
+    /**
      * Process raw CSV data into structured figures
      */
     processRawFigures(rawData) {
-        return rawData.map(row => {
-            // Clean and structure the data
+        return rawData.map((row, index) => {
+            // Debug logging for first few rows
+            if (index < 3) {
+                console.log(`Row ${index}:`, row);
+                console.log(`Image filename field:`, row.image_filename);
+                console.log(`Achievement field:`, row.achievement);
+            }
+
+            // Clean and structure the data with validation
             const figure = {
                 id: this.safeParseInt(row.id),
                 name: this.cleanString(row.name),
@@ -209,7 +298,7 @@ class FigureCsvProcessor {
                 achievement: this.cleanString(row.achievement),
                 famousQuote: this.cleanString(row.famous_quote),
                 shortBio: this.cleanString(row.short_bio),
-                imageFilename: this.cleanString(row.image_filename),
+                imageFilename: this.validateImageFilename(row.image_filename),
                 era: this.cleanString(row.era),
                 gender: this.cleanString(row.gender),
                 status: this.cleanString(row.status),
@@ -219,10 +308,20 @@ class FigureCsvProcessor {
                 // Computed fields
                 lifespan: this.calculateLifespan(row.birth_year, row.death_year),
                 age: this.calculateAge(row.birth_year, row.death_year),
-                imagePath: this.getImagePath(row.image_filename),
+                imagePath: this.getImagePath(this.validateImageFilename(row.image_filename)),
                 fields: this.combineFields(row.primary_field, row.secondary_fields),
                 searchableText: this.createSearchableText(row)
             };
+
+            // Debug logging for processed figure
+            if (index < 3) {
+                console.log(`Processed figure ${index}:`, {
+                    name: figure.name,
+                    imageFilename: figure.imageFilename,
+                    imagePath: figure.imagePath,
+                    achievement: figure.achievement
+                });
+            }
 
             return figure;
         }).filter(figure => figure.name && figure.id); // Filter out invalid entries
@@ -446,13 +545,49 @@ class FigureCsvProcessor {
         return endYear - birthYear;
     }
 
+    /**
+     * Validate and clean image filename
+     */
+    validateImageFilename(filename) {
+        if (!filename) return null;
+        
+        const cleaned = this.cleanString(filename);
+        
+        // Check if this looks like an achievement description instead of filename
+        if (cleaned.length > 50 || cleaned.includes(' ') && !cleaned.includes('.')) {
+            console.warn('Invalid image filename detected (looks like description):', cleaned);
+            return null;
+        }
+        
+        // Check if it's a valid image filename
+        const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const hasValidExtension = validExtensions.some(ext => cleaned.toLowerCase().endsWith(ext));
+        
+        if (!hasValidExtension && cleaned !== 'placeholder.jpg') {
+            console.warn('Invalid image filename (no valid extension):', cleaned);
+            return null;
+        }
+        
+        return cleaned;
+    }
+
     getImagePath(filename) {
-        if (!filename) return 'assets/images/figures/placeholder.jpg';
+        if (!filename || filename === 'placeholder.jpg' || filename === '') {
+            return null; // Return null for placeholder handling
+        }
+        
+        // Handle different possible filename formats
+        if (filename.startsWith('http')) {
+            return filename; // Full URL
+        }
+        
+        // Construct relative path
         return `assets/images/figures/${filename}`;
     }
 
     combineFields(primary, secondary) {
-        const fields = [primary];
+        const fields = [];
+        if (primary) fields.push(primary);
         if (secondary) {
             fields.push(...this.parseStringArray(secondary));
         }
@@ -472,7 +607,7 @@ class FigureCsvProcessor {
             row.famous_quote
         ];
         
-        return searchFields.join(' ').toLowerCase();
+        return searchFields.filter(field => field).join(' ').toLowerCase();
     }
 
     /**
@@ -525,7 +660,7 @@ class FigureCsvProcessor {
     }
 
     /**
-     * Fallback figures if CSV fails to load
+     * Enhanced fallback figures with proper content
      */
     getFallbackFigures() {
         return [
@@ -537,10 +672,10 @@ class FigureCsvProcessor {
                 region: "United States",
                 heritage: "African American",
                 primary_field: "Literature",
-                secondary_fields: "Civil Rights,Arts",
-                achievement: "Poet and civil rights activist",
-                famous_quote: "Still I Rise",
-                short_bio: "Poet, memoirist, and civil rights activist known for 'I Know Why the Caged Bird Sings'",
+                secondary_fields: "Civil Rights,Activism",
+                achievement: "Renowned poet, memoirist, and civil rights activist",
+                famous_quote: "There is no greater agony than bearing an untold story inside you.",
+                short_bio: "Maya Angelou was an American poet, memoirist, and civil rights activist. She published seven autobiographies, three books of essays, several books of poetry, and is credited with a list of plays, movies, and television shows spanning over 50 years. She received dozens of awards and more than 50 honorary degrees.",
                 image_filename: "maya-angelou.jpg",
                 era: "Modern",
                 gender: "Female",
@@ -556,10 +691,10 @@ class FigureCsvProcessor {
                 region: "South Africa",
                 heritage: "Xhosa",
                 primary_field: "Politics",
-                secondary_fields: "Law,Human Rights",
-                achievement: "Anti-apartheid leader and South African President",
-                famous_quote: "Education is the most powerful weapon",
-                short_bio: "Anti-apartheid revolutionary who became South Africa's first Black president",
+                secondary_fields: "Human Rights,Law",
+                achievement: "Anti-apartheid revolutionary and South African President",
+                famous_quote: "Education is the most powerful weapon which you can use to change the world.",
+                short_bio: "Nelson Rolihlahla Mandela was a South African anti-apartheid revolutionary, political leader, and philanthropist who served as President of South Africa from 1994 to 1999. He was the country's first black head of state and the first elected in a fully representative democratic election.",
                 image_filename: "nelson-mandela.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -576,9 +711,9 @@ class FigureCsvProcessor {
                 heritage: "Jamaican",
                 primary_field: "Music",
                 secondary_fields: "Spirituality,Activism",
-                achievement: "Reggae legend and Rastafarian icon",
-                famous_quote: "One love, one heart",
-                short_bio: "Reggae musician who brought Jamaican music and Rastafarian beliefs to global audiences",
+                achievement: "Reggae legend and global cultural icon",
+                famous_quote: "One love, one heart, let's get together and feel all right.",
+                short_bio: "Robert Nesta Marley was a Jamaican singer, songwriter, and musician. Considered one of the pioneers of reggae, his musical career was marked by fusing elements of reggae, ska, and rocksteady, as well as his distinctive vocal and songwriting style.",
                 image_filename: "bob-marley.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -595,9 +730,9 @@ class FigureCsvProcessor {
                 heritage: "Igbo",
                 primary_field: "Literature",
                 secondary_fields: "Education,Academia",
-                achievement: "Author of 'Things Fall Apart'",
-                famous_quote: "If you don't like someone's story, write your own",
-                short_bio: "Nigerian novelist who revolutionized African literature in English",
+                achievement: "Author of 'Things Fall Apart' and literary pioneer",
+                famous_quote: "If you don't like someone's story, write your own.",
+                short_bio: "Chinua Achebe was a Nigerian novelist, poet, professor, and critic. His first novel Things Fall Apart is the most widely read book in modern African literature. Raised by his parents in the Igbo town of Ogidi in southeastern Nigeria, Achebe excelled at school and won a scholarship to study medicine.",
                 image_filename: "chinua-achebe.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -612,11 +747,11 @@ class FigureCsvProcessor {
                 death_year: 2011,
                 region: "Kenya",
                 heritage: "Kikuyu",
-                primary_field: "Activism",
-                secondary_fields: "Environment,Politics",
-                achievement: "First African woman Nobel Peace Prize winner",
-                famous_quote: "When we plant trees, we plant the seeds of peace",
-                short_bio: "Environmental activist and Nobel laureate who founded the Green Belt Movement",
+                primary_field: "Environmental Activism",
+                secondary_fields: "Politics,Women's Rights",
+                achievement: "First African woman to receive the Nobel Peace Prize",
+                famous_quote: "When we plant trees, we plant the seeds of peace and seeds of hope.",
+                short_bio: "Wangari Muta Maathai was a Kenyan social, environmental, and political activist and the first African woman to win the Nobel Peace Prize. She was educated in the United States at Mount St. Scholastica College and the University of Pittsburgh, as well as the University of Nairobi in Kenya.",
                 image_filename: "wangari-maathai.jpg",
                 era: "Contemporary",
                 gender: "Female",
@@ -633,9 +768,9 @@ class FigureCsvProcessor {
                 heritage: "Kenyan-American",
                 primary_field: "Politics",
                 secondary_fields: "Law,Writing",
-                achievement: "First African American U.S. President",
-                famous_quote: "Yes we can",
-                short_bio: "44th President of the United States and bestselling author",
+                achievement: "44th President of the United States",
+                famous_quote: "Yes we can.",
+                short_bio: "Barack Hussein Obama II is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017. A member of the Democratic Party, Obama was the first African-American president of the United States.",
                 image_filename: "barack-obama.jpg",
                 era: "Contemporary",
                 gender: "Male",
@@ -653,8 +788,8 @@ class FigureCsvProcessor {
                 primary_field: "Media",
                 secondary_fields: "Philanthropy,Business",
                 achievement: "Media mogul and philanthropist",
-                famous_quote: "The biggest adventure you can take is to live the life of your dreams",
-                short_bio: "Media executive, actress, and philanthropist who revolutionized television",
+                famous_quote: "The biggest adventure you can take is to live the life of your dreams.",
+                short_bio: "Oprah Gail Winfrey is an American talk show host, television producer, actress, media executive, and philanthropist. She is best known for her talk show, The Oprah Winfrey Show, broadcast from Chicago, which was the highest-rated television program of its kind in history.",
                 image_filename: "oprah-winfrey.jpg",
                 era: "Contemporary",
                 gender: "Female",
@@ -672,13 +807,89 @@ class FigureCsvProcessor {
                 primary_field: "Activism",
                 secondary_fields: "Politics,Business",
                 achievement: "Founder of UNIA and Black nationalism leader",
-                famous_quote: "A people without knowledge of their past is like a tree without roots",
-                short_bio: "Pan-Africanist leader who promoted Black pride and economic independence",
+                famous_quote: "A people without the knowledge of their past history, origin and culture is like a tree without roots.",
+                short_bio: "Marcus Mosiah Garvey Jr. was a Jamaican political activist, publisher, journalist, entrepreneur, and orator. He was the founder and first President-General of the Universal Negro Improvement Association and African Communities League, through which he declared himself Provisional President of Africa.",
                 image_filename: "marcus-garvey.jpg",
                 era: "Colonial",
                 gender: "Male",
                 status: "deceased",
                 connections: "W.E.B. Du Bois,Amy Jacques Garvey",
+                ai_enhanced: true
+            },
+            {
+                id: 9,
+                name: "James Baldwin",
+                birth_year: 1924,
+                death_year: 1987,
+                region: "United States",
+                heritage: "African American",
+                primary_field: "Literature",
+                secondary_fields: "Civil Rights,Social Criticism",
+                achievement: "Influential writer and social critic",
+                famous_quote: "Not everything that is faced can be changed, but nothing can be changed until it is faced.",
+                short_bio: "James Arthur Baldwin was an American novelist, essayist, playwright, poet, and social critic. His essays, collected in Notes of a Native Son, explore intricacies of racial, sexual, and class distinctions in Western societies, most notably in regard to his own experience as a black man in America.",
+                image_filename: "james-baldwin.jpg",
+                era: "Modern",
+                gender: "Male",
+                status: "deceased",
+                connections: "Maya Angelou,Langston Hughes",
+                ai_enhanced: true
+            },
+            {
+                id: 10,
+                name: "Frida Kahlo",
+                birth_year: 1907,
+                death_year: 1954,
+                region: "Mexico",
+                heritage: "Mexican",
+                primary_field: "Visual Arts",
+                secondary_fields: "Politics,Activism",
+                achievement: "Iconic painter and feminist symbol",
+                famous_quote: "I paint my own reality.",
+                short_bio: "Frida Kahlo was a Mexican artist who painted many portraits, self-portraits, and works inspired by the nature and artifacts of Mexico. Inspired by the country's popular culture, she employed a naïve folk art style to explore questions of identity, postcolonialism, gender, class, and race in Mexican society.",
+                image_filename: "frida-kahlo.jpg",
+                era: "Modern",
+                gender: "Female",
+                status: "deceased",
+                connections: "Diego Rivera,André Breton",
+                ai_enhanced: true
+            },
+            {
+                id: 11,
+                name: "Martin Luther King Jr.",
+                birth_year: 1929,
+                death_year: 1968,
+                region: "United States",
+                heritage: "African American",
+                primary_field: "Civil Rights",
+                secondary_fields: "Religion,Activism",
+                achievement: "Leader of the American civil rights movement",
+                famous_quote: "I have a dream that one day this nation will rise up and live out the true meaning of its creed.",
+                short_bio: "Martin Luther King Jr. was an American Baptist minister and activist who became the most visible spokesperson and leader in the American civil rights movement from 1955 until his assassination in 1968. King advanced civil rights through nonviolence and civil disobedience, inspired by his Christian beliefs and the nonviolent activism of Mahatma Gandhi.",
+                image_filename: "martin-luther-king.jpg",
+                era: "Modern",
+                gender: "Male",
+                status: "deceased",
+                connections: "Maya Angelou,Rosa Parks",
+                ai_enhanced: true
+            },
+            {
+                id: 12,
+                name: "Kwame Nkrumah",
+                birth_year: 1909,
+                death_year: 1972,
+                region: "Ghana",
+                heritage: "Akan",
+                primary_field: "Politics",
+                secondary_fields: "Pan-Africanism,Philosophy",
+                achievement: "First President of Ghana and Pan-African leader",
+                famous_quote: "We face neither East nor West; we face forward.",
+                short_bio: "Kwame Nkrumah was a Ghanaian politician and revolutionary. He was the first Prime Minister and President of Ghana, having led the Gold Coast to independence from Britain in 1957. An influential advocate of Pan-Africanism, Nkrumah was a founding member of the Organization of African Unity and winner of the Lenin Peace Prize in 1962.",
+                image_filename: "kwame-nkrumah.jpg",
+                era: "Modern",
+                gender: "Male",
+                status: "deceased",
+                connections: "Julius Nyerere,Gamal Abdel Nasser",
                 ai_enhanced: true
             }
         ];
