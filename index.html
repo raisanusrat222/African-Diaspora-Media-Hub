@@ -431,6 +431,62 @@
             </div>
         </section>
 
+        <!-- Cultural Figures Section - Added Manually -->
+        <section class="cultural-figures-preview" id="cultural-figures-section">
+            <div class="container">
+                <h2 class="section-title">Influential Diaspora Figures</h2>
+                
+                <!-- Loading State -->
+                <div class="figures-loading" id="figures-loading">
+                    <div class="adinkra-loader"></div>
+                    <p class="loading-text">Loading cultural figures...</p>
+                    <p class="loading-subtext">Connecting wisdom across time and space</p>
+                </div>
+                
+                <!-- Error State -->
+                <div class="figures-error" id="figures-error" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Unable to Load Cultural Figures</h3>
+                    <p>We're having trouble loading the cultural figures. Please check your connection and try refreshing the page.</p>
+                    <button class="btn btn-primary" onclick="location.reload()">
+                        <i class="fas fa-redo"></i>
+                        Refresh Page
+                    </button>
+                </div>
+                
+                <!-- Carousel Container -->
+                <div class="figures-carousel" id="figures-carousel" style="display: none;">
+                    <div class="figures-track" id="figures-track">
+                        <!-- Figure cards will be inserted here -->
+                    </div>
+                    
+                    <!-- Navigation arrows -->
+                    <button class="carousel-nav prev" id="carousel-prev" aria-label="Previous figures" title="Previous">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-nav next" id="carousel-next" aria-label="Next figures" title="Next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Carousel controls -->
+                <div class="carousel-controls" id="carousel-controls" style="display: none;">
+                    <div class="carousel-dots" id="carousel-dots">
+                        <!-- Dots will be generated based on figure count -->
+                    </div>
+                </div>
+                
+                <!-- View all link -->
+                <div class="view-all-figures" id="view-all-figures" style="display: none;">
+                    <a href="cultural-figures.html" class="view-all-btn" onclick="loadPage('cultural-figures')">
+                        <i class="fas fa-users"></i>
+                        <span>Explore All Cultural Figures</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- Featured Content -->
         <section class="featured-content">
             <div class="container">
@@ -475,7 +531,9 @@
             </div>
         </section>
 
-
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="container">
                 <!-- Country Profile Information -->
                 <div class="country-info-section" style="margin-top: 60px;">
                     <h2>Explore Diaspora Communities</h2>
@@ -547,6 +605,7 @@
         </div>
     </footer>
 
+    
     <!-- Scripts -->
     <script src="js/main.js"></script>
     <script src="js/navigation.js"></script>
@@ -562,5 +621,57 @@
     <script src="js/env-loader.js"></script>
     <script src="js/ai-service.js"></script>
     <script src="js/ai-config-secure.js"></script>
+    
+    <!-- Cultural Figures Integration Script -->
+    <script>
+        // Enhanced cultural figures integration
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎭 DOM loaded, initializing cultural figures...');
+            
+            // Wait for the CSV processor to be ready
+            function initializeCulturalFiguresUI() {
+                const loadingElement = document.getElementById('figures-loading');
+                const errorElement = document.getElementById('figures-error');
+                const carouselElement = document.getElementById('figures-carousel');
+                const controlsElement = document.getElementById('carousel-controls');
+                const viewAllElement = document.getElementById('view-all-figures');
+                
+                if (window.figureCsvProcessor && window.figureCsvProcessor.isLoaded) {
+                    console.log('✅ CSV processor ready, loading figures...');
+                    
+                    // Hide loading, show carousel
+                    if (loadingElement) loadingElement.style.display = 'none';
+                    if (errorElement) errorElement.style.display = 'none';
+                    if (carouselElement) carouselElement.style.display = 'block';
+                    if (controlsElement) controlsElement.style.display = 'flex';
+                    if (viewAllElement) viewAllElement.style.display = 'block';
+                    
+                    // Initialize the carousel with existing cultural figures manager
+                    if (window.culturalFiguresManager) {
+                        window.culturalFiguresManager.renderFigures();
+                    }
+                } else {
+                    console.log('⏳ CSV processor not ready yet, waiting...');
+                    // Show error after timeout
+                    setTimeout(() => {
+                        if (!window.figureCsvProcessor || !window.figureCsvProcessor.isLoaded) {
+                            console.log('❌ CSV processor failed to load, showing error');
+                            if (loadingElement) loadingElement.style.display = 'none';
+                            if (errorElement) errorElement.style.display = 'block';
+                        }
+                    }, 10000); // 10 second timeout
+                }
+            }
+            
+            // Listen for processor ready event
+            document.addEventListener('figureCsvProcessorReady', function() {
+                console.log('🎉 Received processor ready event');
+                initializeCulturalFiguresUI();
+            });
+            
+            // Also check immediately in case it's already ready
+            setTimeout(initializeCulturalFiguresUI, 1000);
+        });
+    </script>
 </body>
 </html>

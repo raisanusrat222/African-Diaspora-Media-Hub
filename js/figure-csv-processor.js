@@ -1,4 +1,4 @@
-// js/figure-csv-processor.js - Fixed Cultural Figures CSV Data Processor
+// js/figure-csv-processor.js - Complete Cultural Figures CSV Data Processor
 
 /**
  * Figure CSV Processor
@@ -15,14 +15,12 @@ class FigureCsvProcessor {
         this.isInitializing = false;
         this.initPromise = null;
         
-        // Debug: Log the expected path
         console.log('📁 CSV path configured as:', this.csvPath);
         console.log('🌐 Current location:', window.location.href);
         console.log('📂 Expected full URL:', new URL(this.csvPath, window.location.href).href);
     }
 
     async init() {
-        // Prevent multiple initializations
         if (this.isInitializing || this.isLoaded) {
             return this.initPromise || Promise.resolve();
         }
@@ -34,14 +32,10 @@ class FigureCsvProcessor {
             await this.initPromise;
             this.isLoaded = true;
             this.isInitializing = false;
-            
-            // Notify that processor is ready
             this.notifyReady();
-            
         } catch (error) {
             this.isInitializing = false;
             console.error('❌ CSV initialization failed, using fallback data:', error);
-            // Use fallback data instead of throwing
             this.figuresData = this.getFallbackFigures();
             this.processedFigures = this.processRawFigures(this.figuresData);
             this.isLoaded = true;
@@ -55,7 +49,6 @@ class FigureCsvProcessor {
         try {
             console.log('🚀 Starting Figure CSV Processor initialization...');
             
-            // Try to load from cache first
             const cachedData = this.loadFromCache();
             if (cachedData) {
                 this.figuresData = cachedData.figures;
@@ -64,35 +57,26 @@ class FigureCsvProcessor {
                 return;
             }
 
-            // Load from CSV if no cache
             console.log('💾 No cache found, loading from CSV...');
             await this.loadFiguresFromCSV();
             
         } catch (error) {
             console.error('❌ Error initializing Figure CSV Processor:', error);
-            throw error; // Let the init method handle fallback
+            throw error;
         }
     }
 
-    /**
-     * Notify other components that processor is ready
-     */
     notifyReady() {
         console.log('📢 Figure CSV Processor is ready, notifying components...');
         
-        // Dispatch custom event
         const readyEvent = new CustomEvent('figureCsvProcessorReady', {
             detail: { processor: this }
         });
         document.dispatchEvent(readyEvent);
         
-        // Also set a flag for immediate checks
         window.figureCsvProcessorReady = true;
     }
 
-    /**
-     * Load figures from CSV file
-     */
     async loadFiguresFromCSV() {
         try {
             console.log('📥 Loading cultural figures from CSV...');
@@ -109,19 +93,17 @@ class FigureCsvProcessor {
 
             const csvText = await response.text();
             console.log('📄 CSV text length:', csvText.length);
-            console.log('📄 CSV preview:', csvText.substring(0, 200));
+            console.log('📄 CSV preview:', csvText.substring(0, 500));
             
-            // Parse CSV using Papa Parse
             const parseResult = await this.parseCSV(csvText);
             
-            if (parseResult.errors.length > 0) {
+            if (parseResult.errors && parseResult.errors.length > 0) {
                 console.warn('CSV parsing warnings:', parseResult.errors);
             }
 
             this.figuresData = parseResult.data;
             this.processedFigures = this.processRawFigures(this.figuresData);
             
-            // Cache the processed data
             this.saveToCache();
             
             console.log(`✅ Loaded ${this.figuresData.length} cultural figures`);
@@ -134,69 +116,65 @@ class FigureCsvProcessor {
         }
     }
 
-    /**
-     * Parse CSV data using Papa Parse with robust checking
-     */
     async parseCSV(csvText) {
         return new Promise((resolve, reject) => {
-            // Check if Papa Parse is available
             if (typeof Papa === 'undefined') {
-                console.error('❌ Papa Parse library not loaded');
-                console.log('🔄 Attempting robust CSV parsing fallback...');
+                console.log('⚠️ Papa Parse not available, using robust fallback parser');
                 
                 try {
-                    // Use more robust CSV parsing that handles quotes properly
                     const result = this.parseCSVRobust(csvText);
                     console.log('✅ Robust CSV parsing successful:', result.data.length, 'rows');
-                    console.log('Sample row:', result.data[0]);
                     resolve(result);
                 } catch (error) {
                     console.error('❌ Robust CSV parsing failed:', error);
-                    reject(new Error('CSV parsing failed: Both Papa Parse and fallback failed'));
+                    reject(new Error('CSV parsing failed: ' + error.message));
                 }
                 return;
             }
 
-            console.log('✅ Papa Parse available, using advanced parsing');
+            console.log('✅ Papa Parse available, using Papa Parse');
             Papa.parse(csvText, {
                 header: true,
-                dynamicTyping: true,
+                dynamicTyping: false,
                 skipEmptyLines: true,
                 delimiter: ',',
                 quoteChar: '"',
                 escapeChar: '"',
-                complete: function(results) {
+                complete: (results) => {
                     console.log('✅ Papa Parse completed:', results.data.length, 'rows');
                     console.log('CSV Headers:', results.meta.fields);
-                    console.log('Sample row:', results.data[0]);
                     
-                    // Validate the parsing
                     if (results.data.length > 0) {
                         const firstRow = results.data[0];
-                        console.log('🔍 Validating parsed data:');
-                        console.log('Name:', firstRow.name);
-                        console.log('Image filename:', firstRow.image_filename);
-                        console.log('Achievement:', firstRow.achievement);
+                        console.log('🔍 First row validation:');
+                        console.log('- Name:', firstRow.name);
+                        console.log('- Image filename:', firstRow.image_filename);
+                        console.log('- Achievement:', firstRow.achievement);
+                        console.log('- Famous quote:', firstRow.famous_quote);
                     }
                     
                     resolve(results);
                 },
-                error: function(error) {
+                error: (error) => {
                     console.error('❌ Papa Parse error:', error);
-                    reject(error);
+                    try {
+                        const result = this.parseCSVRobust(csvText);
+                        console.log('✅ Fallback to robust parser successful');
+                        resolve(result);
+                    } catch (fallbackError) {
+                        reject(new Error('Both Papa Parse and fallback failed: ' + fallbackError.message));
+                    }
                 }
             });
         });
     }
 
-    /**
-     * Robust CSV parser that handles quoted fields properly
-     */
     parseCSVRobust(csvText) {
         const lines = csvText.trim().split('\n');
         const headers = this.parseCSVLine(lines[0]);
         
         console.log('📋 Parsed headers:', headers);
+        console.log('📋 Expected 17 columns, found:', headers.length);
         
         const data = [];
         
@@ -204,9 +182,12 @@ class FigureCsvProcessor {
             if (lines[i].trim()) {
                 const values = this.parseCSVLine(lines[i]);
                 
-                // Skip rows that don't have the right number of columns
+                if (i <= 3) {
+                    console.log(`Row ${i}: ${values.length} values`);
+                }
+                
                 if (values.length !== headers.length) {
-                    console.warn(`Row ${i} has ${values.length} values but expected ${headers.length}:`, values);
+                    console.warn(`⚠️ Row ${i} has ${values.length} values but expected ${headers.length}, skipping`);
                     continue;
                 }
                 
@@ -219,6 +200,7 @@ class FigureCsvProcessor {
             }
         }
         
+        console.log(`✅ Parsed ${data.length} valid rows`);
         return {
             data: data,
             errors: [],
@@ -226,9 +208,6 @@ class FigureCsvProcessor {
         };
     }
 
-    /**
-     * Parse a single CSV line with proper quote handling - FIXED VERSION
-     */
     parseCSVLine(line) {
         const values = [];
         let current = '';
@@ -240,16 +219,13 @@ class FigureCsvProcessor {
             
             if (char === '"') {
                 if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
-                    // Escaped quote (double quote)
                     current += '"';
                     i += 2;
                 } else {
-                    // Toggle quote state
                     inQuotes = !inQuotes;
                     i++;
                 }
             } else if (char === ',' && !inQuotes) {
-                // End of field
                 values.push(current.trim());
                 current = '';
                 i++;
@@ -259,12 +235,9 @@ class FigureCsvProcessor {
             }
         }
         
-        // Add the last field
         values.push(current.trim());
         
-        // Clean up quotes from values
         return values.map(value => {
-            // Remove surrounding quotes if present
             if (value.startsWith('"') && value.endsWith('"')) {
                 return value.slice(1, -1);
             }
@@ -272,19 +245,16 @@ class FigureCsvProcessor {
         });
     }
 
-    /**
-     * Process raw CSV data into structured figures
-     */
     processRawFigures(rawData) {
         return rawData.map((row, index) => {
-            // Debug logging for first few rows
             if (index < 3) {
-                console.log(`Row ${index}:`, row);
-                console.log(`Image filename field:`, row.image_filename);
-                console.log(`Achievement field:`, row.achievement);
+                console.log(`🔍 Processing row ${index + 1}:`, {
+                    name: row.name,
+                    image_filename: row.image_filename,
+                    achievement: row.achievement
+                });
             }
 
-            // Clean and structure the data with validation
             const figure = {
                 id: this.safeParseInt(row.id),
                 name: this.cleanString(row.name),
@@ -305,7 +275,6 @@ class FigureCsvProcessor {
                 connections: this.parseStringArray(row.connections),
                 aiEnhanced: row.ai_enhanced === true || row.ai_enhanced === 'true',
                 
-                // Computed fields
                 lifespan: this.calculateLifespan(row.birth_year, row.death_year),
                 age: this.calculateAge(row.birth_year, row.death_year),
                 imagePath: this.getImagePath(this.validateImageFilename(row.image_filename)),
@@ -313,9 +282,8 @@ class FigureCsvProcessor {
                 searchableText: this.createSearchableText(row)
             };
 
-            // Debug logging for processed figure
             if (index < 3) {
-                console.log(`Processed figure ${index}:`, {
+                console.log(`✅ Processed figure ${index + 1}:`, {
                     name: figure.name,
                     imageFilename: figure.imageFilename,
                     imagePath: figure.imagePath,
@@ -324,12 +292,42 @@ class FigureCsvProcessor {
             }
 
             return figure;
-        }).filter(figure => figure.name && figure.id); // Filter out invalid entries
+        }).filter(figure => figure.name && figure.id);
     }
 
-    /**
-     * Get random selection of figures
-     */
+    validateImageFilename(filename) {
+        if (!filename) return null;
+        
+        const cleaned = this.cleanString(filename);
+        
+        if (cleaned.length > 50 || (cleaned.includes(' ') && !cleaned.includes('.'))) {
+            console.warn('❌ Invalid image filename detected (looks like description):', cleaned);
+            return null;
+        }
+        
+        const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const hasValidExtension = validExtensions.some(ext => cleaned.toLowerCase().endsWith(ext));
+        
+        if (!hasValidExtension && cleaned !== 'placeholder.jpg') {
+            console.warn('❌ Invalid image filename (no valid extension):', cleaned);
+            return null;
+        }
+        
+        return cleaned;
+    }
+
+    getImagePath(filename) {
+        if (!filename || filename === 'placeholder.jpg' || filename === '') {
+            return null;
+        }
+        
+        if (filename.startsWith('http')) {
+            return filename;
+        }
+        
+        return `assets/images/figures/${filename}`;
+    }
+
     async getRandomFigures(count = 6) {
         await this.ensureLoaded();
         
@@ -337,9 +335,6 @@ class FigureCsvProcessor {
         return shuffled.slice(0, count);
     }
 
-    /**
-     * Get figures by era
-     */
     async getFiguresByEra(era) {
         await this.ensureLoaded();
         
@@ -348,9 +343,6 @@ class FigureCsvProcessor {
         );
     }
 
-    /**
-     * Get figures by field
-     */
     async getFiguresByField(field) {
         await this.ensureLoaded();
         
@@ -359,9 +351,6 @@ class FigureCsvProcessor {
         );
     }
 
-    /**
-     * Get figures by region
-     */
     async getFiguresByRegion(region) {
         await this.ensureLoaded();
         
@@ -371,9 +360,6 @@ class FigureCsvProcessor {
         );
     }
 
-    /**
-     * Get figures by gender
-     */
     async getFiguresByGender(gender) {
         await this.ensureLoaded();
         
@@ -382,9 +368,6 @@ class FigureCsvProcessor {
         );
     }
 
-    /**
-     * Search figures with query
-     */
     async searchFigures(query) {
         await this.ensureLoaded();
         
@@ -399,18 +382,12 @@ class FigureCsvProcessor {
         );
     }
 
-    /**
-     * Get figure by ID
-     */
     async getFigureById(id) {
         await this.ensureLoaded();
         
         return this.processedFigures.find(figure => figure.id === parseInt(id));
     }
 
-    /**
-     * Get connected figures for a given figure
-     */
     async getConnectedFigures(figureId) {
         await this.ensureLoaded();
         
@@ -432,9 +409,6 @@ class FigureCsvProcessor {
         return connected;
     }
 
-    /**
-     * Get all unique eras
-     */
     async getAvailableEras() {
         await this.ensureLoaded();
         
@@ -442,9 +416,6 @@ class FigureCsvProcessor {
         return eras.sort();
     }
 
-    /**
-     * Get all unique fields
-     */
     async getAvailableFields() {
         await this.ensureLoaded();
         
@@ -456,9 +427,6 @@ class FigureCsvProcessor {
         return [...fields].sort();
     }
 
-    /**
-     * Get all unique regions
-     */
     async getAvailableRegions() {
         await this.ensureLoaded();
         
@@ -466,9 +434,6 @@ class FigureCsvProcessor {
         return regions.sort();
     }
 
-    /**
-     * Filter figures with multiple criteria
-     */
     async filterFigures(filters = {}) {
         await this.ensureLoaded();
         
@@ -507,9 +472,6 @@ class FigureCsvProcessor {
         return filtered;
     }
 
-    /**
-     * Utility methods
-     */
     safeParseInt(value, fallback = 0) {
         if (value === null || value === undefined || value === '') {
             return fallback;
@@ -545,46 +507,6 @@ class FigureCsvProcessor {
         return endYear - birthYear;
     }
 
-    /**
-     * Validate and clean image filename
-     */
-    validateImageFilename(filename) {
-        if (!filename) return null;
-        
-        const cleaned = this.cleanString(filename);
-        
-        // Check if this looks like an achievement description instead of filename
-        if (cleaned.length > 50 || cleaned.includes(' ') && !cleaned.includes('.')) {
-            console.warn('Invalid image filename detected (looks like description):', cleaned);
-            return null;
-        }
-        
-        // Check if it's a valid image filename
-        const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-        const hasValidExtension = validExtensions.some(ext => cleaned.toLowerCase().endsWith(ext));
-        
-        if (!hasValidExtension && cleaned !== 'placeholder.jpg') {
-            console.warn('Invalid image filename (no valid extension):', cleaned);
-            return null;
-        }
-        
-        return cleaned;
-    }
-
-    getImagePath(filename) {
-        if (!filename || filename === 'placeholder.jpg' || filename === '') {
-            return null; // Return null for placeholder handling
-        }
-        
-        // Handle different possible filename formats
-        if (filename.startsWith('http')) {
-            return filename; // Full URL
-        }
-        
-        // Construct relative path
-        return `assets/images/figures/${filename}`;
-    }
-
     combineFields(primary, secondary) {
         const fields = [];
         if (primary) fields.push(primary);
@@ -610,9 +532,6 @@ class FigureCsvProcessor {
         return searchFields.filter(field => field).join(' ').toLowerCase();
     }
 
-    /**
-     * Cache management
-     */
     saveToCache() {
         try {
             const cacheData = {
@@ -648,9 +567,6 @@ class FigureCsvProcessor {
         }
     }
 
-    /**
-     * Ensure data is loaded
-     */
     async ensureLoaded() {
         if (!this.isLoaded && !this.isInitializing) {
             await this.init();
@@ -659,9 +575,6 @@ class FigureCsvProcessor {
         }
     }
 
-    /**
-     * Enhanced fallback figures with proper content
-     */
     getFallbackFigures() {
         return [
             {
@@ -675,7 +588,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Civil Rights,Activism",
                 achievement: "Renowned poet, memoirist, and civil rights activist",
                 famous_quote: "There is no greater agony than bearing an untold story inside you.",
-                short_bio: "Maya Angelou was an American poet, memoirist, and civil rights activist. She published seven autobiographies, three books of essays, several books of poetry, and is credited with a list of plays, movies, and television shows spanning over 50 years. She received dozens of awards and more than 50 honorary degrees.",
+                short_bio: "Maya Angelou was an American poet, memoirist, and civil rights activist. She published seven autobiographies, three books of essays, several books of poetry, and is credited with a list of plays, movies, and television shows spanning over 50 years.",
                 image_filename: "maya-angelou.jpg",
                 era: "Modern",
                 gender: "Female",
@@ -694,7 +607,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Human Rights,Law",
                 achievement: "Anti-apartheid revolutionary and South African President",
                 famous_quote: "Education is the most powerful weapon which you can use to change the world.",
-                short_bio: "Nelson Rolihlahla Mandela was a South African anti-apartheid revolutionary, political leader, and philanthropist who served as President of South Africa from 1994 to 1999. He was the country's first black head of state and the first elected in a fully representative democratic election.",
+                short_bio: "Nelson Rolihlahla Mandela was a South African anti-apartheid revolutionary, political leader, and philanthropist who served as President of South Africa from 1994 to 1999.",
                 image_filename: "nelson-mandela.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -713,7 +626,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Spirituality,Activism",
                 achievement: "Reggae legend and global cultural icon",
                 famous_quote: "One love, one heart, let's get together and feel all right.",
-                short_bio: "Robert Nesta Marley was a Jamaican singer, songwriter, and musician. Considered one of the pioneers of reggae, his musical career was marked by fusing elements of reggae, ska, and rocksteady, as well as his distinctive vocal and songwriting style.",
+                short_bio: "Robert Nesta Marley was a Jamaican singer, songwriter, and musician. Considered one of the pioneers of reggae, his musical career was marked by fusing elements of reggae, ska, and rocksteady.",
                 image_filename: "bob-marley.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -730,9 +643,9 @@ class FigureCsvProcessor {
                 heritage: "Igbo",
                 primary_field: "Literature",
                 secondary_fields: "Education,Academia",
-                achievement: "Author of 'Things Fall Apart' and literary pioneer",
+                achievement: "Author of Things Fall Apart and literary pioneer",
                 famous_quote: "If you don't like someone's story, write your own.",
-                short_bio: "Chinua Achebe was a Nigerian novelist, poet, professor, and critic. His first novel Things Fall Apart is the most widely read book in modern African literature. Raised by his parents in the Igbo town of Ogidi in southeastern Nigeria, Achebe excelled at school and won a scholarship to study medicine.",
+                short_bio: "Chinua Achebe was a Nigerian novelist, poet, professor, and critic. His first novel Things Fall Apart is the most widely read book in modern African literature.",
                 image_filename: "chinua-achebe.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -751,7 +664,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Politics,Women's Rights",
                 achievement: "First African woman to receive the Nobel Peace Prize",
                 famous_quote: "When we plant trees, we plant the seeds of peace and seeds of hope.",
-                short_bio: "Wangari Muta Maathai was a Kenyan social, environmental, and political activist and the first African woman to win the Nobel Peace Prize. She was educated in the United States at Mount St. Scholastica College and the University of Pittsburgh, as well as the University of Nairobi in Kenya.",
+                short_bio: "Wangari Muta Maathai was a Kenyan social, environmental, and political activist and the first African woman to win the Nobel Peace Prize.",
                 image_filename: "wangari-maathai.jpg",
                 era: "Contemporary",
                 gender: "Female",
@@ -770,7 +683,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Law,Writing",
                 achievement: "44th President of the United States",
                 famous_quote: "Yes we can.",
-                short_bio: "Barack Hussein Obama II is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017. A member of the Democratic Party, Obama was the first African-American president of the United States.",
+                short_bio: "Barack Hussein Obama II is an American politician and attorney who served as the 44th president of the United States from 2009 to 2017.",
                 image_filename: "barack-obama.jpg",
                 era: "Contemporary",
                 gender: "Male",
@@ -789,7 +702,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Philanthropy,Business",
                 achievement: "Media mogul and philanthropist",
                 famous_quote: "The biggest adventure you can take is to live the life of your dreams.",
-                short_bio: "Oprah Gail Winfrey is an American talk show host, television producer, actress, media executive, and philanthropist. She is best known for her talk show, The Oprah Winfrey Show, broadcast from Chicago, which was the highest-rated television program of its kind in history.",
+                short_bio: "Oprah Gail Winfrey is an American talk show host, television producer, actress, media executive, and philanthropist.",
                 image_filename: "oprah-winfrey.jpg",
                 era: "Contemporary",
                 gender: "Female",
@@ -808,7 +721,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Politics,Business",
                 achievement: "Founder of UNIA and Black nationalism leader",
                 famous_quote: "A people without the knowledge of their past history, origin and culture is like a tree without roots.",
-                short_bio: "Marcus Mosiah Garvey Jr. was a Jamaican political activist, publisher, journalist, entrepreneur, and orator. He was the founder and first President-General of the Universal Negro Improvement Association and African Communities League, through which he declared himself Provisional President of Africa.",
+                short_bio: "Marcus Mosiah Garvey Jr. was a Jamaican political activist, publisher, journalist, entrepreneur, and orator.",
                 image_filename: "marcus-garvey.jpg",
                 era: "Colonial",
                 gender: "Male",
@@ -827,7 +740,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Civil Rights,Social Criticism",
                 achievement: "Influential writer and social critic",
                 famous_quote: "Not everything that is faced can be changed, but nothing can be changed until it is faced.",
-                short_bio: "James Arthur Baldwin was an American novelist, essayist, playwright, poet, and social critic. His essays, collected in Notes of a Native Son, explore intricacies of racial, sexual, and class distinctions in Western societies, most notably in regard to his own experience as a black man in America.",
+                short_bio: "James Arthur Baldwin was an American novelist, essayist, playwright, poet, and social critic. His essays explore intricacies of racial, sexual, and class distinctions in Western societies.",
                 image_filename: "james-baldwin.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -846,7 +759,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Politics,Activism",
                 achievement: "Iconic painter and feminist symbol",
                 famous_quote: "I paint my own reality.",
-                short_bio: "Frida Kahlo was a Mexican artist who painted many portraits, self-portraits, and works inspired by the nature and artifacts of Mexico. Inspired by the country's popular culture, she employed a naïve folk art style to explore questions of identity, postcolonialism, gender, class, and race in Mexican society.",
+                short_bio: "Frida Kahlo was a Mexican artist who painted many portraits, self-portraits, and works inspired by the nature and artifacts of Mexico.",
                 image_filename: "frida-kahlo.jpg",
                 era: "Modern",
                 gender: "Female",
@@ -865,7 +778,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Religion,Activism",
                 achievement: "Leader of the American civil rights movement",
                 famous_quote: "I have a dream that one day this nation will rise up and live out the true meaning of its creed.",
-                short_bio: "Martin Luther King Jr. was an American Baptist minister and activist who became the most visible spokesperson and leader in the American civil rights movement from 1955 until his assassination in 1968. King advanced civil rights through nonviolence and civil disobedience, inspired by his Christian beliefs and the nonviolent activism of Mahatma Gandhi.",
+                short_bio: "Martin Luther King Jr. was an American Baptist minister and activist who became the most visible spokesperson and leader in the American civil rights movement.",
                 image_filename: "martin-luther-king.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -884,7 +797,7 @@ class FigureCsvProcessor {
                 secondary_fields: "Pan-Africanism,Philosophy",
                 achievement: "First President of Ghana and Pan-African leader",
                 famous_quote: "We face neither East nor West; we face forward.",
-                short_bio: "Kwame Nkrumah was a Ghanaian politician and revolutionary. He was the first Prime Minister and President of Ghana, having led the Gold Coast to independence from Britain in 1957. An influential advocate of Pan-Africanism, Nkrumah was a founding member of the Organization of African Unity and winner of the Lenin Peace Prize in 1962.",
+                short_bio: "Kwame Nkrumah was a Ghanaian politician and revolutionary. He was the first Prime Minister and President of Ghana, having led the Gold Coast to independence from Britain in 1957.",
                 image_filename: "kwame-nkrumah.jpg",
                 era: "Modern",
                 gender: "Male",
@@ -895,9 +808,6 @@ class FigureCsvProcessor {
         ];
     }
 
-    /**
-     * Public API for getting statistics
-     */
     async getStatistics() {
         await this.ensureLoaded();
         
@@ -911,19 +821,11 @@ class FigureCsvProcessor {
         };
 
         this.processedFigures.forEach(figure => {
-            // Count by era
             stats.byEra[figure.era] = (stats.byEra[figure.era] || 0) + 1;
-            
-            // Count by gender
             stats.byGender[figure.gender] = (stats.byGender[figure.gender] || 0) + 1;
-            
-            // Count by primary field
             stats.byField[figure.primaryField] = (stats.byField[figure.primaryField] || 0) + 1;
-            
-            // Count by region
             stats.byRegion[figure.region] = (stats.byRegion[figure.region] || 0) + 1;
             
-            // Count by status
             if (figure.isAlive) {
                 stats.byStatus.alive++;
             } else {
@@ -934,9 +836,6 @@ class FigureCsvProcessor {
         return stats;
     }
 
-    /**
-     * Cleanup method
-     */
     cleanup() {
         this.figuresData = [];
         this.processedFigures = [];
