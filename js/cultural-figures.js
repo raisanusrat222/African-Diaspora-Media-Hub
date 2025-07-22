@@ -1000,7 +1000,7 @@ async init() {
                 era: "Modern",
                 fields: ["Politics", "Human Rights"],
                 lifespan: "1918 - 2013",
-                imagePath: null,
+                imagePath: "assets\images\figures\nelson-mandela.jpg",
                 imageFilename: null,
                 connections: ["Desmond Tutu", "Oliver Tambo"]
             },
