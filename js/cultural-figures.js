@@ -984,8 +984,8 @@ async init() {
                 era: "Modern",
                 fields: ["Literature", "Civil Rights"],
                 lifespan: "1928 - 2014",
-                imagePath: null, // Will use placeholder
-                imageFilename: null,
+                imagePath: "assets\images\figures\maya-angelou.jpg",
+                imageFilename: "maya-angelou.jpg",
                 connections: ["James Baldwin", "Martin Luther King Jr."]
             },
             {
