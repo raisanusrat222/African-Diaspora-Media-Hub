@@ -542,7 +542,7 @@
 
 .cultural-modal-content {
     position: relative;
-    background: var(--light-color);
+    background: var(--light-color); 
     border-radius: 15px;
     max-width: 600px;
     max-height: 80vh;
@@ -590,6 +590,7 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    background: var(--light-color); 
 }
 
 .modal-figure-portrait {
@@ -636,7 +637,7 @@
 
 .modal-figure-info h2 {
     margin: 0 0 5px 0;
-    color: var(--dark-color);
+    color: var(--dark-color); 
     font-size: 1.8rem;
     font-weight: 600;
 }
@@ -673,6 +674,7 @@
 /* Modal Body - FIXED */
 .modal-body {
     padding: 20px 30px 30px;
+    background: var(--light-color); 
 }
 
 .modal-quote {
@@ -717,6 +719,55 @@
     text-align: justify;
 }
 
+/* NEW: Personal Details Section */
+.modal-personal-details {
+    background: rgba(34, 139, 34, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--accent-color);
+}
+
+.modal-personal-details h3 {
+    color: var(--accent-color);
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.modal-personal-details p {
+    color: var(--text-color); /* Dark text */
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: justify;
+}
+
+/* NEW: Cultural Impact Section */
+.modal-cultural-impact {
+    background: rgba(139, 0, 0, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--secondary-color);
+}
+
+.modal-cultural-impact h3 {
+    color: var(--secondary-color);
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.modal-cultural-impact p {
+    color: var(--text-color); /* Dark text */
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: justify;
+}
+
+/* AI Insights - FIXED */
 .modal-ai-insights {
     background: rgba(34, 139, 34, 0.1);
     padding: 20px;
@@ -746,6 +797,29 @@
     line-height: 1.6;
     margin: 0;
     text-align: justify;
+}
+
+/* NEW: Enhancement Note */
+.modal-enhancement-note {
+    background: rgba(212, 175, 55, 0.1);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+
+.modal-enhancement-note i {
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.modal-enhancement-note span {
+    color: var(--text-color);
+    font-weight: 500;
 }
 
 /* Modal Actions - FIXED */
@@ -890,6 +964,67 @@
     margin: 0;
     font-size: 1rem;
     line-height: 1.5;
+}
+
+/* NEW: Connection Suggestions */
+.connection-suggestions {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.connection-suggestions h3 {
+    color: var(--dark-color);
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.connection-suggestions i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+.suggestions-intro {
+    color: var(--text-color);
+    margin: 0 0 20px 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.ai-suggestions-content {
+    color: var(--text-color);
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: left;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 10px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.suggestions-disclaimer {
+    background: rgba(139, 0, 0, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(139, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+}
+
+.suggestions-disclaimer i {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+.suggestions-disclaimer span {
+    color: var(--text-color);
+    font-style: italic;
 }
 
 /* Modal Error State */

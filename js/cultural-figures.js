@@ -1,8 +1,7 @@
-// js/cultural-figures.js - Fixed Smooth Interactive Cultural Figures Component
+// enhanced with AI Integration for Gap-Filling
 
 /**
- * Cultural Figures Manager - Optimized for 4-card display
- * Handles the smooth interactive cultural figures carousel
+ * Cultural Figures Manager - Enhanced with AI Integration
  */
 class CulturalFiguresManager {
     constructor() {
@@ -11,7 +10,7 @@ class CulturalFiguresManager {
         this.visibleCards = 4; // Always show 4 cards
         this.isAutoRotating = true;
         this.autoRotateInterval = null;
-        this.autoRotateDelay = 10000; // 10 seconds - much more relaxed
+        this.autoRotateDelay = 10000; 
         this.isTransitioning = false;
         this.touchStartX = 0;
         this.touchEndX = 0;
@@ -19,44 +18,71 @@ class CulturalFiguresManager {
         this.init();
     }
 
-async init() {
-    try {
-        console.log('🎭 Initializing Cultural Figures Manager...');
+    async init() {
+        try {
+            console.log('🎭 Initializing Enhanced Cultural Figures Manager...');
 
-        // Wait for CSV processor to be ready
-        await this.waitForProcessor();
-        console.log('✅ CSV processor ready');
+            // Initialize AI service first
+            this.initializeAIService();
 
-        // Load figures data
-        await this.loadFigures();
-        console.log(`✅ Loaded ${this.figures.length} figures`);
+            // Wait for CSV processor to be ready
+            await this.waitForProcessor();
+            console.log('✅ CSV processor ready');
 
-        // Only set up if on homepage
-        if (this.isHomepage()) {
-            console.log('✅ Homepage detected, using existing cultural figures section');
+            // Load figures data
+            await this.loadFigures();
+            console.log(`✅ Loaded ${this.figures.length} figures`);
 
-            // Check if the section exists in DOM
-            const existingSection = document.getElementById('cultural-figures-section');
-            if (existingSection) {
-                this.renderFigures();
-                this.setupEventHandlers();
-                this.startAutoRotation();
-                console.log('✅ Carousel initialized in existing section');
+            // Only set up if on homepage
+            if (this.isHomepage()) {
+                console.log('✅ Homepage detected, using existing cultural figures section');
+
+                // Check if the section exists in DOM
+                const existingSection = document.getElementById('cultural-figures-section');
+                if (existingSection) {
+                    this.renderFigures();
+                    this.setupEventHandlers();
+                    this.startAutoRotation();
+                    console.log('✅ Enhanced carousel initialized in existing section');
+                } else {
+                    console.warn('⚠️ No cultural figures section found in HTML. Skipping setup.');
+                }
             } else {
-                console.warn('⚠️ No cultural figures section found in HTML. Skipping setup.');
+                console.log('ℹ️ Not on homepage, skipping cultural figures setup');
+            }
+
+            console.log('🎭 Enhanced Cultural Figures Manager initialized successfully');
+        } catch (error) {
+            console.error('❌ Error initializing Cultural Figures Manager:', error);
+            this.showError();
+        }
+    }
+
+    // NEW: Initialize AI service
+    initializeAIService() {
+        console.log('🤖 Initializing AI service for cultural figures...');
+        
+        const apiKey = this.getAPIKey();
+        
+        if (apiKey && window.DiasporaAI) {
+            try {
+                window.DiasporaAI.initialize(apiKey);
+                console.log('✅ AI service initialized for cultural figures');
+            } catch (error) {
+                console.error('❌ Failed to initialize AI service:', error);
             }
         } else {
-            console.log('ℹ️ Not on homepage, skipping cultural figures setup');
+            console.log('⚠️ API key not found or DiasporaAI not available for cultural figures');
         }
-
-        console.log('🎭 Cultural Figures Manager initialized successfully');
-    } catch (error) {
-        console.error('❌ Error initializing Cultural Figures Manager:', error);
-        this.showError();
     }
-}
 
-
+    // NEW: Get API key using your config pattern
+    getAPIKey() {
+        if (window.CONFIG && window.CONFIG.OPENAI_API_KEY) {
+            return window.CONFIG.OPENAI_API_KEY;
+        }
+        return null;
+    }
 
     /**
      * Wait for CSV processor to be ready
@@ -125,78 +151,6 @@ async init() {
                window.location.pathname.endsWith('/');
     }
 
-
-    /**
-     * Find the best insertion point on the homepage
-     */
-    findInsertionPoint() {
-        console.log('🔍 Looking for insertion point...');
-        
-        // Look for country search section first
-        const countrySearch = document.querySelector('.country-search-section');
-        if (countrySearch) {
-            console.log('✅ Found country search section');
-            return countrySearch;
-        }
-
-        // Fallback to featured content section
-        const featuredContent = document.querySelector('.featured-content');
-        if (featuredContent) {
-            console.log('✅ Found featured content section (fallback)');
-            return featuredContent;
-        }
-
-        // Last resort - main content
-        const mainContent = document.querySelector('#main-content');
-        if (mainContent) {
-            console.log('⚠️ Using main content as last resort');
-            return mainContent;
-        }
-
-        console.error('❌ No suitable insertion point found');
-        return null;
-    }
-
-    /**
-     * Generate carousel HTML structure - Clean without auto-rotation controls
-     */
-    getCarouselHTML() {
-        return `
-            <div class="container">
-                <h2 class="section-title">Influential Diaspora Figures</h2>
-                <div class="figures-carousel" id="figures-carousel">
-                    <div class="figures-track" id="figures-track">
-                        <!-- Figure cards will be inserted here -->
-                    </div>
-                    
-                    <!-- Navigation arrows -->
-                    <button class="carousel-nav prev" id="carousel-prev" aria-label="Previous figures" title="Previous">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="carousel-nav next" id="carousel-next" aria-label="Next figures" title="Next">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                
-                <!-- Carousel controls -->
-                <div class="carousel-controls">
-                    <div class="carousel-dots" id="carousel-dots">
-                        <!-- Dots will be generated based on figure count -->
-                    </div>
-                </div>
-                
-                <!-- View all link -->
-                <div class="view-all-figures">
-                    <a href="cultural-figures.html" class="view-all-btn" onclick="loadPage('cultural-figures')">
-                        <i class="fas fa-users"></i>
-                        <span>Explore All Cultural Figures</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        `;
-    }
-
     /**
      * Render figure cards in the carousel - optimized for 4-card display
      */
@@ -263,31 +217,32 @@ async init() {
     /**
      * Create portrait HTML with improved fallback handling
      */
-    createPortraitHTML(figure) {
-        // Check if we have a valid image path
-        if (figure.imagePath && figure.imagePath !== 'assets/images/figures/placeholder.jpg') {
-            return `
-                <div class="figure-portrait">
-                    <img src="${figure.imagePath}" 
-                         alt="${figure.name}" 
-                         loading="lazy" 
-                         onload="this.style.opacity = '1';"
-                         onerror="this.parentElement.outerHTML = '<div class=\\"figure-portrait-placeholder\\">${this.getInitials(figure.name)}</div>'">
-                </div>
-            `;
-        } else {
-            // Use placeholder directly
-            return `
-                <div class="figure-portrait-placeholder" title="${figure.name}">
+createPortraitHTML(figure) {
+    // Check if we have a valid image path
+    if (figure.imagePath && figure.imagePath !== 'assets/images/figures/placeholder.jpg') {
+        return `
+            <div class="figure-portrait">
+                <img src="${figure.imagePath}" 
+                     alt="${figure.name}" 
+                     loading="lazy" 
+                     onload="this.style.opacity = '1';"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="figure-portrait-placeholder" style="display: none;" title="${figure.name}">
                     ${this.getInitials(figure.name)}
                 </div>
-            `;
-        }
+            </div>
+        `;
+    } else {
+        // Use placeholder directly
+        return `
+            <div class="figure-portrait-placeholder" title="${figure.name}">
+                ${this.getInitials(figure.name)}
+            </div>
+        `;
     }
+}
 
-    /**
-     * Get initials for placeholder
-     */
+     // Get initials for placeholder
     getInitials(name) {
         return name.split(' ')
             .map(word => word.charAt(0))
@@ -296,9 +251,7 @@ async init() {
             .toUpperCase();
     }
 
-    /**
-     * Create navigation dots based on the number of slides
-     */
+     // Create navigation dots based on the number of slides
     createDots() {
         const dotsContainer = document.getElementById('carousel-dots');
         if (!dotsContainer) return;
@@ -561,11 +514,11 @@ async init() {
     }
 
     /**
-     * AI-powered figure interactions - Fixed for proper modal display
+     * ENHANCED: AI-powered figure interactions with gap-filling
      */
     async showFigureDetails(figureId) {
         try {
-            console.log('🔍 Showing figure details for ID:', figureId);
+            console.log('🔍 Showing AI-enhanced figure details for ID:', figureId);
             
             const figure = await window.figureCsvProcessor.getFigureById(figureId);
             if (!figure) {
@@ -579,42 +532,91 @@ async init() {
             // Show loading state
             this.showModal('figure-details', this.getLoadingModalHTML(figure.name));
 
-            // Generate AI-enhanced biography
-            let biography = figure.shortBio;
-            let aiInsights = '';
+            // Identify gaps in figure data
+            const gaps = this.identifyFigureGaps(figure);
+            console.log('📊 Identified data gaps:', gaps);
 
-            // Check if AI service is available
-            if (window.DiasporaAI && typeof window.DiasporaAI.callOpenAI === 'function') {
+            // Start with existing data
+            let enhancedBio = figure.shortBio;
+            let modernRelevance = '';
+            let culturalImpact = '';
+            let personalLife = '';
+
+            // ENHANCED: AI gap-filling if service is available
+            if (window.DiasporaAI && window.DiasporaAI.isInitialized) {
                 try {
-                    console.log('🤖 Generating AI content for', figure.name);
+                    console.log('🤖 Generating AI-enhanced content for', figure.name);
                     
-                    const prompt = `Write a compelling 200-word biography of ${figure.name}, the ${figure.achievement}. Include:
-                    - Their most significant contributions to ${figure.primaryField}
-                    - How they impacted the African diaspora community
-                    - Their lasting legacy today
-                    - What made them unique in their era (${figure.era})
-                    
-                    Write in an engaging, informative style. Start directly with their story.`;
+                    // Enhanced biography with gap-filling
+                    if (gaps.includes('detailed_biography') || figure.shortBio.length < 100) {
+                        const bioPrompt = `Write a compelling 250-word biography of ${figure.name}, ${figure.achievement}. Include:
+                        - Their early life and background in ${figure.heritage || figure.region}
+                        - Key accomplishments in ${figure.primaryField}
+                        - Their impact on the African diaspora community
+                        - What made them unique in the ${figure.era} era
+                        
+                        Base this on historical facts. Write in an engaging, informative style.`;
 
-                    biography = await window.DiasporaAI.callOpenAI(prompt, 300, 0.8);
+                        enhancedBio = await window.DiasporaAI.callOpenAI(bioPrompt, 400, 0.7);
+                        console.log('✅ Enhanced biography generated');
+                    }
 
-                    // Get AI insights about their relevance
-                    const insightsPrompt = `In 2-3 sentences, explain why ${figure.name} remains relevant to African diaspora communities today. Focus on their lasting impact and lessons for current generations.`;
+                    // Modern relevance (always generate)
+                    const relevancePrompt = `In 2-3 sentences, explain why ${figure.name} remains relevant to African diaspora communities today. Focus on:
+                    - Their lasting impact on ${figure.primaryField}
+                    - Lessons for current generations
+                    - How their work influences modern movements
                     
-                    aiInsights = await window.DiasporaAI.callOpenAI(insightsPrompt, 150, 0.7);
+                    Write in an engaging, contemporary style.`;
                     
-                    console.log('✅ AI content generated successfully');
+                    modernRelevance = await window.DiasporaAI.callOpenAI(relevancePrompt, 150, 0.7);
+
+                    // Cultural impact analysis
+                    if (gaps.includes('cultural_impact')) {
+                        const impactPrompt = `Analyze ${figure.name}'s cultural impact on the African diaspora in 100-150 words. Focus on:
+                        - How they changed perceptions or opened doors
+                        - Their influence on other artists/leaders/activists
+                        - What traditions or movements they started
+                        
+                        Be specific about their contributions to diaspora culture.`;
+                        
+                        culturalImpact = await window.DiasporaAI.callOpenAI(impactPrompt, 200, 0.7);
+                    }
+
+                    // Personal life details (if missing)
+                    if (gaps.includes('personal_details')) {
+                        const personalPrompt = `Provide interesting personal details about ${figure.name} in 2-3 sentences:
+                        - Their personality traits or characteristics
+                        - Lesser-known facts about their life
+                        - Their relationships with family or other notable figures
+                        
+                        Keep it factual and respectful.`;
+                        
+                        personalLife = await window.DiasporaAI.callOpenAI(personalPrompt, 120, 0.7);
+                    }
+
+                    console.log('✅ All AI content generated successfully');
 
                 } catch (aiError) {
                     console.warn('⚠️ AI enhancement failed, using static content:', aiError);
                     // Continue with static content
                 }
             } else {
-                console.log('ℹ️ AI service not available, using static content');
+                console.log('ℹ️ AI service not available, using static content with fallback enhancements');
+                modernRelevance = this.getFallbackModernRelevance(figure);
+                if (gaps.length > 0) {
+                    culturalImpact = this.getFallbackCulturalImpact(figure);
+                }
             }
 
-            // Update modal with full content
-            this.showModal('figure-details', this.getFigureDetailsHTML(figure, biography, aiInsights));
+            // Update modal with enhanced content
+            this.showModal('figure-details', this.getEnhancedFigureDetailsHTML(figure, {
+                biography: enhancedBio,
+                modernRelevance,
+                culturalImpact,
+                personalLife,
+                gaps
+            }));
 
         } catch (error) {
             console.error('❌ Error showing figure details:', error);
@@ -622,9 +624,122 @@ async init() {
         }
     }
 
+    // NEW: Identify gaps in figure data
+    identifyFigureGaps(figure) {
+        const gaps = [];
+        
+        // Check for missing or minimal biography
+        if (!figure.shortBio || figure.shortBio.length < 100) {
+            gaps.push('detailed_biography');
+        }
+        
+        // Check for missing personal details
+        if (!figure.personalLife && !figure.shortBio.includes('born') && !figure.shortBio.includes('family')) {
+            gaps.push('personal_details');
+        }
+        
+        // Check for missing cultural impact info
+        if (!figure.culturalImpact && figure.shortBio.length < 200) {
+            gaps.push('cultural_impact');
+        }
+        
+        // Check for missing modern connections
+        if (figure.era !== 'Contemporary' && !figure.modernRelevance) {
+            gaps.push('modern_relevance');
+        }
+        
+        return gaps;
+    }
+
+    // NEW: Enhanced figure details modal with AI content
+    getEnhancedFigureDetailsHTML(figure, aiContent) {
+        const portraitHTML = this.createModalPortraitHTML(figure);
+        
+        return `
+            <div class="modal-header">
+                ${portraitHTML}
+                <div class="modal-figure-info">
+                    <h2>${figure.name}</h2>
+                    <div class="modal-lifespan">${figure.lifespan}</div>
+                    <div class="modal-achievement">${figure.achievement}</div>
+                    <div class="modal-fields">
+                        ${figure.fields.map(field => `<span class="modal-field-tag">${field}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-quote">
+                    <i class="fas fa-quote-left"></i>
+                    <p>"${figure.famousQuote}"</p>
+                </div>
+                
+                <div class="modal-biography">
+                    <h3>Biography</h3>
+                    <p>${aiContent.biography}</p>
+                </div>
+
+                ${aiContent.personalLife ? `
+                    <div class="modal-personal-details">
+                        <h3>Personal Life</h3>
+                        <p>${aiContent.personalLife}</p>
+                    </div>
+                ` : ''}
+
+                ${aiContent.culturalImpact ? `
+                    <div class="modal-cultural-impact">
+                        <h3>Cultural Impact</h3>
+                        <p>${aiContent.culturalImpact}</p>
+                    </div>
+                ` : ''}
+                
+                ${aiContent.modernRelevance ? `
+                    <div class="modal-ai-insights">
+                        <h3><i class="fas fa-lightbulb"></i> Why ${figure.name} Matters Today</h3>
+                        <p>${aiContent.modernRelevance}</p>
+                    </div>
+                ` : ''}
+
+                ${aiContent.gaps.length > 0 ? `
+                    <div class="modal-enhancement-note">
+                        <i class="fas fa-magic"></i>
+                        <span>Enhanced with AI insights${window.DiasporaAI && window.DiasporaAI.isInitialized ? '' : ' and curated content'}</span>
+                    </div>
+                ` : ''}
+                
+                <div class="modal-actions">
+                    <button class="modal-btn primary" onclick="culturalFiguresManager.showConnections(${figure.id})">
+                        <i class="fas fa-project-diagram"></i>
+                        View Connections
+                    </button>
+                    <button class="modal-btn secondary" onclick="culturalFiguresManager.shareFigure(${figure.id})">
+                        <i class="fas fa-share"></i>
+                        Share
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // NEW: Fallback content for when AI is not available
+    getFallbackModernRelevance(figure) {
+        const relevanceMap = {
+            'Maya Angelou': 'Angelou\'s powerful storytelling and advocacy for civil rights continue to inspire writers and activists today, particularly in movements for social justice and equality.',
+            'Nelson Mandela': 'Mandela\'s principles of reconciliation and peaceful resistance remain a guiding light for modern democracy movements and conflict resolution worldwide.',
+            'Bob Marley': 'Marley\'s message of unity and spiritual consciousness through reggae music continues to influence global peace movements and cultural identity preservation.',
+            'Chinua Achebe': 'Achebe\'s literary legacy shows African writers how to reclaim narrative power and challenge Western stereotypes in contemporary literature.',
+            'Marcus Garvey': 'Garvey\'s Pan-African philosophy and Black pride message resonate strongly with modern movements for African unity and diaspora empowerment.'
+        };
+        
+        return relevanceMap[figure.name] || `${figure.name}'s contributions to ${figure.primaryField} continue to influence modern African diaspora communities, inspiring new generations to preserve their cultural heritage while building bridges across cultures.`;
+    }
+
+    getFallbackCulturalImpact(figure) {
+        return `${figure.name} significantly shaped ${figure.primaryField} within the African diaspora, opening doors for future generations and establishing important cultural precedents that continue to influence communities worldwide.`;
+    }
+
     async showConnections(figureId) {
         try {
-            console.log('🔗 Showing connections for figure ID:', figureId);
+            console.log('🔗 Showing enhanced connections for figure ID:', figureId);
             
             const figure = await window.figureCsvProcessor.getFigureById(figureId);
             if (!figure) {
@@ -641,25 +756,28 @@ async init() {
 
             let connectionInsights = '';
 
-            // Generate AI explanations for connections
-            if (window.DiasporaAI && typeof window.DiasporaAI.callOpenAI === 'function' && connections.length > 0) {
+            // ENHANCED: Generate AI explanations for connections
+            if (window.DiasporaAI && window.DiasporaAI.isInitialized && connections.length > 0) {
                 try {
                     const connectionNames = connections.map(c => c.name).join(', ');
-                    const prompt = `Explain the relationships between ${figure.name} and these figures: ${connectionNames}. 
+                    const prompt = `Explain the relationships between ${figure.name} and these historical figures: ${connectionNames}. 
                     
                     For each connection, briefly describe:
-                    - How they knew each other or were connected
-                    - What they shared in common (movements, ideas, time periods)
+                    - How they knew each other or were connected (personally, professionally, or ideologically)
+                    - What they shared in common (movements, ideas, time periods, goals)
                     - How their relationship impacted the African diaspora community
                     
-                    Keep each explanation to 2-3 sentences. Write in an engaging, informative style.`;
+                    Focus on historical accuracy. Keep each explanation to 2-3 sentences. Write in an engaging, informative style.`;
 
                     connectionInsights = await window.DiasporaAI.callOpenAI(prompt, 400, 0.7);
                     console.log('✅ AI connection analysis generated');
 
                 } catch (aiError) {
                     console.warn('⚠️ AI connection analysis failed:', aiError);
+                    connectionInsights = this.getFallbackConnectionInsights(figure, connections);
                 }
+            } else if (connections.length > 0) {
+                connectionInsights = this.getFallbackConnectionInsights(figure, connections);
             }
 
             // Update modal with connections
@@ -669,6 +787,14 @@ async init() {
             console.error('❌ Error showing connections:', error);
             this.showErrorModal('Could not load figure connections. Please try again.');
         }
+    }
+
+    // NEW: Fallback connection insights
+    getFallbackConnectionInsights(figure, connections) {
+        if (connections.length === 0) return '';
+        
+        const connectionNames = connections.map(c => c.name).join(' and ');
+        return `${figure.name} shared important connections with ${connectionNames} through their work in ${figure.primaryField} and their shared commitment to African diaspora empowerment. These relationships helped shape cultural and social movements that continue to influence communities today.`;
     }
 
     /**
@@ -757,53 +883,6 @@ async init() {
         `;
     }
 
-    getFigureDetailsHTML(figure, biography, aiInsights) {
-        const portraitHTML = this.createModalPortraitHTML(figure);
-        
-        return `
-            <div class="modal-header">
-                ${portraitHTML}
-                <div class="modal-figure-info">
-                    <h2>${figure.name}</h2>
-                    <div class="modal-lifespan">${figure.lifespan}</div>
-                    <div class="modal-achievement">${figure.achievement}</div>
-                    <div class="modal-fields">
-                        ${figure.fields.map(field => `<span class="modal-field-tag">${field}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="modal-quote">
-                    <i class="fas fa-quote-left"></i>
-                    <p>"${figure.famousQuote}"</p>
-                </div>
-                
-                <div class="modal-biography">
-                    <h3>Biography</h3>
-                    <p>${biography}</p>
-                </div>
-                
-                ${aiInsights ? `
-                    <div class="modal-ai-insights">
-                        <h3><i class="fas fa-robot"></i> AI Insights: Relevance Today</h3>
-                        <p>${aiInsights}</p>
-                    </div>
-                ` : ''}
-                
-                <div class="modal-actions">
-                    <button class="modal-btn primary" onclick="culturalFiguresManager.showConnections(${figure.id})">
-                        <i class="fas fa-project-diagram"></i>
-                        View Connections
-                    </button>
-                    <button class="modal-btn secondary" onclick="culturalFiguresManager.shareFigure(${figure.id})">
-                        <i class="fas fa-share"></i>
-                        Share
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
     /**
      * Create modal portrait HTML with better fallback
      */
@@ -850,7 +929,7 @@ async init() {
                     
                     ${aiInsights ? `
                         <div class="modal-ai-insights">
-                            <h3><i class="fas fa-robot"></i> AI Analysis: How They Connected</h3>
+                            <h3><i class="fas fa-brain"></i> Connection Analysis</h3>
                             <div class="ai-insights-content">${aiInsights}</div>
                         </div>
                     ` : ''}
@@ -859,10 +938,80 @@ async init() {
                         <i class="fas fa-users"></i>
                         <h3>No Direct Connections Found</h3>
                         <p>This figure's connections haven't been mapped yet, but they contributed significantly to the broader diaspora community.</p>
+                        
+                        ${window.DiasporaAI && window.DiasporaAI.isInitialized ? `
+                            <button class="modal-btn primary" onclick="culturalFiguresManager.suggestConnections('${figure.name}', ${figure.id})">
+                                <i class="fas fa-lightbulb"></i>
+                                Suggest Possible Connections
+                            </button>
+                        ` : ''}
                     </div>
                 `}
             </div>
         `;
+    }
+
+    // NEW: AI-powered connection suggestions
+    async suggestConnections(figureName, figureId) {
+        try {
+            console.log('💡 Generating connection suggestions for:', figureName);
+            
+            const figure = await window.figureCsvProcessor.getFigureById(figureId);
+            if (!figure) return;
+
+            // Update modal with loading state
+            const modal = document.querySelector('.modal-body .no-connections');
+            if (modal) {
+                modal.innerHTML = `
+                    <div class="traditional-loading-container">
+                        <div class="adinkra-loader"></div>
+                        <p class="loading-text">Finding possible connections...</p>
+                        <p class="loading-subtext">Analyzing historical relationships</p>
+                    </div>
+                `;
+            }
+
+            if (window.DiasporaAI && window.DiasporaAI.isInitialized) {
+                const prompt = `Based on ${figure.name}'s life (${figure.lifespan}), work in ${figure.primaryField}, and ${figure.era} era background, suggest 3-4 historical figures from the African diaspora they might have known, influenced, or been influenced by.
+
+                For each suggestion, provide:
+                - The person's name and brief description
+                - How they might have connected (shared time period, location, field, or movements)
+                - Why this connection would be significant
+                
+                Focus on historically plausible connections. Write in a clear, informative style.`;
+
+                const suggestions = await window.DiasporaAI.callOpenAI(prompt, 350, 0.7);
+
+                // Update modal with suggestions
+                if (modal) {
+                    modal.innerHTML = `
+                        <div class="connection-suggestions">
+                            <i class="fas fa-lightbulb"></i>
+                            <h3>Possible Historical Connections</h3>
+                            <p class="suggestions-intro">Based on ${figure.name}'s era and work, here are some figures they might have known or influenced:</p>
+                            <div class="ai-suggestions-content">${suggestions}</div>
+                            <div class="suggestions-disclaimer">
+                                <i class="fas fa-info-circle"></i>
+                                <span>These are AI-generated suggestions based on historical analysis. Actual connections may vary.</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+        } catch (error) {
+            console.error('❌ Error generating connection suggestions:', error);
+            if (modal) {
+                modal.innerHTML = `
+                    <div class="no-connections">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Could not generate suggestions</h3>
+                        <p>Unable to analyze possible connections at this time. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
     }
 
     /**
@@ -984,9 +1133,12 @@ async init() {
                 era: "Modern",
                 fields: ["Literature", "Civil Rights"],
                 lifespan: "1928 - 2014",
-                imagePath: "assets\images\figures\maya-angelou.jpg",
+                imagePath: "assets/images/figures/maya-angelou.jpg",
                 imageFilename: "maya-angelou.jpg",
-                connections: ["James Baldwin", "Martin Luther King Jr."]
+                connections: ["James Baldwin", "Martin Luther King Jr."],
+                heritage: "African American",
+                region: "United States",
+                primaryField: "Literature"
             },
             {
                 id: 2,
@@ -1000,9 +1152,12 @@ async init() {
                 era: "Modern",
                 fields: ["Politics", "Human Rights"],
                 lifespan: "1918 - 2013",
-                imagePath: "assets\images\figures\nelson-mandela.jpg",
+                imagePath: "assets/images/figures/nelson-mandela.jpg",
                 imageFilename: null,
-                connections: ["Desmond Tutu", "Oliver Tambo"]
+                connections: ["Desmond Tutu", "Oliver Tambo"],
+                heritage: "Xhosa",
+                region: "South Africa",
+                primaryField: "Politics"
             },
             {
                 id: 3,
@@ -1018,7 +1173,10 @@ async init() {
                 lifespan: "1945 - 1981",
                 imagePath: null,
                 imageFilename: null,
-                connections: ["Peter Tosh", "Jimmy Cliff"]
+                connections: ["Peter Tosh", "Jimmy Cliff"],
+                heritage: "Jamaican",
+                region: "Jamaica",
+                primaryField: "Music"
             },
             {
                 id: 4,
@@ -1034,7 +1192,10 @@ async init() {
                 lifespan: "1930 - 2013",
                 imagePath: null,
                 imageFilename: null,
-                connections: ["Wole Soyinka", "Ngugi wa Thiong'o"]
+                connections: ["Wole Soyinka", "Ngugi wa Thiong'o"],
+                heritage: "Igbo",
+                region: "Nigeria",
+                primaryField: "Literature"
             },
             {
                 id: 5,
@@ -1050,7 +1211,10 @@ async init() {
                 lifespan: "1940 - 2011",
                 imagePath: null,
                 imageFilename: null,
-                connections: ["Vandana Shiva", "Al Gore"]
+                connections: ["Vandana Shiva", "Al Gore"],
+                heritage: "Kikuyu",
+                region: "Kenya",
+                primaryField: "Environmental Activism"
             },
             {
                 id: 6,
@@ -1066,7 +1230,10 @@ async init() {
                 lifespan: "1961 - present",
                 imagePath: null,
                 imageFilename: null,
-                connections: ["Michelle Obama", "Nelson Mandela"]
+                connections: ["Michelle Obama", "Nelson Mandela"],
+                heritage: "Kenyan-American",
+                region: "United States",
+                primaryField: "Politics"
             },
             {
                 id: 7,
@@ -1082,7 +1249,10 @@ async init() {
                 lifespan: "1954 - present",
                 imagePath: null,
                 imageFilename: null,
-                connections: ["Maya Angelou", "Gayle King"]
+                connections: ["Maya Angelou", "Gayle King"],
+                heritage: "African American",
+                region: "United States",
+                primaryField: "Media"
             },
             {
                 id: 8,
@@ -1098,7 +1268,10 @@ async init() {
                 lifespan: "1887 - 1940",
                 imagePath: null,
                 imageFilename: null,
-                connections: ["W.E.B. Du Bois", "Amy Jacques Garvey"]
+                connections: ["W.E.B. Du Bois", "Amy Jacques Garvey"],
+                heritage: "Jamaican",
+                region: "Jamaica",
+                primaryField: "Activism"
             }
         ];
     }
@@ -1118,12 +1291,12 @@ async init() {
             clearTimeout(this.debounceTimeout);
         }
         
-        console.log('🧹 Cultural Figures Manager cleaned up');
+        console.log('🧹 Enhanced Cultural Figures Manager cleaned up');
     }
 }
 
 /**
- * Initialize Cultural Figures Manager with proper processor dependency
+ * Initialize Enhanced Cultural Figures Manager
  */
 function initializeCulturalFiguresManager() {
     // Only initialize on homepage or if specifically requested
@@ -1133,7 +1306,7 @@ function initializeCulturalFiguresManager() {
                             document.querySelector('.cultural-figures-preview');
     
     if (shouldInitialize) {
-        console.log('🎭 Initializing Smooth Cultural Figures Manager...');
+        console.log('🎭 Initializing Enhanced Cultural Figures Manager with AI...');
         window.culturalFiguresManager = new CulturalFiguresManager();
         
         // Cleanup on page unload
@@ -1153,7 +1326,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         // Wait for processor ready event
         document.addEventListener('figureCsvProcessorReady', function() {
-            console.log('✅ Received processor ready event, initializing smooth cultural figures manager');
+            console.log('✅ Received processor ready event, initializing enhanced cultural figures manager');
             initializeCulturalFiguresManager();
         }, { once: true });
     }

@@ -1,3 +1,4 @@
+// country-search.js - Clean version with AI integration
 // Country data with diaspora information
 const countryData = [
     {
@@ -315,51 +316,134 @@ function showAISummary(country) {
             });
         }, 300);
         
-        // NOW trigger AI enhancement
+        // Trigger AI enhancement immediately after static content
         setTimeout(() => {
             triggerAIEnhancement(country);
-        }, 1000);
+        }, 500);
         
     }, 1000);
 }
 
-// Trigger AI enhancement function
+// AI enhancement trigger
 function triggerAIEnhancement(country) {
-    console.log('Triggering AI enhancement for:', country.name);
+    console.log('🎯 Triggering AI enhancement for:', country.name);
     
-    // Check if AI is available
-    if (window.secureAIConfigInstance && window.secureAIConfigInstance.initialized) {
-        console.log('AI is available, enhancing content...');
-        window.secureAIConfigInstance.enhanceCountrySummaryWithAI(country);
-    } else if (window.enhanceWithAI) {
-        console.log('Using global AI enhancement function...');
-        window.enhanceWithAI(country);
+    // Check if DiasporaAI service is available and initialized
+    if (window.DiasporaAI && window.DiasporaAI.isInitialized) {
+        console.log('✅ AI service available, enhancing content...');
+        
+        // Call the new enhancement method
+        window.DiasporaAI.enhanceCountrySummaryWithAI(country)
+            .then(() => {
+                console.log('✅ AI enhancement completed successfully');
+            })
+            .catch(error => {
+                console.error('❌ AI enhancement failed:', error);
+                showEnhancementError();
+            });
+            
     } else {
-        console.log('AI not available:', {
-            configInstance: !!window.secureAIConfigInstance,
-            initialized: window.secureAIConfigInstance ? window.secureAIConfigInstance.initialized : false,
-            enhanceWithAI: !!window.enhanceWithAI
+        console.log('❌ No AI service available:', {
+            DiasporaAI: !!window.DiasporaAI,
+            initialized: window.DiasporaAI ? window.DiasporaAI.isInitialized : false
         });
         
-        // Show that AI wasn't available
-        const summaryText = document.getElementById('summary-text');
-        if (summaryText) {
-            const aiNote = document.createElement('div');
-            aiNote.style.cssText = `
-                background: rgba(255, 152, 0, 0.1);
-                border: 1px solid rgba(255, 152, 0, 0.3);
-                color: #ff9800;
-                padding: 8px 12px;
-                border-radius: 6px;
-                margin-top: 15px;
-                font-size: 0.8rem;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            `;
-            aiNote.innerHTML = '<i class="fas fa-info-circle"></i> AI enhancement unavailable - showing static content';
-            summaryText.appendChild(aiNote);
+        // Show AI unavailable message
+        showAIUnavailableMessage();
+    }
+}
+
+// Show AI unavailable message
+function showAIUnavailableMessage() {
+    const summaryText = document.getElementById('summary-text');
+    if (!summaryText) return;
+    
+    const aiNote = document.createElement('div');
+    aiNote.className = 'ai-status-message';
+    aiNote.style.cssText = `
+        background: rgba(255, 152, 0, 0.1);
+        border: 1px solid rgba(255, 152, 0, 0.3);
+        color: #ff9800;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: fadeInUp 0.5s ease;
+    `;
+    aiNote.innerHTML = `
+        <i class="fas fa-info-circle"></i>
+        <span>AI enhancement unavailable - showing verified diaspora information</span>
+    `;
+    
+    summaryText.appendChild(aiNote);
+}
+
+// Show enhancement error
+function showEnhancementError() {
+    const summaryText = document.getElementById('summary-text');
+    if (!summaryText) return;
+    
+    // Remove any existing status messages
+    const existingMessage = summaryText.querySelector('.ai-status-message');
+    if (existingMessage) existingMessage.remove();
+    
+    const errorNote = document.createElement('div');
+    errorNote.className = 'ai-status-message';
+    errorNote.style.cssText = `
+        background: rgba(244, 67, 54, 0.1);
+        border: 1px solid rgba(244, 67, 54, 0.3);
+        color: #f44336;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: fadeInUp 0.5s ease;
+    `;
+    errorNote.innerHTML = `
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>AI enhancement temporarily unavailable - showing verified content</span>
+    `;
+    
+    summaryText.appendChild(errorNote);
+    
+    // Remove error message after 5 seconds
+    setTimeout(() => {
+        errorNote.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => errorNote.remove(), 300);
+    }, 5000);
+}
+
+// Get API key for AI service
+function getAPIKey() {
+    // Try to get from global CONFIG
+    if (window.CONFIG && window.CONFIG.OPENAI_API_KEY) {
+        return window.CONFIG.OPENAI_API_KEY;
+    }
+    return null; // just return null if config not found
+}
+
+// Initialize AI service
+function initializeAIService() {
+    console.log('🚀 Initializing AI service...');
+    
+    // Try to get API key
+    const apiKey = getAPIKey();
+    
+    if (apiKey && window.DiasporaAI) {
+        try {
+            window.DiasporaAI.initialize(apiKey);
+            console.log('✅ AI service initialized successfully');
+        } catch (error) {
+            console.error('❌ Failed to initialize AI service:', error);
         }
+    } else {
+        console.log('⚠️ API key not found or DiasporaAI not available');
     }
 }
 
@@ -391,21 +475,17 @@ function shareCountrySummary() {
     }
 }
 
-// Utility function for debouncing
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Initializing country search...');
+    console.log('🎯 Initializing country search...');
+    
+    // Initialize country search functionality
     initializeCountrySearch();
+    
+    // Initialize AI service
+    setTimeout(() => {
+        initializeAIService();
+    }, 500);
+    
+    console.log('✅ Country search initialization complete');
 });

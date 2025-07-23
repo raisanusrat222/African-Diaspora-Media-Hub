@@ -14,6 +14,35 @@ function initializeApp() {
     // Page-specific initializations
     initializePageSpecificFeatures();
 }
+function loadPage(pageName) {
+  fetch(pageName + '.html')
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.text();
+    })
+    .then(html => {
+      // Replace main content with fetched HTML
+      document.getElementById('main-content').innerHTML = html;
+
+      // Re-initialize scripts for new page content
+      initializePageSpecificFeatures();
+
+      // Update browser URL without reload (optional)
+      history.pushState(null, '', pageName + '.html');
+    })
+    .catch(error => {
+      console.error('Failed to load page:', error);
+      // Fallback: full page reload if fetch fails
+      window.location.href = pageName + '.html';
+    });
+}
+
+// Handle back/forward buttons to load correct page content dynamically
+window.onpopstate = function() {
+  const path = window.location.pathname;
+  const page = path.substring(path.lastIndexOf('/') + 1).replace('.html', '') || 'index';
+  loadPage(page);
+};
 
 // Go to home page function 
 function goToHomePage() {

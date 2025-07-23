@@ -243,21 +243,20 @@
                 <p class="hero-subtitle animate-slide-up">
                     Connecting cultures, preserving heritage, empowering communities across the global African diaspora
                 </p>
-                <div class="hero-buttons animate-slide-up-delayed">
-                    <button class="btn btn-primary" onclick="loadPage('explore')">
-                        <i class="fas fa-compass"></i>
-                        Explore Now
-                    </button>
-                    <button class="btn btn-outline" onclick="loadPage('about')">
-                        <i class="fas fa-info-circle"></i>
-                        Learn More
-                    </button>
-                </div>
+            <div class="hero-buttons animate-slide-up-delayed">
+                <a href="#features" class="btn btn-primary">
+                    <i class="fas fa-compass"></i>
+                    Explore Now
+                </a>
+                <a href="about.html" class="btn btn-outline" onclick="loadPage('about')">
+                    <i class="fas fa-info-circle"></i>
+                    Learn More
+                </a>
             </div>
         </section>
 
         <!-- Feature Slideshow -->
-        <section class="feature-slideshow-section">
+        <section id="features" class="feature-slideshow-section">
             <div class="container">
                 <div class="slideshow-container">
                     <div class="slideshow-wrapper">
@@ -585,7 +584,6 @@
                 <div class="footer-section">
                     <h3>Resources</h3>
                     <ul>
-                        <li><a href="#" onclick="loadPage('api-docs')">API Documentation</a></li>
                         <li><a href="#" onclick="loadPage('contribute')">Contribute</a></li>
                         <li><a href="partnerships.html" onclick="loadPage('partnerships')">Partnerships</a></li>
                     </ul>
@@ -593,6 +591,7 @@
                 <div class="footer-section">
                     <h3>Support</h3>
                     <ul>
+                        <li><a href="about.html" onclick="loadPage('about')">About Us</a></li>
                         <li><a href="#" onclick="loadPage('contact')">Contact Us</a></li>
                         <li><a href="#" onclick="loadPage('faq')">FAQ</a></li>
                         <li><a href="#" onclick="loadPage('privacy')">Privacy Policy</a></li>
@@ -611,6 +610,7 @@
     <script src="js/navigation.js"></script>
     <script src="js/animations.js"></script>
     <script src="js/page-loader.js"></script>
+    <script src="js/config.js"></script>                   
     <script src="js/country-search.js"></script>
     <script src="js/slideshow.js"></script>
     <script src="js/maps-interactive.js"></script>
@@ -626,7 +626,7 @@
     <script>
         // Enhanced cultural figures integration
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎭 DOM loaded, initializing cultural figures...');
+            console.log('DOM loaded, initializing cultural figures...');
             
             // Wait for the CSV processor to be ready
             function initializeCulturalFiguresUI() {

@@ -1,10 +1,10 @@
-// js/ai-service.js - Fixed version with clean, direct responses
+// js/ai-service.js - Enhanced version with gap-filling capabilities
 class DiasporaAIService {
     constructor() {
         // Store API key securely - you'll set this via environment or config
         this.apiKey = null;
         this.baseURL = 'https://api.openai.com/v1/chat/completions';
-        this.model = 'gpt-4.1';
+        this.model = 'gpt-4o-mini';
         this.isInitialized = false;
         
         // User tracking for personalization
@@ -81,6 +81,335 @@ class DiasporaAIService {
             console.log('⚠️ Falling back to static content');
             return this.getFallbackContent(prompt);
         }
+    }
+    
+    // NEW: Enhanced country summary with gap-filling
+    async enhanceCountrySummaryWithAI(country) {
+        console.log('🎯 Enhancing country summary with AI for:', country.name);
+        
+        const summaryText = document.getElementById('summary-text');
+        if (!summaryText) {
+            console.log('❌ Summary text element not found');
+            return;
+        }
+        
+        try {
+            // Identify gaps in current data
+            const gaps = this.identifyCountryGaps(country);
+            console.log('📊 Identified gaps:', gaps);
+            
+            // Build gap-filling prompt
+            const enhancedPrompt = this.buildGapFillingPrompt(country, gaps);
+            
+            // Show AI enhancement indicator
+            this.showAIEnhancementIndicator();
+            
+            // Get AI enhancement
+            const enhancement = await this.callOpenAI(enhancedPrompt, 400, 0.7);
+            
+            // Update the summary with enhancement
+            this.updateSummaryWithEnhancement(country, enhancement);
+            
+            // Track user interest
+            this.trackUserInterest('country', country.name);
+            
+        } catch (error) {
+            console.error('❌ AI enhancement failed:', error);
+            this.hideAIEnhancementIndicator();
+            
+            // Add fallback enhancement
+            this.addFallbackEnhancement(country);
+        }
+    }
+    
+    // NEW: Identify what data gaps exist for a country
+    identifyCountryGaps(country) {
+        const gaps = [];
+        
+        // Check for missing notable figures
+        if (!country.notableFigures || country.notableFigures.length === 0) {
+            gaps.push('notable_figures');
+        }
+        
+        // Check for missing festivals
+        if (!country.festivals || country.festivals.length === 0) {
+            gaps.push('festivals');
+        }
+        
+        // Check for missing cuisine info
+        if (!country.cuisine || !country.cuisineDetails) {
+            gaps.push('cuisine');
+        }
+        
+        // Check for missing language info
+        if (!country.languages || country.languages.length === 0) {
+            gaps.push('languages');
+        }
+        
+        // Check for missing economic impact
+        if (!country.economicImpact) {
+            gaps.push('economic_impact');
+        }
+        
+        return gaps;
+    }
+    
+    // NEW: Build prompt for filling identified gaps
+    buildGapFillingPrompt(country, gaps) {
+        const gapInstructions = this.buildGapInstructions(country.name, gaps);
+        
+        return `
+Create enhanced content for ${country.name} diaspora community that seamlessly extends the existing information.
+
+EXISTING DATA (reference only, don't repeat):
+- Population: ${country.diaspora} worldwide
+- Region: ${country.region}
+- Main destinations: ${country.destinations} countries
+- Cultural centers: ${country.culturalCenters}
+
+${gapInstructions}
+
+Write 2-3 additional paragraphs that naturally flow from the existing summary. Make it feel like one cohesive, authoritative description. Include specific names, places, and examples where possible. Write in an engaging, informative style.
+        `.trim();
+    }
+    
+    // NEW: Build specific instructions for each gap type
+    buildGapInstructions(countryName, gaps) {
+        let instructions = 'ENHANCE WITH THESE DETAILS:\n';
+        
+        if (gaps.includes('notable_figures')) {
+            instructions += `- Notable Figures: Name 2-3 prominent ${countryName} diaspora members (writers, artists, business leaders, etc.)\n`;
+        }
+        
+        if (gaps.includes('festivals')) {
+            instructions += `- Cultural Festivals: Describe 1-2 major ${countryName} celebrations held in diaspora communities worldwide\n`;
+        }
+        
+        if (gaps.includes('cuisine')) {
+            instructions += `- Cuisine Impact: How ${countryName} traditional foods have influenced global cuisine and where they're popular\n`;
+        }
+        
+        if (gaps.includes('languages')) {
+            instructions += `- Languages: What ${countryName} languages are preserved and spoken in diaspora communities\n`;
+        }
+        
+        if (gaps.includes('economic_impact')) {
+            instructions += `- Economic Contributions: Estimate remittances sent back to ${countryName} and economic impact on host countries\n`;
+        }
+        
+        return instructions;
+    }
+    
+    // NEW: Show AI enhancement loading indicator
+    showAIEnhancementIndicator() {
+        const summaryText = document.getElementById('summary-text');
+        if (!summaryText) return;
+        
+        // Remove any existing indicator
+        const existingIndicator = summaryText.querySelector('.ai-enhancement-indicator');
+        if (existingIndicator) existingIndicator.remove();
+        
+        const indicator = document.createElement('div');
+        indicator.className = 'ai-enhancement-indicator';
+        indicator.style.cssText = `
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            animation: aiPulse 2s infinite;
+        `;
+        indicator.innerHTML = `
+            <div class="spinner" style="
+                width: 16px; 
+                height: 16px; 
+                border: 2px solid rgba(255,255,255,0.3); 
+                border-top: 2px solid white; 
+                border-radius: 50%; 
+                animation: spin 1s linear infinite;
+            "></div>
+            <span>AI is enhancing this summary with additional insights...</span>
+        `;
+        
+        summaryText.appendChild(indicator);
+        
+        // Add CSS animations if not already present
+        if (!document.getElementById('ai-enhancement-styles')) {
+            const style = document.createElement('style');
+            style.id = 'ai-enhancement-styles';
+            style.textContent = `
+                @keyframes aiPulse {
+                    0%, 100% { opacity: 1; transform: scale(1); }
+                    50% { opacity: 0.8; transform: scale(1.02); }
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+    
+    // NEW: Hide AI enhancement indicator
+    hideAIEnhancementIndicator() {
+        const indicator = document.querySelector('.ai-enhancement-indicator');
+        if (indicator) {
+            indicator.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => indicator.remove(), 300);
+        }
+    }
+    
+    // NEW: Update summary with AI enhancement
+    updateSummaryWithEnhancement(country, enhancement) {
+        const summaryText = document.getElementById('summary-text');
+        if (!summaryText) return;
+        
+        // Remove loading indicator
+        this.hideAIEnhancementIndicator();
+        
+        // Get current content
+        const currentContent = summaryText.innerHTML;
+        
+        // Add enhanced content
+        const enhancedContent = `
+            ${currentContent}
+            <div class="ai-enhanced-content" style="
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                animation: fadeInUp 0.8s ease;
+            ">
+                ${this.formatEnhancementContent(enhancement)}
+            </div>
+        `;
+        
+        summaryText.innerHTML = enhancedContent;
+        
+        // Add success indicator
+        this.addEnhancementSuccessIndicator();
+        
+        // Add fade-in animation CSS if not present
+        if (!document.getElementById('enhancement-animations')) {
+            const style = document.createElement('style');
+            style.id = 'enhancement-animations';
+            style.textContent = `
+                @keyframes fadeInUp {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+    
+    // NEW: Format AI enhancement content
+    formatEnhancementContent(content) {
+        // Split into paragraphs and clean up
+        const paragraphs = content.split('\n\n').filter(p => p.trim().length > 0);
+        
+        return paragraphs.map(paragraph => `<p>${paragraph.trim()}</p>`).join('');
+    }
+    
+    // NEW: Add success indicator
+    addEnhancementSuccessIndicator() {
+        const summaryText = document.getElementById('summary-text');
+        if (!summaryText) return;
+        
+        const successIndicator = document.createElement('div');
+        successIndicator.style.cssText = `
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            color: #4caf50;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInUp 0.5s ease;
+        `;
+        successIndicator.innerHTML = '<i class="fas fa-check-circle"></i> Enhanced with AI insights';
+        
+        summaryText.appendChild(successIndicator);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            successIndicator.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => successIndicator.remove(), 300);
+        }, 3000);
+    }
+    
+    // NEW: Add fallback enhancement when AI fails
+    addFallbackEnhancement(country) {
+        const summaryText = document.getElementById('summary-text');
+        if (!summaryText) return;
+        
+        const fallbackContent = this.getFallbackEnhancement(country);
+        
+        const enhancedContent = `
+            ${summaryText.innerHTML}
+            <div class="fallback-enhanced-content" style="
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                animation: fadeInUp 0.8s ease;
+            ">
+                ${fallbackContent}
+            </div>
+        `;
+        
+        summaryText.innerHTML = enhancedContent;
+        
+        // Add info indicator
+        const infoIndicator = document.createElement('div');
+        infoIndicator.style.cssText = `
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            color: #ff9800;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        `;
+        infoIndicator.innerHTML = '<i class="fas fa-info-circle"></i> Enhanced with curated insights';
+        
+        summaryText.appendChild(infoIndicator);
+    }
+    
+    // NEW: Get fallback enhancement content
+    getFallbackEnhancement(country) {
+        const fallbackEnhancements = {
+            'Nigeria': `
+                <p>The Nigerian diaspora includes influential figures like author Chimamanda Ngozi Adichie and business magnate Aliko Dangote, who have elevated Nigeria's global profile through literature and entrepreneurship. Nigerian communities worldwide celebrate Independence Day festivals each October, featuring traditional Afrobeat music, colorful attire, and authentic cuisine.</p>
+                <p>Nigerian dishes like jollof rice, suya, and plantains have gained international popularity, with Nigerian restaurants thriving in major cities. The diaspora maintains connections through languages like Yoruba, Igbo, and Hausa, often taught in weekend cultural schools.</p>
+            `,
+            'Jamaica': `
+                <p>The Jamaican diaspora has produced global icons like Bob Marley and Marcus Garvey, whose influence extends far beyond music into social consciousness and Pan-African identity. Annual events like Jamaican Independence Day and Bob Marley's birthday celebrations unite communities worldwide through reggae music and cultural pride.</p>
+                <p>Jamaican cuisine, including jerk chicken, ackee and saltfish, and patties, has become globally recognized comfort food. Patois language and Rastafarian philosophy continue to influence international culture and spirituality.</p>
+            `,
+            'Ghana': `
+                <p>Ghana's diaspora includes notable figures like author Ama Ata Aidoo and businessman Tony Elumelu, contributing to global literature and business innovation. The country's "Year of Return" initiative has strengthened connections between African Americans and Ghana, with annual homecoming celebrations becoming major cultural events.</p>
+                <p>Ghanaian foods like kelewele, banku, and jollof rice compete globally for culinary recognition. Traditional languages like Twi and Ga are preserved through cultural associations and weekend schools in diaspora communities.</p>
+            `
+        };
+        
+        return fallbackEnhancements[country.name] || `
+            <p>The ${country.name} diaspora maintains strong cultural connections through traditional festivals, cuisine, and language preservation. Community leaders and cultural organizations work to bridge homeland and diaspora experiences.</p>
+            <p>Economic contributions through remittances and business networks continue to strengthen ties between ${country.name} and its global communities.</p>
+        `;
     }
     
     // Generate country diaspora summary with clean prompting

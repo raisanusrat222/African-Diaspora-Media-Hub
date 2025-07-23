@@ -9,334 +9,38 @@ function loadPage(pageName) {
         window.NavigationUtils.trackNavigation(pageName, 'navigation');
     }
     
-    // Simulate page loading with content switching
-    setTimeout(() => {
-        switchPageContent(pageName);
-        hideLoadingSpinner();
-        
-        // Update navigation state
-        if (window.NavigationUtils && window.NavigationUtils.NavigationState) {
-            window.NavigationUtils.NavigationState.navigateTo(pageName);
-        }
-    }, 800);
-}
-
-function switchPageContent(pageName) {
-    const mainContent = document.getElementById('main-content');
-    
-    // Page content templates
-    const pageTemplates = {
-        'historical-timeline': `
-            <section class="page-header">
-                <div class="container">
-                    <h1>Historical Timeline</h1>
-                    <p>Journey through key moments in African diaspora history</p>
-                </div>
-            </section>
-            <section class="timeline-content">
-                <div class="container">
-                    <div class="timeline">
-                        <div class="timeline-item fade-in-up">
-                            <div class="timeline-date">3000 BCE</div>
-                            <div class="timeline-content-item">
-                                <h3>Ancient African Civilizations</h3>
-                                <p>Rise of Nubian kingdoms and early trade networks across the Red Sea and Indian Ocean.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item fade-in-up">
-                            <div class="timeline-date">1400s-1800s</div>
-                            <div class="timeline-content-item">
-                                <h3>Transatlantic Slave Trade</h3>
-                                <p>Forced migration of millions of Africans to the Americas, creating diaspora communities.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item fade-in-up">
-                            <div class="timeline-date">1960s</div>
-                            <div class="timeline-content-item">
-                                <h3>Civil Rights Movement</h3>
-                                <p>Pan-African solidarity and independence movements across Africa and the diaspora.</p>
-                            </div>
-                        </div>
-                        <div class="timeline-item fade-in-up">
-                            <div class="timeline-date">2000s-Present</div>
-                            <div class="timeline-content-item">
-                                <h3>Digital Renaissance</h3>
-                                <p>Technology enables new forms of cultural connection and diaspora identity expression.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        `,
-        'maps': `
-            <section class="page-header">
-                <div class="container">
-                    <h1>Interactive Maps</h1>
-                    <p>Explore migration patterns and cultural connections</p>
-                </div>
-            </section>
-            <section class="maps-content">
-                <div class="container">
-                    <div class="map-container">
-                        <div class="map-placeholder fade-in-up">
-                            <i class="fas fa-globe-africa" style="font-size: 5rem; color: var(--primary-color);"></i>
-                            <h3>Interactive World Map</h3>
-                            <p>Click regions to explore diaspora communities and migration routes</p>
-                            <div class="map-controls">
-                                <button class="btn btn-primary" onclick="filterMap('migration')">Migration Routes</button>
-                                <button class="btn btn-outline" onclick="filterMap('cultural')">Cultural Centers</button>
-                                <button class="btn btn-outline" onclick="filterMap('historical')">Historical Sites</button>
-                            </div>
-                        </div>
-                        <div class="map-legend fade-in-up">
-                            <h4>Legend</h4>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--primary-color);"></span>
-                                <span>Major Diaspora Communities</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--secondary-color);"></span>
-                                <span>Historical Trade Routes</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background: var(--accent-color);"></span>
-                                <span>Cultural Heritage Sites</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        `,
-        'podcasts': `
-            <section class="page-header">
-                <div class="container">
-                    <h1>Podcasts</h1>
-                    <p>Voices and stories from across the diaspora</p>
-                </div>
-            </section>
-            <section class="podcasts-content">
-                <div class="container">
-                    <div class="podcast-grid">
-                        <div class="podcast-card fade-in-up">
-                            <div class="podcast-image">
-                                <i class="fas fa-microphone"></i>
-                            </div>
-                            <h3>Diaspora Voices</h3>
-                            <p>Weekly conversations with community leaders and cultural innovators</p>
-                            <div class="podcast-meta">
-                                <span class="episode-count">42 Episodes</span>
-                                <span class="rating">★★★★★ 4.8</span>
-                            </div>
-                            <button class="btn btn-small" onclick="playPodcast('diaspora-voices')">Listen Now</button>
-                        </div>
-                        <div class="podcast-card fade-in-up">
-                            <div class="podcast-image">
-                                <i class="fas fa-headphones"></i>
-                            </div>
-                            <h3>Heritage Stories</h3>
-                            <p>Personal narratives of identity, tradition, and belonging</p>
-                            <div class="podcast-meta">
-                                <span class="episode-count">28 Episodes</span>
-                                <span class="rating">★★★★☆ 4.6</span>
-                            </div>
-                            <button class="btn btn-small" onclick="playPodcast('heritage-stories')">Listen Now</button>
-                        </div>
-                        <div class="podcast-card fade-in-up">
-                            <div class="podcast-image">
-                                <i class="fas fa-broadcast-tower"></i>
-                            </div>
-                            <h3>Cultural Currents</h3>
-                            <p>Exploring contemporary arts, music, and creative expressions</p>
-                            <div class="podcast-meta">
-                                <span class="episode-count">35 Episodes</span>
-                                <span class="rating">★★★★★ 4.9</span>
-                            </div>
-                            <button class="btn btn-small" onclick="playPodcast('cultural-currents')">Listen Now</button>
-                        </div>
-                    </div>
-                    <div class="featured-episode fade-in-up">
-                        <h3>Featured Episode</h3>
-                        <div class="episode-player">
-                            <div class="episode-info">
-                                <h4>The Digital Griot: Preserving Stories in the Modern Age</h4>
-                                <p>Exploring how technology is revolutionizing oral tradition preservation</p>
-                                <div class="episode-controls">
-                                    <button class="play-btn"><i class="fas fa-play"></i></button>
-                                    <div class="progress-bar">
-                                        <div class="progress"></div>
-                                    </div>
-                                    <span class="duration">42:30</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        `,
-        'news': `
-            <section class="page-header">
-                <div class="container">
-                    <h1>News & Updates</h1>
-                    <p>Latest developments in diaspora communities worldwide</p>
-                </div>
-            </section>
-            <section class="news-content">
-                <div class="container">
-                    <div class="news-filters fade-in-up">
-                        <button class="filter-btn active" onclick="filterNews('all')">All News</button>
-                        <button class="filter-btn" onclick="filterNews('culture')">Culture</button>
-                        <button class="filter-btn" onclick="filterNews('politics')">Politics</button>
-                        <button class="filter-btn" onclick="filterNews('education')">Education</button>
-                        <button class="filter-btn" onclick="filterNews('technology')">Technology</button>
-                    </div>
-                    <div class="news-grid">
-                        <article class="news-article featured fade-in-up">
-                            <div class="article-image">
-                                <i class="fas fa-newspaper"></i>
-                            </div>
-                            <div class="article-content">
-                                <span class="article-category">Culture</span>
-                                <h2>International Year of African Heritage Celebration</h2>
-                                <p>Communities across six continents unite to celebrate shared cultural legacy through virtual and in-person events highlighting the rich contributions of the African diaspora to global society.</p>
-                                <div class="article-meta">
-                                    <span class="article-date">June 15, 2025</span>
-                                    <span class="article-author">Heritage Today</span>
-                                    <span class="read-time">5 min read</span>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="news-article fade-in-up">
-                            <span class="article-category">Technology</span>
-                            <h3>New Digital Archive Launched</h3>
-                            <p>Preserving oral histories from elder community members through AI-enhanced recording and transcription technology.</p>
-                            <span class="article-date">June 14, 2025</span>
-                        </article>
-                        <article class="news-article fade-in-up">
-                            <span class="article-category">Education</span>
-                            <h3>Youth Leadership Summit</h3>
-                            <p>Next generation leaders gather to discuss future initiatives and sustainable community development projects.</p>
-                            <span class="article-date">June 12, 2025</span>
-                        </article>
-                        <article class="news-article fade-in-up">
-                            <span class="article-category">Politics</span>
-                            <h3>Diaspora Voting Rights Expanded</h3>
-                            <p>New legislation allows greater political participation for diaspora communities in homeland elections.</p>
-                            <span class="article-date">June 10, 2025</span>
-                        </article>
-                    </div>
-                </div>
-            </section>
-        `,
-        'films': `
-            <section class="page-header">
-                <div class="container">
-                    <h1>Films & Documentaries</h1>
-                    <p>Visual storytelling from diaspora filmmakers</p>
-                </div>
-            </section>
-            <section class="films-content">
-                <div class="container">
-                    <div class="film-categories fade-in-up">
-                        <button class="category-btn active" onclick="filterFilms('all')">All Films</button>
-                        <button class="category-btn" onclick="filterFilms('documentary')">Documentaries</button>
-                        <button class="category-btn" onclick="filterFilms('feature')">Feature Films</button>
-                        <button class="category-btn" onclick="filterFilms('short')">Short Films</button>
-                    </div>
-                    <div class="films-grid">
-                        <div class="film-card fade-in-up">
-                            <div class="film-poster">
-                                <i class="fas fa-film"></i>
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="film-info">
-                                <h3>Roots Revisited</h3>
-                                <p>A documentary exploring modern genealogy research in diaspora communities</p>
-                                <div class="film-meta">
-                                    <span class="duration">92 min</span>
-                                    <span class="year">2024</span>
-                                    <span class="rating">★★★★☆</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="film-card fade-in-up">
-                            <div class="film-poster">
-                                <i class="fas fa-video"></i>
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="film-info">
-                                <h3>Digital Griots</h3>
-                                <p>How technology preserves and transforms traditional storytelling</p>
-                                <div class="film-meta">
-                                    <span class="duration">75 min</span>
-                                    <span class="year">2025</span>
-                                    <span class="rating">★★★★★</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="film-card fade-in-up">
-                            <div class="film-poster">
-                                <i class="fas fa-camera"></i>
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="film-info">
-                                <h3>Bridges Across Waters</h3>
-                                <p>Personal stories of connection between homeland and diaspora</p>
-                                <div class="film-meta">
-                                    <span class="duration">110 min</span>
-                                    <span class="year">2024</span>
-                                    <span class="rating">★★★★☆</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        `
-    };
-
-    // Add page-specific styles
-    const pageStyles = getPageSpecificStyles();
-
-    // Replace content
-    if (pageTemplates[pageName]) {
-        mainContent.innerHTML = pageTemplates[pageName];
-        
-        // Add page-specific styles
-        updatePageStyles(pageStyles);
-        
-        // Re-initialize animations for new content
-        setTimeout(() => {
+    // fetch HTML files
+    fetch(pageName + '.html')
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load page');
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('main-content').innerHTML = html;
+            hideLoadingSpinner();
+            
+            // Update navigation state
+            if (window.NavigationUtils && window.NavigationUtils.NavigationState) {
+                window.NavigationUtils.NavigationState.navigateTo(pageName);
+            }
+            
+            // Re-initialize animations for new content
             if (window.setupAnimations) {
                 setupAnimations();
             }
-            
-            // Trigger entrance animations
-            const fadeElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right');
-            fadeElements.forEach((el, index) => {
-                setTimeout(() => {
-                    el.classList.add('animate');
-                }, index * 100);
-            });
-        }, 100);
-        
-    } else {
-        // Default page or go back to home
-        location.reload();
-    }
+        })
+        .catch(err => {
+            console.error('Failed to load page:', err);
+            hideLoadingSpinner();
+            location.href = pageName + '.html'; // fallback: full reload
+        });
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
     // Update page title
     updatePageTitle(pageName);
 }
-
 function getPageSpecificStyles() {
     return `
         .page-header {

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Voices of the Diaspora</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/about.css">
+    <link rel="stylesheet" href="styles/navigation.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Scripts for Translate and CSV parsing -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,es,fr,pt,sw,ar'
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+<body class="about-page">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="fas fa-globe-africa"></i>
+                <span>Voices of the Diaspora</span>
+            </div>
+            
+            <div class="nav-center">
+                <!-- Mobile Search -->
+                <div class="mobile-search-container">
+                    <div class="mobile-search-box">
+                        <input type="text" id="mobile-search-input" placeholder="Search..." autocomplete="off">
+                        <button class="mobile-search-btn" id="mobile-search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="mobile-search-results" id="mobile-search-results"></div>
+                </div>
+
+                <!-- Mobile Google Translate -->
+                <div class="mobile-translate-container">
+                    <div id="mobile_google_translate_element"></div>
+                </div>
+
+                <!-- Full Dropdown Navigation -->
+                <div class="nav-menu" id="nav-menu">
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span class="nav-text">Learning</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Learning Resources</div>
+                            <a href="#" onclick="loadPage('educational-content')">
+                                <i class="fas fa-book-open"></i>Educational Content
+                            </a>
+                            <a href="#" onclick="loadPage('online-courses')">
+                                <i class="fas fa-laptop"></i>Online Courses
+                            </a>
+                            <a href="#" onclick="loadPage('research-papers')">
+                                <i class="fas fa-file-alt"></i>Research Papers
+                            </a>
+                            <a href="#" onclick="loadPage('digital-archives')">
+                                <i class="fas fa-archive"></i>Digital Archives
+                            </a>
+                            <a href="glossary.html" onclick="loadPage('glossary')">
+                                <i class="fas fa-spell-check""></i>Glossary
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span class="nav-text">Teaching</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Teaching Tools</div>
+                            <a href="#" onclick="loadPage('lesson-plans')">
+                                <i class="fas fa-clipboard-list"></i>Lesson Plans
+                            </a>
+                            <a href="#" onclick="loadPage('interactive-materials')">
+                                <i class="fas fa-puzzle-piece"></i>Interactive Materials
+                            </a>
+                            <a href="#" onclick="loadPage('assessment-tools')">
+                                <i class="fas fa-check-circle"></i>Assessment Tools
+                            </a>
+                            <a href="#" onclick="loadPage('educator-guides')">
+                                <i class="fas fa-user-graduate"></i>Educator Guides
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-palette"></i>
+                            <span class="nav-text">Culture</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Culture & Arts</div>
+                            <a href="visual-arts.html" onclick="loadPage('visual-arts')">
+                                <i class="fas fa-paint-brush"></i>Visual Arts
+                            </a>
+                            <a href="#" onclick="loadPage('music-dance')">
+                                <i class="fas fa-music"></i>Music & Dance
+                            </a>
+                            <a href="literature.html" onclick="loadPage('literature')">
+                                <i class="fas fa-feather-alt"></i>Literature
+                            </a>
+                            <a href="festivals-events.html" onclick="loadPage('festivals-events')">
+                                <i class="fas fa-calendar"></i>Festivals & Events
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-microphone"></i>
+                            <span class="nav-text">Voices</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Voices & Stories</div>
+                            <a href="#" onclick="loadPage('oral-histories')">
+                                <i class="fas fa-microphone-alt"></i>Oral Histories
+                            </a>
+                            <a href="#" onclick="loadPage('personal-narratives')">
+                                <i class="fas fa-user-edit"></i>Personal Narratives
+                            </a>
+                            <a href="#" onclick="loadPage('community-voices')">
+                                <i class="fas fa-users"></i>Community Voices
+                            </a>
+                            <a href="#" onclick="loadPage('interviews')">
+                                <i class="fas fa-comments"></i>Interviews
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">
+                            <i class="fas fa-scroll"></i>
+                            <span class="nav-text">History</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">History & Identity</div>
+                            <a href="historical-timeline.html" onclick="loadPage('historical-timeline')">
+                                <i class="fas fa-clock"></i>Historical Timeline
+                            </a>
+                            <a href="cultural-figures.html" onclick="loadPage('cultural-figures')">
+                                <i class="fas fa-users"></i>Cultural Figures
+                            </a>
+                            <a href="#" onclick="loadPage('genealogy-tools')">
+                                <i class="fas fa-sitemap"></i>Genealogy Tools
+                            </a>
+                            <a href="#" onclick="loadPage('cultural-identity')">
+                                <i class="fas fa-fingerprint"></i>Cultural Identity
+                            </a>
+                            <a href="#" onclick="loadPage('migration-patterns')">
+                                <i class="fas fa-route"></i>Migration Patterns
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="news.html" class="nav-link" onclick="loadPage('news')" title="News">
+                            <i class="fas fa-newspaper"></i>
+                            <span class="nav-text">News</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadPage('films')" title="Films">
+                            <i class="fas fa-film"></i>
+                            <span class="nav-text">Films</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="#" class="nav-link" onclick="loadPage('podcasts')" title="Podcasts">
+                            <i class="fas fa-podcast"></i>
+                            <span class="nav-text">Podcasts</span>
+                        </a>
+                    </div>
+
+                    <div class="nav-item">
+                        <a href="maps.html" class="nav-link" onclick="loadPage('maps')" title="Maps">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span class="nav-text">Maps</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <!-- Desktop Search -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+                        <button class="search-btn" id="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="search-results"></div>
+                </div>
+
+                <!-- Google Translate -->
+                <div class="google-translate-container">
+                    <div id="google_translate_element"></div>
+                </div>
+
+                <!-- Mobile Nav Toggle -->
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header" style="background-image: url('assets/images/about/hero-msu.jpg'); background-size: cover; background-position: center;">
+        <h1>About Us</h1>
+        <p>Discover the vision behind Voices of the Diaspora</p>
+    </header>
+
+    <!-- About Content -->
+    <main class="container" style="padding: 60px 20px;">
+        <section class="about-section">
+            <h2>What is Voices of the Diaspora?</h2>
+            <p>Voices of the Diaspora is a digital platform that brings together news, podcasts, videos, and social media about the global African Diaspora. Inspired by <strong>COMM 300</strong> at Morgan State University, this project engages students and provides a central resource to explore Black identity in media. It highlights diverse voices, stories, and cultures through content like music, film, and language exchange. By fostering learning and cultural connection, this platform helps unify and amplify African Diaspora narratives worldwide.</p>
+        </section>
+
+        <!-- Image Divider -->
+        <div class="full-width-divider" style="background-image: url('assets/images/about/divider-1-msu.jpg');"></div>
+
+        <section class="about-section">
+            <h2>What is COMM 300?</h2>
+            <p><strong>COMM 300 (Communication and the Black Diaspora)</strong> is a course offered through the School of Global Journalism and Communication at Morgan State University. Open to all undergraduate students, it fulfills the critical thinking general education requirement.</p>
+            <p>The course helps students understand the African Diaspora, focusing on the modern era shaped by the Transatlantic Slave Trade and European colonization. Topics include shared cultural elements—language, music, film, dance, food, and spirituality—as well as how media portrays these communities and how they use media to tell their own stories.</p>
+        </section>
+
+        <!-- Image Divider -->
+        <div class="full-width-divider" style="background-image: url('assets/images/hero/hero-background.jpg');"></div>
+
+        <section class="about-section">
+            <h2>Who is the intended audience?</h2>
+            <p>This platform is designed for students and educators, providing resources to learn about and teach the history, culture, and global impact of the African Diaspora. Whether for classroom use or independent exploration, this platform offers tools to connect with the richness of African-descended communities worldwide.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Connect</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#" onclick="loadPage('contribute')">Contribute</a></li>
+                        <li><a href="partnerships.html" onclick="loadPage('partnerships')">Partnerships</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="about.html" onclick="loadPage('about')">About Us</a></li>
+                        <li><a href="#" onclick="loadPage('contact')">Contact Us</a></li>
+                        <li><a href="#" onclick="loadPage('faq')">FAQ</a></li>
+                        <li><a href="#" onclick="loadPage('privacy')">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Voices of the Diaspora. Empowering communities through shared heritage.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/page-loader.js"></script>
+</body>
+</html>

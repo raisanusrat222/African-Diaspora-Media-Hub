@@ -3,9 +3,9 @@
 /* Base responsive utilities */
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1600px; /* Increased from 1200px to match new featured content */
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 40px; /* Increased from 20px */
 }
 
 /* Tablet Styles */

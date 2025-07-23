@@ -9,7 +9,7 @@ function setupNavigation() {
     const searchBtn = document.getElementById('search-btn');
     const searchResults = document.getElementById('search-results');
 
-    // Simple banner removal (less aggressive)
+    
     setTimeout(() => {
         const banner = document.querySelector('.goog-te-banner-frame');
         if (banner) {
