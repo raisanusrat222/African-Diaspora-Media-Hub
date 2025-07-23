@@ -1,30 +1,101 @@
 // js/maps-interactive.js - Complete Enhanced Version with AI Integration
 
-// Get API key using existing config pattern
+// Debug function to check AI availability
+function debugAIAvailability() {
+    console.log('🔍 Maps AI Debug Check:');
+    console.log('- window.DiasporaAI exists:', !!window.DiasporaAI);
+    console.log('- window.CONFIG exists:', !!window.CONFIG);
+    console.log('- window.CONFIG.OPENAI_API_KEY exists:', !!(window.CONFIG && window.CONFIG.OPENAI_API_KEY));
+    
+    if (window.DiasporaAI) {
+        console.log('- DiasporaAI.isInitialized:', window.DiasporaAI.isInitialized);
+        console.log('- DiasporaAI.apiKey exists:', !!window.DiasporaAI.apiKey);
+        console.log('- DiasporaAI.callOpenAI exists:', typeof window.DiasporaAI.callOpenAI);
+        console.log('- DiasporaAI properties:', Object.keys(window.DiasporaAI));
+    }
+    
+    if (window.CONFIG) {
+        console.log('- CONFIG properties:', Object.keys(window.CONFIG));
+    }
+}
+
+// Get API key using multiple fallback methods
 function getAPIKey() {
+    // Method 1: Try window.CONFIG (original method)
     if (window.CONFIG && window.CONFIG.OPENAI_API_KEY) {
+        console.log('📋 Using API key from window.CONFIG');
         return window.CONFIG.OPENAI_API_KEY;
     }
+    
+    // Method 2: Try DiasporaAI's internal apiKey
+    if (window.DiasporaAI && window.DiasporaAI.apiKey) {
+        console.log('📋 Using API key from DiasporaAI.apiKey');
+        return window.DiasporaAI.apiKey;
+    }
+    
+    // Method 3: Check if DiasporaAI is initialized (might have key internally)
+    if (window.DiasporaAI && window.DiasporaAI.isInitialized) {
+        console.log('📋 DiasporaAI is initialized (assuming key is available)');
+        return 'initialized'; // Return a placeholder since AI is ready
+    }
+    
+    console.log('📋 No API key found in any location');
     return null;
 }
 
-// Initialize AI service for maps
+// Initialize AI service for maps with graceful fallback
 function initializeAIService() {
-    console.log('🤖 Initializing AI service for maps...');
+    console.log('🤖 Checking AI service availability for maps...');
+    
+    // Run debug check
+    debugAIAvailability();
+    
+    // Check if DiasporaAI is available
+    if (!window.DiasporaAI) {
+        console.log('ℹ️ DiasporaAI not available - maps will work without AI enhancement');
+        return false;
+    }
+    
+    // Check if already initialized - THIS IS THE KEY CHECK
+    if (window.DiasporaAI.isInitialized) {
+        console.log('✅ AI service already initialized for maps');
+        return true;
+    }
+    
+    // Check if has API key but not marked initialized
+    if (window.DiasporaAI.apiKey && !window.DiasporaAI.isInitialized) {
+        console.log('✅ AI service has key but not marked initialized - marking as ready');
+        window.DiasporaAI.isInitialized = true;
+        return true;
+    }
     
     const apiKey = getAPIKey();
     
-    if (apiKey && window.DiasporaAI) {
+    if (apiKey) {
         try {
+            // If using placeholder key and AI is ready, just return true
+            if (apiKey === 'initialized' && window.DiasporaAI.callOpenAI) {
+                console.log('✅ AI service confirmed ready for maps');
+                return true;
+            }
+            
+            // Otherwise initialize normally
             window.DiasporaAI.initialize(apiKey);
             console.log('✅ AI service initialized for maps');
             return true;
         } catch (error) {
-            console.error('❌ Failed to initialize AI service for maps:', error);
+            console.warn('⚠️ Failed to initialize AI service for maps:', error);
+            
+            // Even if initialize fails, check if AI is actually working
+            if (window.DiasporaAI.callOpenAI && typeof window.DiasporaAI.callOpenAI === 'function') {
+                console.log('✅ AI service appears functional despite initialization error');
+                return true;
+            }
+            
             return false;
         }
     } else {
-        console.log('⚠️ API key not found or DiasporaAI not available for maps');
+        console.log('ℹ️ API key not found - maps will work without AI enhancement');
         return false;
     }
 }
@@ -647,12 +718,18 @@ let currentMap = 'pre-slavery';
 let sidebarOpen = false;
 let aiServiceReady = false;
 
-// Initialize enhanced interactive maps
-function initializeInteractiveMaps() {
+// Initialize enhanced interactive maps with AI retry
+async function initializeInteractiveMaps() {
     console.log('🗺️ Initializing enhanced interactive maps...');
     
-    // Initialize AI service
-    aiServiceReady = initializeAIService();
+    // Initialize core functionality first (this works immediately)
+    setupMapTabs();
+    setupMarkers();
+    setupTradeRoutes();
+    setupSidebar();
+    
+    // Show initial map
+    showMap('pre-slavery');
     
     // Ensure cultural data processor is loaded
     if (window.culturalDataProcessor) {
@@ -661,13 +738,61 @@ function initializeInteractiveMaps() {
         });
     }
     
-    setupMapTabs();
-    setupMarkers();
-    setupTradeRoutes();
-    setupSidebar();
+    // Wait for AI service to be available
+    await waitForAIService();
     
-    // Show initial map
-    showMap('pre-slavery');
+    // Try to initialize AI service after waiting
+    aiServiceReady = initializeAIService();
+    
+    if (aiServiceReady) {
+        console.log('🚀 Maps now have AI enhancement capabilities!');
+    } else {
+        console.log('ℹ️ Maps running without AI enhancement (still fully functional)');
+    }
+}
+
+// Wait for AI service to become available
+function waitForAIService() {
+    return new Promise((resolve) => {
+        console.log('⏳ Waiting for AI service to be ready...');
+        
+        // Check if AI is already ready
+        if (window.DiasporaAI && (window.DiasporaAI.isInitialized || window.DiasporaAI.apiKey)) {
+            console.log('✅ AI service already ready');
+            resolve();
+            return;
+        }
+        
+        let attempts = 0;
+        const maxAttempts = 30; // Wait up to 3 seconds
+        
+        const checkInterval = setInterval(() => {
+            attempts++;
+            
+            // Check for AI service readiness
+            if (window.DiasporaAI && (window.DiasporaAI.isInitialized || window.DiasporaAI.apiKey)) {
+                console.log(`✅ AI service became ready after ${attempts * 100}ms`);
+                clearInterval(checkInterval);
+                resolve();
+                return;
+            }
+            
+            // Check for CONFIG readiness as alternative
+            if (window.CONFIG && window.CONFIG.OPENAI_API_KEY) {
+                console.log(`✅ CONFIG became ready after ${attempts * 100}ms`);
+                clearInterval(checkInterval);
+                resolve();
+                return;
+            }
+            
+            // Timeout after max attempts
+            if (attempts >= maxAttempts) {
+                console.log(`⏰ Stopped waiting for AI service after ${attempts * 100}ms`);
+                clearInterval(checkInterval);
+                resolve();
+            }
+        }, 100);
+    });
 }
 
 // Setup map tab functionality
@@ -804,8 +929,8 @@ async function handleMarkerClick(marker) {
     }
 }
 
-// Handle trade route clicks
-function handleTradeRouteClick(route) {
+// ENHANCED: Handle trade route clicks with AI integration
+async function handleTradeRouteClick(route) {
     const routeKey = route.getAttribute('data-route');
     const routeInfo = tradeRouteData[routeKey];
     
@@ -815,7 +940,9 @@ function handleTradeRouteClick(route) {
         });
         
         route.classList.add('selected');
-        showTradeRouteInfo(routeInfo);
+        
+        // Show enhanced trade route info with AI
+        await showEnhancedTradeRouteInfo(routeInfo, routeKey);
         
         if (window.DiasporaHub && window.DiasporaHub.Analytics) {
             window.DiasporaHub.Analytics.track('trade_route_click', {
@@ -824,6 +951,242 @@ function handleTradeRouteClick(route) {
                 timestamp: new Date().toISOString()
             });
         }
+    }
+}
+
+// ENHANCED: Show trade route information with AI cultural insights
+async function showEnhancedTradeRouteInfo(routeInfo, routeKey) {
+    const sidebar = document.getElementById('info-sidebar');
+    const title = document.getElementById('sidebar-title');
+    const content = document.getElementById('sidebar-content');
+    
+    if (!sidebar || !title || !content) return;
+    
+    title.textContent = routeInfo.name;
+    
+    // Show loading state
+    content.innerHTML = `
+        <div class="region-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading trade route insights...</p>
+        </div>
+    `;
+    
+    // Show sidebar immediately
+    sidebar.classList.add('active');
+    sidebarOpen = true;
+    
+    try {
+        // Generate enhanced trade route content
+        const enhancedContent = await generateEnhancedTradeRouteContent(routeInfo, routeKey);
+        
+        // Update sidebar with enhanced content
+        content.innerHTML = enhancedContent;
+        
+    } catch (error) {
+        console.error('Error generating enhanced trade route content:', error);
+        // Fallback to basic content
+        content.innerHTML = generateTradeRouteContent(routeInfo);
+    }
+}
+
+// ENHANCED: Generate comprehensive trade route content with AI insights
+async function generateEnhancedTradeRouteContent(routeInfo, routeKey) {
+    let html = '<div class="enhanced-route-info">';
+    
+    // Header with period
+    html += `
+        <div class="route-header">
+            <div class="route-title">${routeInfo.name}</div>
+            <div class="route-period">${routeInfo.period}</div>
+        </div>
+    `;
+    
+    // Volume highlight
+    html += `
+        <div class="route-volume">
+            <div class="volume-number">${routeInfo.volume}</div>
+            <div class="volume-label">People Enslaved</div>
+        </div>
+    `;
+    
+    // Description
+    html += `<div class="region-description">${routeInfo.description}</div>`;
+    
+    // Economic drivers
+    if (routeInfo.economicDrivers) {
+        html += `
+            <div class="economic-drivers">
+                <h4><i class="fas fa-seedling"></i> Economic Drivers</h4>
+                <div class="driver-list">
+        `;
+        routeInfo.economicDrivers.forEach(driver => {
+            html += `<span class="driver-tag">${driver}</span>`;
+        });
+        html += '</div></div>';
+    }
+    
+    // Route Details
+    html += '<div class="region-stats"><h4>Route Details</h4>';
+    
+    if (routeInfo.source) {
+        html += `<div class="stat-row"><span class="stat-label">Source Regions:</span><span class="stat-value">${routeInfo.source}</span></div>`;
+    }
+    
+    if (routeInfo.destination) {
+        html += `<div class="stat-row"><span class="stat-label">Destinations:</span><span class="stat-value">${routeInfo.destination}</span></div>`;
+    }
+    
+    if (routeInfo.peakPeriod) {
+        html += `<div class="stat-row"><span class="stat-label">Peak Period:</span><span class="stat-value">${routeInfo.peakPeriod}</span></div>`;
+    }
+    
+    if (routeInfo.mortality) {
+        html += `<div class="stat-row"><span class="stat-label">Mortality Rate:</span><span class="stat-value">${routeInfo.mortality}</span></div>`;
+    }
+    
+    html += '</div>';
+    
+    // Cultural Impact (existing)
+    if (routeInfo.culturalImpact) {
+        html += `<div class="impact-section"><h4>Cultural Impact</h4><p>${routeInfo.culturalImpact}</p></div>`;
+    }
+    
+    // AI-Enhanced Cultural Journeys
+    if (aiServiceReady && window.DiasporaAI && window.DiasporaAI.isInitialized) {
+        try {
+            const culturalJourneys = await generateCulturalJourneys(routeInfo);
+            if (culturalJourneys) {
+                html += `
+                    <div class="cultural-journeys-section">
+                        <h4>🌊 Cultural Journeys</h4>
+                        <p>${culturalJourneys}</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.warn('Could not generate cultural journey insights:', error);
+        }
+    }
+    
+    // AI-Enhanced Resistance & Resilience Stories
+    if (aiServiceReady && window.DiasporaAI && window.DiasporaAI.isInitialized) {
+        try {
+            const resistanceStories = await generateResistanceStories(routeInfo);
+            if (resistanceStories) {
+                html += `
+                    <div class="resistance-stories-section">
+                        <h4>✊ Resistance & Resilience</h4>
+                        <p>${resistanceStories}</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.warn('Could not generate resistance stories:', error);
+        }
+    }
+    
+    // Modern Legacy (existing)
+    if (routeInfo.legacyConnections) {
+        html += `<div class="legacy-section"><h4>Modern Legacy</h4><p>${routeInfo.legacyConnections}</p></div>`;
+    }
+    
+    // AI-Enhanced Living Connections
+    if (aiServiceReady && window.DiasporaAI && window.DiasporaAI.isInitialized) {
+        try {
+            const livingConnections = await generateLivingConnections(routeInfo);
+            if (livingConnections) {
+                html += `
+                    <div class="living-connections-section">
+                        <h4>🌍 Living Connections Today</h4>
+                        <p>${livingConnections}</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.warn('Could not generate living connections:', error);
+        }
+    }
+    
+    html += '</div>';
+    
+    return html;
+}
+
+// Generate AI-powered cultural journey insights
+async function generateCulturalJourneys(routeInfo) {
+    if (!aiServiceReady || !window.DiasporaAI || !window.DiasporaAI.isInitialized) {
+        return null;
+    }
+    
+    try {
+        const prompt = `Based on the ${routeInfo.name} slave trade route (${routeInfo.period}) that transported ${routeInfo.volume} people:
+
+Describe in 2-3 sentences how specific African cultural practices survived and evolved during this forced journey. Focus on:
+- Specific traditions that survived the Middle Passage via this route
+- How enslaved peoples secretly preserved their cultural knowledge
+- Examples of cultural blending that occurred in destination regions
+
+Write in an engaging style that honors both the tragedy and the cultural resilience.`;
+
+        const aiResponse = await window.DiasporaAI.callOpenAI(prompt, 200, 0.7);
+        return aiResponse;
+        
+    } catch (error) {
+        console.warn('Cultural journeys AI failed gracefully:', error.message);
+        return null;
+    }
+}
+
+// Generate AI-powered resistance and resilience stories
+async function generateResistanceStories(routeInfo) {
+    if (!aiServiceReady || !window.DiasporaAI || !window.DiasporaAI.isInitialized) {
+        return null;
+    }
+    
+    try {
+        const prompt = `For the ${routeInfo.name} trade route that carried ${routeInfo.volume} enslaved Africans:
+
+Describe in 2-3 sentences the forms of resistance and resilience that occurred along this route. Include:
+- Acts of resistance during transport or at destinations
+- How enslaved communities maintained dignity and identity
+- Examples of cultural or spiritual resistance practices
+- Formation of free communities or escape networks
+
+Focus on human agency and strength in the face of oppression.`;
+
+        const aiResponse = await window.DiasporaAI.callOpenAI(prompt, 200, 0.7);
+        return aiResponse;
+        
+    } catch (error) {
+        console.warn('Resistance stories AI failed gracefully:', error.message);
+        return null;
+    }
+}
+
+// Generate AI-powered living connections to modern diaspora
+async function generateLivingConnections(routeInfo) {
+    if (!aiServiceReady || !window.DiasporaAI || !window.DiasporaAI.isInitialized) {
+        return null;
+    }
+    
+    try {
+        const prompt = `Considering the ${routeInfo.name} route and its cultural impact: "${routeInfo.culturalImpact}"
+
+Explain in 2-3 sentences how this historical route connects to living diaspora communities today. Include:
+- Specific modern cultural practices that trace to this route
+- Contemporary diaspora communities that maintain these connections
+- How people today honor or connect with this history
+- Modern cultural exchanges or reconnection efforts
+
+Write in a way that bridges past and present meaningfully.`;
+
+        const aiResponse = await window.DiasporaAI.callOpenAI(prompt, 200, 0.7);
+        return aiResponse;
+        
+    } catch (error) {
+        console.warn('Living connections AI failed gracefully:', error.message);
+        return null;
     }
 }
 
@@ -850,12 +1213,28 @@ async function showEnhancedRegionInfo(regionInfo, regionKey) {
     sidebarOpen = true;
     
     try {
+        // DEBUG: Log what we're looking for
+        console.log(`🔍 Looking for cultural data for region: "${regionKey}"`);
+        
         // Get cultural data
         const culturalData = window.culturalDataProcessor ? 
             await window.culturalDataProcessor.getCulturalData(regionKey) : null;
         
         const migrationData = window.culturalDataProcessor ? 
             await window.culturalDataProcessor.getMigrationData(regionKey) : null;
+        
+        // DEBUG: Log what we found
+        if (culturalData) {
+            console.log(`✅ Found cultural data for ${regionKey}:`, culturalData);
+        } else {
+            console.log(`❌ No cultural data found for ${regionKey}`);
+            
+            // DEBUG: Show what regions ARE available
+            if (window.culturalDataProcessor) {
+                const availableRegions = window.culturalDataProcessor.getAllRegions();
+                console.log('📋 Available cultural data regions:', availableRegions);
+            }
+        }
         
         // Generate enhanced content
         const enhancedContent = await generateEnhancedRegionContent(regionInfo, culturalData, migrationData, regionKey);
@@ -1004,6 +1383,16 @@ async function generateEnhancedRegionContent(regionInfo, culturalData, migration
 
 // Generate cultural life section from Excel data
 async function generateCulturalLifeSection(culturalData, regionName) {
+    // Check if this is real data or fallback data
+    const isRealData = culturalData.food && culturalData.food.length > 100;
+    
+    if (!isRealData) {
+        console.log(`⚠️ Using fallback cultural data for ${regionName}`);
+        return ''; // Don't show cultural life section for fallback data
+    }
+    
+    console.log(`✅ Using rich cultural data for ${regionName}`);
+    
     let html = '<div class="cultural-life-section"><h4>🎭 Cultural Life</h4>';
     
     // Food & Agriculture
@@ -1081,15 +1470,23 @@ async function generateCulturalLifeSection(culturalData, regionName) {
     return html;
 }
 
-// ENHANCED: Generate AI-powered modern connections
+// ENHANCED: Generate AI-powered modern connections with better error handling
 async function generateModernConnections(regionInfo, culturalData) {
-    if (!aiServiceReady || !window.DiasporaAI || !window.DiasporaAI.isInitialized) {
+    // Check if AI service is ready and available
+    if (!aiServiceReady || !window.DiasporaAI) {
+        console.log('🤖 AI service not available for modern connections');
+        return null;
+    }
+    
+    // Double-check initialization
+    if (!window.DiasporaAI.isInitialized) {
+        console.log('🤖 AI service not initialized for modern connections');
         return null;
     }
     
     try {
         // Create comprehensive context for AI
-        let context = `${regionInfo.name} (${regionInfo.period}) was ${regionInfo.description}`;
+        let context = `${regionInfo.name} (${regionInfo.period || 'Historical period'}) was ${regionInfo.description}`;
         
         if (culturalData) {
             if (culturalData.food) context += ` Their food traditions included ${culturalData.food.substring(0, 200)}...`;
@@ -1106,12 +1503,18 @@ Explain in 2-3 sentences how the cultural traditions of ${regionInfo.name} conti
 
 Write in an engaging, informative style that connects past to present.`;
 
+        // Check if the callOpenAI method exists
+        if (typeof window.DiasporaAI.callOpenAI !== 'function') {
+            console.warn('🤖 AI service method not available');
+            return null;
+        }
+
         const aiResponse = await window.DiasporaAI.callOpenAI(prompt, 200, 0.7);
         
         return aiResponse;
         
     } catch (error) {
-        console.warn('AI enhancement failed:', error);
+        console.warn('🤖 AI enhancement failed gracefully:', error.message);
         return null;
     }
 }
@@ -1338,9 +1741,9 @@ function generateAIInsights(regionKey) {
 }
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     if (document.querySelector('.interactive-map-container')) {
-        initializeInteractiveMaps();
+        await initializeInteractiveMaps();
         
         window.addEventListener('resize', handleResize);
     }
@@ -1358,7 +1761,11 @@ window.MapsInteractive = {
     handleTradeRouteClick,
     showTradeRouteInfo,
     showEnhancedRegionInfo,
+    showEnhancedTradeRouteInfo,
     generateModernConnections,
+    generateCulturalJourneys,
+    generateResistanceStories,
+    generateLivingConnections,
     generateAIInsights
 };
 

@@ -174,7 +174,7 @@ class CulturalDataProcessor {
     }
 
     addSampleBeforeTradeData() {
-        // Sample data based on the Angola example you provided
+        // Sample data
         const sampleData = {
             angola: {
                 region: 'Africa',
