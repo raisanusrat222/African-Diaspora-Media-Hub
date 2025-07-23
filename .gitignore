@@ -1,0 +1,38 @@
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+*.env
+
+# Config files with secrets 
+config.js
+js/config.js
+
+# Development tools
+node_modules/
+.vscode/settings.json
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Cache directories
+.npm
+.cache/
+
+# Build outputs
+dist/
+build/
+
+# Temporary files
+.tmp/
+temp/
+
