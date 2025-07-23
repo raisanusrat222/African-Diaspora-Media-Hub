@@ -1,5 +1,498 @@
 /* Map Container Layout */
 
+/* Enhanced Maps CSS - Add to maps.css */
+
+/* Loading States */
+.region-loading {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(212, 175, 55, 0.3);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.region-loading p {
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Enhanced Region Info */
+.enhanced-region-info {
+    line-height: 1.6;
+}
+
+.enhanced-region-info .region-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.enhanced-region-info .region-title {
+    font-size: 1.4rem;
+    color: var(--dark-color);
+    margin: 0 0 5px 0;
+    font-weight: 600;
+}
+
+.enhanced-region-info .region-period {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.enhanced-region-info .region-description {
+    color: var(--dark-color);
+    margin-bottom: 20px;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* Cultural Life Section */
+.cultural-life-section {
+    background: rgba(212, 175, 55, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.cultural-life-section h4 {
+    color: var(--dark-color);
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cultural-subsection {
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.cultural-subsection:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.cultural-subsection h5 {
+    color: var(--primary-color);
+    margin: 0 0 8px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cultural-subsection p {
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: justify;
+}
+
+/* Migration Section */
+.migration-section {
+    background: rgba(34, 139, 34, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.migration-section h4 {
+    color: var(--accent-color);
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.migration-section p {
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Modern Connections Section */
+.modern-connections-section {
+    background: rgba(139, 0, 0, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.modern-connections-section h4 {
+    color: var(--secondary-color);
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modern-connections-section p {
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: justify;
+}
+
+/* Achievements Section Styling */
+.achievements-section {
+    background: rgba(212, 175, 55, 0.08);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.achievements-section h4 {
+    color: var(--dark-color);
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.achievements-section ul {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--dark-color);
+}
+
+.achievements-section li {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 5px;
+}
+
+/* Stats Section Enhanced */
+.region-stats {
+    background: rgba(212, 175, 55, 0.08);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.region-stats h4 {
+    color: var(--dark-color);
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.stat-label {
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+.stat-value {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+/* Legacy Section */
+.legacy-section {
+    background: rgba(139, 0, 0, 0.08);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.legacy-section h4 {
+    color: var(--secondary-color);
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.legacy-section p {
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Impact Section */
+.impact-section {
+    background: rgba(34, 139, 34, 0.08);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.impact-section h4 {
+    color: var(--accent-color);
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.impact-section p {
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Enhanced Sidebar Scrolling */
+.sidebar-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    color: var(--dark-color) !important;
+    max-height: calc(100vh - 100px);
+}
+
+/* Smooth scrollbar styling */
+.sidebar-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+    background: #e6c200;
+}
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 1024px) {
+    .info-sidebar {
+        max-height: 100vh;
+    }
+    
+    .sidebar-content {
+        max-height: calc(100vh - 80px);
+        padding: 15px;
+    }
+    
+    .cultural-life-section,
+    .migration-section,
+    .modern-connections-section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .cultural-subsection h5 {
+        font-size: 0.95rem;
+    }
+    
+    .cultural-subsection p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar-content {
+        padding: 12px;
+    }
+    
+    .enhanced-region-info .region-title {
+        font-size: 1.2rem;
+    }
+    
+    .cultural-life-section,
+    .migration-section,
+    .modern-connections-section,
+    .achievements-section,
+    .legacy-section {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .cultural-subsection h5 {
+        font-size: 0.9rem;
+    }
+    
+    .cultural-subsection p,
+    .migration-section p,
+    .modern-connections-section p {
+        font-size: 0.8rem;
+    }
+    
+    .stat-row {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-content {
+        padding: 10px;
+    }
+    
+    .enhanced-region-info .region-title {
+        font-size: 1.1rem;
+    }
+    
+    .enhanced-region-info .region-period {
+        font-size: 0.8rem;
+    }
+    
+    .cultural-life-section h4,
+    .migration-section h4,
+    .modern-connections-section h4 {
+        font-size: 1rem;
+    }
+    
+    .cultural-subsection h5 {
+        font-size: 0.85rem;
+    }
+    
+    .cultural-subsection p,
+    .migration-section p,
+    .modern-connections-section p,
+    .legacy-section p {
+        font-size: 0.75rem;
+        line-height: 1.5;
+    }
+}
+
+/* Animation for content loading */
+.enhanced-region-info {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animations for sections */
+.cultural-life-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.migration-section {
+    animation: fadeInUp 0.7s ease-out;
+}
+
+.modern-connections-section {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* Loading state improvements */
+.region-loading {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Focus states for accessibility */
+.cultural-subsection:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .cultural-life-section,
+    .migration-section,
+    .modern-connections-section,
+    .achievements-section,
+    .legacy-section {
+        border: 2px solid currentColor;
+    }
+    
+    .stat-row {
+        border-bottom: 1px solid currentColor;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .enhanced-region-info,
+    .cultural-life-section,
+    .migration-section,
+    .modern-connections-section,
+    .region-loading {
+        animation: none;
+    }
+    
+    .loading-spinner {
+        animation: none;
+        border: 3px solid var(--primary-color);
+    }
+}
+
+/* Print styles for enhanced content */
+@media print {
+    .cultural-life-section,
+    .migration-section,
+    .modern-connections-section,
+    .achievements-section,
+    .legacy-section {
+        border: 1px solid #ccc;
+        break-inside: avoid;
+        margin-bottom: 15px;
+    }
+    
+    .sidebar-content {
+        overflow: visible;
+        max-height: none;
+    }
+    
+    .loading-spinner {
+        display: none;
+    }
+}
+
 .interactive-map-container {
     display: grid;
     grid-template-columns: 1fr 350px;

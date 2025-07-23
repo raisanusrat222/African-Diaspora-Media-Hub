@@ -1,5 +1,35 @@
-// Trade Route data for detailed information
+// js/maps-interactive.js - Complete Enhanced Version with AI Integration
 
+// Get API key using existing config pattern
+function getAPIKey() {
+    if (window.CONFIG && window.CONFIG.OPENAI_API_KEY) {
+        return window.CONFIG.OPENAI_API_KEY;
+    }
+    return null;
+}
+
+// Initialize AI service for maps
+function initializeAIService() {
+    console.log('🤖 Initializing AI service for maps...');
+    
+    const apiKey = getAPIKey();
+    
+    if (apiKey && window.DiasporaAI) {
+        try {
+            window.DiasporaAI.initialize(apiKey);
+            console.log('✅ AI service initialized for maps');
+            return true;
+        } catch (error) {
+            console.error('❌ Failed to initialize AI service for maps:', error);
+            return false;
+        }
+    } else {
+        console.log('⚠️ API key not found or DiasporaAI not available for maps');
+        return false;
+    }
+}
+
+// Trade Route data for detailed information
 const tradeRouteData = {
     'west-africa-caribbean': {
         name: 'West Africa → Caribbean',
@@ -393,7 +423,7 @@ const regionData = {
         ],
         modernLegacy: 'Northern Ethiopia and Eritrea'
     },
-    'carthage': {
+'carthage': {
         name: 'Carthaginian Empire',
         period: '814-146 BCE',
         capital: 'Carthage',
@@ -615,10 +645,22 @@ const regionData = {
 // Current state
 let currentMap = 'pre-slavery';
 let sidebarOpen = false;
+let aiServiceReady = false;
 
-// Initialize interactive maps
+// Initialize enhanced interactive maps
 function initializeInteractiveMaps() {
-    console.log('Initializing interactive maps...');
+    console.log('🗺️ Initializing enhanced interactive maps...');
+    
+    // Initialize AI service
+    aiServiceReady = initializeAIService();
+    
+    // Ensure cultural data processor is loaded
+    if (window.culturalDataProcessor) {
+        window.culturalDataProcessor.ensureLoaded().then(() => {
+            console.log('✅ Cultural data processor ready');
+        });
+    }
+    
     setupMapTabs();
     setupMarkers();
     setupTradeRoutes();
@@ -685,17 +727,14 @@ function setupMarkers() {
     const markers = document.querySelectorAll('.marker');
     
     markers.forEach(marker => {
-        // Click handler
         marker.addEventListener('click', function(e) {
             e.stopPropagation();
             handleMarkerClick(this);
         });
         
-        // Make markers keyboard accessible
         marker.setAttribute('tabindex', '0');
         marker.setAttribute('role', 'button');
         
-        // Keyboard handler
         marker.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -703,7 +742,6 @@ function setupMarkers() {
             }
         });
         
-        // Add tooltip data attribute for accessibility
         const tooltip = marker.getAttribute('data-tooltip');
         if (tooltip) {
             marker.setAttribute('aria-label', tooltip);
@@ -716,17 +754,14 @@ function setupTradeRoutes() {
     const routes = document.querySelectorAll('.trade-route');
     
     routes.forEach(route => {
-        // Click handler
         route.addEventListener('click', function(e) {
             e.stopPropagation();
             handleTradeRouteClick(this);
         });
         
-        // Make routes keyboard accessible
         route.setAttribute('tabindex', '0');
         route.setAttribute('role', 'button');
         
-        // Keyboard handler
         route.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -734,7 +769,6 @@ function setupTradeRoutes() {
             }
         });
         
-        // Add tooltip data attribute for accessibility
         const tooltip = route.getAttribute('data-tooltip');
         if (tooltip) {
             route.setAttribute('aria-label', tooltip);
@@ -742,8 +776,8 @@ function setupTradeRoutes() {
     });
 }
 
-// Handle marker clicks
-function handleMarkerClick(marker) {
+// ENHANCED: Handle marker clicks with AI integration
+async function handleMarkerClick(marker) {
     const regionKey = marker.getAttribute('data-region');
     const regionInfo = regionData[regionKey];
     
@@ -756,8 +790,8 @@ function handleMarkerClick(marker) {
         // Select current marker
         marker.classList.add('selected');
         
-        // Show information in sidebar
-        showRegionInfo(regionInfo);
+        // Show information in sidebar with enhancement
+        await showEnhancedRegionInfo(regionInfo, regionKey);
         
         // Track analytics if available
         if (window.DiasporaHub && window.DiasporaHub.Analytics) {
@@ -776,18 +810,13 @@ function handleTradeRouteClick(route) {
     const routeInfo = tradeRouteData[routeKey];
     
     if (routeInfo) {
-        // Remove selection from other elements
         document.querySelectorAll('.marker, .trade-route').forEach(element => {
             element.classList.remove('selected');
         });
         
-        // Select current route
         route.classList.add('selected');
-        
-        // Show route information in sidebar
         showTradeRouteInfo(routeInfo);
         
-        // Track analytics if available
         if (window.DiasporaHub && window.DiasporaHub.Analytics) {
             window.DiasporaHub.Analytics.track('trade_route_click', {
                 route: routeKey,
@@ -798,8 +827,8 @@ function handleTradeRouteClick(route) {
     }
 }
 
-// Show region information in sidebar
-function showRegionInfo(regionInfo) {
+// ENHANCED: Show region information with cultural data and AI insights
+async function showEnhancedRegionInfo(regionInfo, regionKey) {
     const sidebar = document.getElementById('info-sidebar');
     const title = document.getElementById('sidebar-title');
     const content = document.getElementById('sidebar-content');
@@ -807,14 +836,317 @@ function showRegionInfo(regionInfo) {
     if (!sidebar || !title || !content) return;
     
     title.textContent = regionInfo.name;
-    content.innerHTML = generateRegionContent(regionInfo);
     
-    // Show sidebar (especially important for mobile)
+    // Show loading state
+    content.innerHTML = `
+        <div class="region-loading">
+            <div class="loading-spinner"></div>
+            <p>Loading cultural insights...</p>
+        </div>
+    `;
+    
+    // Show sidebar immediately
     sidebar.classList.add('active');
     sidebarOpen = true;
+    
+    try {
+        // Get cultural data
+        const culturalData = window.culturalDataProcessor ? 
+            await window.culturalDataProcessor.getCulturalData(regionKey) : null;
+        
+        const migrationData = window.culturalDataProcessor ? 
+            await window.culturalDataProcessor.getMigrationData(regionKey) : null;
+        
+        // Generate enhanced content
+        const enhancedContent = await generateEnhancedRegionContent(regionInfo, culturalData, migrationData, regionKey);
+        
+        // Update sidebar with enhanced content
+        content.innerHTML = enhancedContent;
+        
+    } catch (error) {
+        console.error('Error generating enhanced content:', error);
+        // Fallback to basic content
+        content.innerHTML = generateBasicRegionContent(regionInfo);
+    }
 }
 
-// Show trade route information in sidebar
+// ENHANCED: Generate comprehensive region content with AI insights
+async function generateEnhancedRegionContent(regionInfo, culturalData, migrationData, regionKey) {
+    let html = '<div class="enhanced-region-info">';
+    
+    // Header with period
+    html += `
+        <div class="region-header">
+            <div class="region-title">${regionInfo.name}</div>
+            <div class="region-period">${regionInfo.period || 'Ancient Times'}</div>
+        </div>
+    `;
+    
+    // Main description
+    html += `<div class="region-description">${regionInfo.description}</div>`;
+    
+    // Basic stats
+    html += '<div class="region-stats"><h4>Key Information</h4>';
+    
+    if (regionInfo.capital) {
+        html += `<div class="stat-row"><span class="stat-label">Capital:</span><span class="stat-value">${regionInfo.capital}</span></div>`;
+    }
+    
+    if (regionInfo.peakPopulation) {
+        html += `<div class="stat-row"><span class="stat-label">Peak Population:</span><span class="stat-value">${regionInfo.peakPopulation}</span></div>`;
+    }
+    
+    if (regionInfo.population) {
+        html += `<div class="stat-row"><span class="stat-label">Population:</span><span class="stat-value">${regionInfo.population}</span></div>`;
+    }
+    
+    if (regionInfo.diaspora) {
+        html += `<div class="stat-row"><span class="stat-label">Global Diaspora:</span><span class="stat-value">${regionInfo.diaspora}</span></div>`;
+    }
+    
+    if (regionInfo.enslavedNumbers) {
+        html += `<div class="stat-row"><span class="stat-label">People Enslaved:</span><span class="stat-value">${regionInfo.enslavedNumbers}</span></div>`;
+    }
+    
+    if (regionInfo.receivedNumbers) {
+        html += `<div class="stat-row"><span class="stat-label">People Received:</span><span class="stat-value">${regionInfo.receivedNumbers}</span></div>`;
+    }
+    
+    html += '</div>';
+    
+    // Cultural Life Section (from Excel data)
+    if (culturalData) {
+        html += await generateCulturalLifeSection(culturalData, regionInfo.name);
+    }
+    
+    // Migration Patterns (from Excel data)
+    if (migrationData && migrationData.migrationWaves) {
+        html += `
+            <div class="migration-section">
+                <h4>🌍 Migration Patterns</h4>
+                <p>${migrationData.migrationWaves}</p>
+            </div>
+        `;
+    }
+    
+    // Achievements (existing data)
+    if (regionInfo.achievements) {
+        html += '<div class="achievements-section"><h4>Major Achievements</h4><ul>';
+        regionInfo.achievements.forEach(achievement => {
+            html += `<li>${achievement}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    
+    // Additional sections for trade routes
+    if (regionInfo.majorPorts) {
+        html += '<div class="ports-section"><h4>Major Ports</h4>';
+        regionInfo.majorPorts.forEach(port => {
+            html += `<p style="margin: 5px 0;"><strong>${port}</strong></p>`;
+        });
+        html += '</div>';
+    }
+    
+    if (regionInfo.destinations) {
+        html += '<div class="destinations-section"><h4>Primary Destinations</h4>';
+        regionInfo.destinations.forEach(destination => {
+            html += `<p style="margin: 5px 0;">${destination}</p>`;
+        });
+        html += '</div>';
+    }
+    
+    if (regionInfo.culturalExports) {
+        html += '<div class="cultural-section"><h4>Cultural Exports</h4><ul>';
+        regionInfo.culturalExports.forEach(item => {
+            html += `<li>${item}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    
+    // AI-Enhanced Modern Connections
+    if (aiServiceReady && window.DiasporaAI && window.DiasporaAI.isInitialized) {
+        try {
+            const modernConnections = await generateModernConnections(regionInfo, culturalData);
+            if (modernConnections) {
+                html += `
+                    <div class="modern-connections-section">
+                        <h4>🌐 Legacy in Modern Diaspora</h4>
+                        <p>${modernConnections}</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.warn('Could not generate AI insights:', error);
+        }
+    }
+    
+    // Modern Legacy and Impact
+    if (regionInfo.modernLegacy) {
+        html += `<div class="legacy-section"><h4>Geographic Legacy</h4><p>${regionInfo.modernLegacy}</p></div>`;
+    }
+    
+    if (regionInfo.culturalImpact) {
+        html += `<div class="impact-section"><h4>Cultural Impact</h4><p>${regionInfo.culturalImpact}</p></div>`;
+    }
+    
+    if (regionInfo.modernContributions) {
+        html += `<div class="contributions-section"><h4>Modern Contributions</h4><p>${regionInfo.modernContributions}</p></div>`;
+    }
+    
+    if (regionInfo.modernImpact) {
+        html += `<div class="modern-impact-section"><h4>Modern Impact</h4><p>${regionInfo.modernImpact}</p></div>`;
+    }
+    
+    html += '</div>';
+    
+    return html;
+}
+
+// Generate cultural life section from Excel data
+async function generateCulturalLifeSection(culturalData, regionName) {
+    let html = '<div class="cultural-life-section"><h4>🎭 Cultural Life</h4>';
+    
+    // Food & Agriculture
+    if (culturalData.food && culturalData.food.length > 50) {
+        html += `
+            <div class="cultural-subsection">
+                <h5>🌾 Food & Agriculture</h5>
+                <p>${culturalData.food}</p>
+            </div>
+        `;
+    }
+    
+    // Music & Arts
+    if (culturalData.music && culturalData.music.length > 50) {
+        html += `
+            <div class="cultural-subsection">
+                <h5>🎵 Music & Arts</h5>
+                <p>${culturalData.music}</p>
+            </div>
+        `;
+    }
+    
+    // Clothing & Adornment
+    if (culturalData.clothing && culturalData.clothing.length > 50) {
+        html += `
+            <div class="cultural-subsection">
+                <h5>👘 Clothing & Adornment</h5>
+                <p>${culturalData.clothing}</p>
+            </div>
+        `;
+    }
+    
+    // Spiritual Beliefs
+    if (culturalData.religion && culturalData.religion.length > 50) {
+        html += `
+            <div class="cultural-subsection">
+                <h5>🙏 Spiritual Beliefs</h5>
+                <p>${culturalData.religion}</p>
+            </div>
+        `;
+    }
+    
+    // Languages
+    if (culturalData.languages && culturalData.languages.length > 30) {
+        html += `
+            <div class="cultural-subsection">
+                <h5>🗣️ Languages & Communication</h5>
+                <p>${culturalData.languages}</p>
+            </div>
+        `;
+    }
+    
+    // Celebrations
+    if (culturalData.celebrations && culturalData.celebrations.length > 50) {
+        html += `
+            <div class="cultural-subsection">
+                <h5>🎊 Celebrations & Festivals</h5>
+                <p>${culturalData.celebrations}</p>
+            </div>
+        `;
+    }
+    
+    // Education
+    if (culturalData.education && culturalData.education.length > 30) {
+        html += `
+            <div class="cultural-subsection">
+                <h5>📚 Education & Learning</h5>
+                <p>${culturalData.education}</p>
+            </div>
+        `;
+    }
+    
+    html += '</div>';
+    
+    return html;
+}
+
+// ENHANCED: Generate AI-powered modern connections
+async function generateModernConnections(regionInfo, culturalData) {
+    if (!aiServiceReady || !window.DiasporaAI || !window.DiasporaAI.isInitialized) {
+        return null;
+    }
+    
+    try {
+        // Create comprehensive context for AI
+        let context = `${regionInfo.name} (${regionInfo.period}) was ${regionInfo.description}`;
+        
+        if (culturalData) {
+            if (culturalData.food) context += ` Their food traditions included ${culturalData.food.substring(0, 200)}...`;
+            if (culturalData.music) context += ` Musical traditions featured ${culturalData.music.substring(0, 200)}...`;
+            if (culturalData.religion) context += ` Spiritual practices involved ${culturalData.religion.substring(0, 200)}...`;
+        }
+        
+        const prompt = `Based on this historical information about ${regionInfo.name}: ${context}
+
+Explain in 2-3 sentences how the cultural traditions of ${regionInfo.name} continue to influence modern African diaspora communities around the world. Focus on:
+- Specific cultural practices that survived and evolved
+- Modern examples of these traditions in diaspora communities
+- How these connections help preserve cultural identity today
+
+Write in an engaging, informative style that connects past to present.`;
+
+        const aiResponse = await window.DiasporaAI.callOpenAI(prompt, 200, 0.7);
+        
+        return aiResponse;
+        
+    } catch (error) {
+        console.warn('AI enhancement failed:', error);
+        return null;
+    }
+}
+
+// Generate basic content as fallback
+function generateBasicRegionContent(regionInfo) {
+    let html = '<div class="region-info">';
+    
+    html += `
+        <div class="region-header">
+            <div class="region-title">${regionInfo.name}</div>
+            <div class="region-period">${regionInfo.period || 'Ancient Times'}</div>
+        </div>
+    `;
+    
+    html += `<div class="region-description">${regionInfo.description}</div>`;
+    
+    if (regionInfo.achievements) {
+        html += '<div class="achievements-section"><h4>Major Achievements</h4><ul>';
+        regionInfo.achievements.forEach(achievement => {
+            html += `<li>${achievement}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    
+    if (regionInfo.modernLegacy) {
+        html += `<div class="legacy-section"><h4>Modern Legacy</h4><p>${regionInfo.modernLegacy}</p></div>`;
+    }
+    
+    html += '</div>';
+    
+    return html;
+}
+
+// Show trade route information
 function showTradeRouteInfo(routeInfo) {
     const sidebar = document.getElementById('info-sidebar');
     const title = document.getElementById('sidebar-title');
@@ -825,16 +1157,14 @@ function showTradeRouteInfo(routeInfo) {
     title.textContent = routeInfo.name;
     content.innerHTML = generateTradeRouteContent(routeInfo);
     
-    // Show sidebar (especially important for mobile)
     sidebar.classList.add('active');
     sidebarOpen = true;
 }
 
-// Generate content for trade routes
+// Generate trade route content
 function generateTradeRouteContent(info) {
     let html = '<div class="route-info">';
     
-    // Header with period
     html += `
         <div class="route-header">
             <div class="route-title">${info.name}</div>
@@ -842,7 +1172,6 @@ function generateTradeRouteContent(info) {
         </div>
     `;
     
-    // Volume highlight
     html += `
         <div class="route-volume">
             <div class="volume-number">${info.volume}</div>
@@ -850,10 +1179,8 @@ function generateTradeRouteContent(info) {
         </div>
     `;
     
-    // Description
     html += `<div class="region-description">${info.description}</div>`;
     
-    // Economic drivers
     if (info.economicDrivers) {
         html += `
             <div class="economic-drivers">
@@ -866,7 +1193,6 @@ function generateTradeRouteContent(info) {
         html += '</div></div>';
     }
     
-    // Stats section
     html += '<div class="region-stats"><h4>Route Details</h4>';
     
     if (info.source) {
@@ -887,124 +1213,12 @@ function generateTradeRouteContent(info) {
     
     html += '</div>';
     
-    // Cultural impact
     if (info.culturalImpact) {
         html += `<div class="impact-section"><h4>Cultural Impact</h4><p>${info.culturalImpact}</p></div>`;
     }
     
-    // Legacy connections
     if (info.legacyConnections) {
         html += `<div class="legacy-section"><h4>Modern Legacy</h4><p>${info.legacyConnections}</p></div>`;
-    }
-    
-    html += '</div>';
-    
-    return html;
-}
-
-// Generate content based on region type
-function generateRegionContent(info) {
-    let html = '<div class="region-info">';
-    
-    // Header with period/timeframe
-    if (info.period) {
-        html += `
-            <div class="region-header">
-                <div class="region-title">${info.name}</div>
-                <div class="region-period">${info.period}</div>
-            </div>
-        `;
-    } else {
-        html += `
-            <div class="region-header">
-                <div class="region-title">${info.name}</div>
-            </div>
-        `;
-    }
-    
-    // Description
-    html += `<div class="region-description">${info.description}</div>`;
-    
-    // Stats section
-    html += '<div class="region-stats"><h4>Key Information</h4>';
-    
-    if (info.capital) {
-        html += `<div class="stat-row"><span class="stat-label">Capital:</span><span class="stat-value">${info.capital}</span></div>`;
-    }
-    
-    if (info.peakPopulation) {
-        html += `<div class="stat-row"><span class="stat-label">Peak Population:</span><span class="stat-value">${info.peakPopulation}</span></div>`;
-    }
-    
-    if (info.population) {
-        html += `<div class="stat-row"><span class="stat-label">Population:</span><span class="stat-value">${info.population}</span></div>`;
-    }
-    
-    if (info.diaspora) {
-        html += `<div class="stat-row"><span class="stat-label">Global Diaspora:</span><span class="stat-value">${info.diaspora}</span></div>`;
-    }
-    
-    if (info.enslavedNumbers) {
-        html += `<div class="stat-row"><span class="stat-label">People Enslaved:</span><span class="stat-value">${info.enslavedNumbers}</span></div>`;
-    }
-    
-    if (info.receivedNumbers) {
-        html += `<div class="stat-row"><span class="stat-label">People Received:</span><span class="stat-value">${info.receivedNumbers}</span></div>`;
-    }
-    
-    html += '</div>';
-    
-    // Additional sections based on data type
-    if (info.achievements) {
-        html += '<div class="achievements-section"><h4>Major Achievements</h4><ul>';
-        info.achievements.forEach(achievement => {
-            html += `<li>${achievement}</li>`;
-        });
-        html += '</ul></div>';
-    }
-    
-    if (info.majorPorts) {
-        html += '<div class="ports-section"><h4>Major Ports</h4>';
-        info.majorPorts.forEach(port => {
-            html += `<p style="margin: 5px 0;"><strong>${port}</strong></p>`;
-        });
-        html += '</div>';
-    }
-    
-    if (info.destinations) {
-        html += '<div class="destinations-section"><h4>Primary Destinations</h4>';
-        info.destinations.forEach(destination => {
-            html += `<p style="margin: 5px 0;">${destination}</p>`;
-        });
-        html += '</div>';
-    }
-    
-    if (info.routes) {
-        html += `<div class="routes-section"><h4>Trade Routes</h4><p>${info.routes}</p></div>`;
-    }
-    
-    if (info.culturalExports) {
-        html += '<div class="cultural-section"><h4>Cultural Exports</h4><ul>';
-        info.culturalExports.forEach(item => {
-            html += `<li>${item}</li>`;
-        });
-        html += '</ul></div>';
-    }
-    
-    if (info.modernLegacy) {
-        html += `<div class="legacy-section"><h4>Modern Legacy</h4><p>${info.modernLegacy}</p></div>`;
-    }
-    
-    if (info.culturalImpact) {
-        html += `<div class="impact-section"><h4>Cultural Impact</h4><p>${info.culturalImpact}</p></div>`;
-    }
-    
-    if (info.modernContributions) {
-        html += `<div class="contributions-section"><h4>Modern Contributions</h4><p>${info.modernContributions}</p></div>`;
-    }
-    
-    if (info.modernImpact) {
-        html += `<div class="modern-impact-section"><h4>Modern Impact</h4><p>${info.modernImpact}</p></div>`;
     }
     
     html += '</div>';
@@ -1019,7 +1233,6 @@ function setupSidebar() {
         closeBtn.addEventListener('click', closeSidebar);
     }
     
-    // Close sidebar when clicking outside (mobile)
     document.addEventListener('click', function(e) {
         const sidebar = document.getElementById('info-sidebar');
         if (sidebarOpen && sidebar && !sidebar.contains(e.target) && 
@@ -1028,7 +1241,6 @@ function setupSidebar() {
         }
     });
     
-    // Close sidebar with Escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && sidebarOpen) {
             closeSidebar();
@@ -1043,12 +1255,10 @@ function closeSidebar() {
         sidebar.classList.remove('active');
     }
     
-    // Clear selected markers and routes
     document.querySelectorAll('.marker, .trade-route').forEach(element => {
         element.classList.remove('selected');
     });
     
-    // Reset sidebar content
     const title = document.getElementById('sidebar-title');
     const content = document.getElementById('sidebar-content');
     
@@ -1076,7 +1286,7 @@ function loadCountryProfile(countryName) {
     const regionKey = countryName.toLowerCase();
     const regionInfo = regionData[regionKey];
     if (regionInfo) {
-        showRegionInfo(regionInfo);
+        showEnhancedRegionInfo(regionInfo, regionKey);
     }
 }
 
@@ -1094,34 +1304,9 @@ function filterMap(type) {
     showMap(mapping[type] || 'modern-borders');
 }
 
-// Utility function to handle window resize (maintain marker positions)
 function handleResize() {
-    // This function can be used for additional responsive adjustments if needed
     console.log('Window resized - markers maintain relative positions');
 }
-
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    if (document.querySelector('.interactive-map-container')) {
-        initializeInteractiveMaps();
-        
-        // Add resize listener for potential future enhancements
-        window.addEventListener('resize', handleResize);
-    }
-});
-
-// Global exports for legacy compatibility
-window.MapsInteractive = {
-    showMap,
-    closeSidebar,
-    switchMap,
-    loadCountryProfile,
-    closeCountryProfile,
-    filterMap,
-    handleResize,
-    handleTradeRouteClick,
-    showTradeRouteInfo
-};
 
 // Additional helper functions for potential AI integration
 function generateAIInsights(regionKey) {
@@ -1152,5 +1337,34 @@ function generateAIInsights(regionKey) {
     }
 }
 
-// Export AI function for potential use
-window.MapsInteractive.generateAIInsights = generateAIInsights;
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.querySelector('.interactive-map-container')) {
+        initializeInteractiveMaps();
+        
+        window.addEventListener('resize', handleResize);
+    }
+});
+
+// Global exports for legacy compatibility
+window.MapsInteractive = {
+    showMap,
+    closeSidebar,
+    switchMap,
+    loadCountryProfile,
+    closeCountryProfile,
+    filterMap,
+    handleResize,
+    handleTradeRouteClick,
+    showTradeRouteInfo,
+    showEnhancedRegionInfo,
+    generateModernConnections,
+    generateAIInsights
+};
+
+// Cleanup function
+window.addEventListener('beforeunload', function() {
+    if (window.culturalDataProcessor) {
+        window.culturalDataProcessor.cleanup();
+    }
+});
