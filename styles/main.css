@@ -9,7 +9,7 @@
     --primary-color: #d4af37;
     --secondary-color: #8b0000;
     --accent-color: #228b22;
-    --dark-color: #1a1a1a;
+    --dark-color: #000000;
     --light-color: #ffffff;
     --text-color: #333333;
     --bg-color: #fafafa;
@@ -166,7 +166,7 @@ body {
 
 /* Feature Slideshow Section */
 .feature-slideshow-section {
-    padding: 60px 0;
+    padding: 40px 30px;
     background: var(--light-color);
     position: relative;
     overflow: hidden;
@@ -174,8 +174,8 @@ body {
 
 .slideshow-container {
     position: relative;
-    max-width: 1000px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: var(--shadow-hover);
