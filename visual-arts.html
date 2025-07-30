@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles/navigation.css">
     <link rel="stylesheet" href="styles/responsive.css">
     <link rel="stylesheet" href="styles/visual-arts.css">
+    <link rel="stylesheet" href="styles/ai-enhancement.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <!-- D3.js and Animation Libraries -->
@@ -408,6 +409,119 @@
             </div>
         </section>
 
+        <!-- NEW: Artistic Techniques Evolution Section -->
+        <section class="artistic-techniques-section">
+            <div class="container">
+                <div class="techniques-intro">
+                    <h2>Artistic Techniques Evolution</h2>
+                    <p>Explore how traditional artistic methods transformed across cultures and continents</p>
+                </div>
+
+                <div class="techniques-selector">
+                    <button class="technique-btn active" data-technique="textiles">
+                        <i class="fas fa-cut"></i>
+                        <span>Textile Arts</span>
+                    </button>
+                    <button class="technique-btn" data-technique="sculpture">
+                        <i class="fas fa-hammer"></i>
+                        <span>Sculpture</span>
+                    </button>
+                    <button class="technique-btn" data-technique="pottery">
+                        <i class="fas fa-wine-glass-alt"></i>
+                        <span>Pottery</span>
+                    </button>
+                    <button class="technique-btn" data-technique="body-art">
+                        <i class="fas fa-hand-sparkles"></i>
+                        <span>Body Art</span>
+                    </button>
+                    <button class="technique-btn" data-technique="patterns">
+                        <i class="fas fa-th"></i>
+                        <span>Patterns</span>
+                    </button>
+                </div>
+
+                <div class="technique-comparison-container">
+                    <div class="split-screen-wrapper">
+                        <div class="traditional-side">
+                            <div class="technique-header">
+                                <h3 id="traditional-technique-title">Traditional Kente Weaving</h3>
+                                <span class="technique-origin" id="traditional-technique-origin">Ghana, West Africa</span>
+                            </div>
+                            <div class="technique-visual" id="traditional-technique-visual">
+                                <div class="technique-icon">
+                                    <i class="fas fa-cut"></i>
+                                </div>
+                                <div class="technique-pattern" id="traditional-technique-pattern">
+                                    <!-- SVG pattern will be inserted here -->
+                                </div>
+                            </div>
+                            <div class="technique-description" id="traditional-technique-desc">
+                                <p>Traditional hand-woven cloth made from silk and cotton threads. Each pattern has specific symbolic meaning representing proverbs, historical events, or important figures in Akan culture.</p>
+                            </div>
+                        </div>
+
+                        <div class="comparison-divider">
+                            <div class="divider-slider" id="comparison-slider">
+                                <div class="slider-handle">
+                                    <i class="fas fa-arrows-alt-h"></i>
+                                </div>
+                            </div>
+                            <div class="evolution-indicator">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Cultural Evolution</span>
+                            </div>
+                        </div>
+
+                        <div class="evolved-side">
+                            <div class="technique-header">
+                                <h3 id="evolved-technique-title">African American Quilting</h3>
+                                <span class="technique-destination" id="evolved-technique-destination">United States, North America</span>
+                            </div>
+                            <div class="technique-visual" id="evolved-technique-visual">
+                                <div class="technique-icon">
+                                    <i class="fas fa-cut"></i>
+                                </div>
+                                <div class="technique-pattern" id="evolved-technique-pattern">
+                                    <!-- SVG pattern will be inserted here -->
+                                </div>
+                            </div>
+                            <div class="technique-description" id="evolved-technique-desc">
+                                <p>Adapted textile tradition using available materials like cotton scraps. Maintained symbolic storytelling through geometric patterns, often encoding messages and preserving cultural memory.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="technique-details" id="technique-details">
+                        <div class="evolution-insights">
+                            <h4>Evolution Insights</h4>
+                            <div class="insights-grid">
+                                <div class="insight-item">
+                                    <i class="fas fa-tools"></i>
+                                    <h5>Materials</h5>
+                                    <p id="materials-evolution">From luxury silk to available cotton scraps, adaptation to local resources</p>
+                                </div>
+                                <div class="insight-item">
+                                    <i class="fas fa-palette"></i>
+                                    <h5>Patterns</h5>
+                                    <p id="patterns-evolution">Symbolic meanings preserved through geometric adaptations</p>
+                                </div>
+                                <div class="insight-item">
+                                    <i class="fas fa-users"></i>
+                                    <h5>Purpose</h5>
+                                    <p id="purpose-evolution">From ceremonial regalia to practical bedding with hidden cultural messages</p>
+                                </div>
+                                <div class="insight-item">
+                                    <i class="fas fa-globe"></i>
+                                    <h5>Cultural Impact</h5>
+                                    <p id="impact-evolution">Maintained community identity and storytelling traditions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Cultural Symbols Section -->
         <section class="cultural-symbols-section">
             <div class="container">
@@ -546,12 +660,16 @@
     <!-- Visual Arts Specific Scripts -->
     <script src="js/adinkra-csv-processor.js"></script>
     <script src="js/cultural-symbols-db.js"></script>
+    <script src="js/ai-enhancement-handler.js"></script>
+    <script src="js/symbol-enhancer.js"></script>
     <script src="js/art-evolution-tracker.js"></script>
     <script src="js/art-map-interactive.js"></script>
     <script src="js/art-animation.js"></script>
+    <script src="js/artistic-techniques.js"></script>
     <script src="js/visual-arts.js"></script>
     
     <!-- AI Enhancement Scripts -->
+     <script src="js/config.js"></script>
     <script src="js/env-loader.js"></script>
     <script src="js/ai-service.js"></script>
     <script src="js/ai-config-secure.js"></script>

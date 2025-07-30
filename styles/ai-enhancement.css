@@ -1,0 +1,139 @@
+/* styles/ai-enhancement.css - AI Enhancement Button Styles */
+
+/* AI Enhancement Button */
+.ai-enhance-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    z-index: 10;
+}
+
+.ai-enhance-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2, #667eea);
+}
+
+.ai-enhance-btn:active {
+    transform: scale(0.95);
+}
+
+.ai-enhance-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: scale(0.9);
+}
+
+.ai-enhance-btn:disabled:hover {
+    transform: scale(0.9);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Show button on card hover */
+.symbol-card:hover .ai-enhance-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Loading spinner animation */
+.ai-enhance-btn .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Error state styling */
+.ai-enhance-btn .fa-exclamation-triangle {
+    color: #ffd700;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Success sparkle animation */
+.ai-enhance-btn .fa-sparkles {
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+/* Enhanced symbol card subtle indicator */
+.symbol-card[data-ai-enhanced="true"] {
+    position: relative;
+}
+
+.symbol-card[data-ai-enhanced="true"]::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+    border-radius: 17px;
+    z-index: -1;
+    opacity: 0.1;
+    animation: borderGlow 3s ease-in-out infinite;
+}
+
+@keyframes borderGlow {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 0.2; }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .ai-enhance-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+        bottom: 10px;
+        right: 10px;
+        opacity: 0.7; /* Slightly visible on mobile */
+    }
+    
+    .symbol-card:hover .ai-enhance-btn,
+    .symbol-card .ai-enhance-btn {
+        opacity: 0.8;
+    }
+}
+
+@media (max-width: 480px) {
+    .ai-enhance-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+        bottom: 8px;
+        right: 8px;
+    }
+}

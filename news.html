@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music & Dance - Voices of the Diaspora</title>
+    <title>Diaspora News Hub - Voices of the Diaspora</title>
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/music-dance.css">
+    <link rel="stylesheet" href="styles/news.css">
     <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/navigation.css">
     <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/ai-features.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <script type="text/javascript">
@@ -33,7 +34,7 @@
             </div>
             
             <div class="nav-center">
-                <!-- Mobile Search -->
+                <!-- Mobile Search (hidden by default, shown in mobile menu) -->
                 <div class="mobile-search-container">
                     <div class="mobile-search-box">
                         <input type="text" id="mobile-search-input" placeholder="Search..." autocomplete="off">
@@ -110,7 +111,7 @@
                             <a href="visual-arts.html" onclick="loadPage('visual-arts')">
                                 <i class="fas fa-paint-brush"></i>Visual Arts
                             </a>
-                            <a href="music-dance.html" class="active" onclick="loadPage('music-dance')">
+                            <a href="#" onclick="loadPage('music-dance')">
                                 <i class="fas fa-music"></i>Music & Dance
                             </a>
                             <a href="literature.html" onclick="loadPage('literature')">
@@ -172,7 +173,7 @@
                     </div>
 
                     <div class="nav-item">
-                        <a href="news.html" class="nav-link" onclick="loadPage('news')" title="News">
+                        <a href="news.html" class="nav-link active" onclick="loadPage('news')" title="News">
                             <i class="fas fa-newspaper"></i>
                             <span class="nav-text">News</span>
                         </a>
@@ -227,123 +228,239 @@
 
     <!-- Main Content -->
     <main id="main-content">
-        <!-- Hero Section -->
-        <section class="music-hero" id="music-hero">
-            <div class="hero-background" id="hero-background">
-                <div class="cultural-patterns" id="cultural-patterns"></div>
-                <div class="hero-overlay"></div>
-            </div>
-            
+        <!-- Page Header -->
+        <section class="news-header">
             <div class="container">
-                <div class="hero-content">
-                    <h1 class="hero-title">Music & Dance of the Diaspora</h1>
-                    <p class="hero-subtitle">Explore the rhythms, movements, and cultural expressions that connect communities across the globe</p>
+                <div class="news-header-content">
+                    <h1>Diaspora News Hub</h1>
+                    <p>Stay connected with stories that matter to diaspora communities worldwide</p>
+                    <div class="news-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-newspaper"></i>
+                            <span class="stat-number" id="total-newspapers">500+</span>
+                            <span class="stat-label">Newspapers</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-globe"></i>
+                            <span class="stat-number" id="total-countries">180+</span>
+                            <span class="stat-label">Countries</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-clock"></i>
+                            <span class="stat-number" id="update-frequency">24/7</span>
+                            <span class="stat-label">Updates</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Front Pages Carousel -->
+        <section class="featured-frontpages">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Today's Featured Front Pages</h2>
+                    <p>Diaspora-relevant headlines from newspapers worldwide</p>
+                    <div class="ai-indicator">
+                        <i class="fas fa-robot"></i>
+                        <span>AI-Curated Selection</span>
+                    </div>
+                </div>
+                
+                <div class="frontpages-carousel" id="frontpages-carousel">
+                    <div class="carousel-track" id="frontpages-track">
+                        <!-- Loading state -->
+                        <div class="frontpage-loading" id="frontpage-loading">
+                            <div class="newspaper-skeleton">
+                                <div class="skeleton-header"></div>
+                                <div class="skeleton-image"></div>
+                                <div class="skeleton-text"></div>
+                                <div class="skeleton-text short"></div>
+                            </div>
+                            <p>Loading today's featured newspapers...</p>
+                        </div>
+                    </div>
                     
-                    <!-- Genre Navigation -->
-                    <div class="genre-navigation" id="genre-navigation">
-                        <div class="genre-tab active" data-genre="afrobeat">
-                            <div class="genre-icon">🥁</div>
-                            <span>Afrobeat</span>
-                        </div>
-                        <div class="genre-tab" data-genre="reggae">
-                            <div class="genre-icon">🎵</div>
-                            <span>Reggae</span>
-                        </div>
-                        <div class="genre-tab" data-genre="salsa">
-                            <div class="genre-icon">💃🏾</div>
-                            <span>Salsa</span>
-                        </div>
-                        <div class="genre-tab" data-genre="house">
-                            <div class="genre-icon">🎧</div>
-                            <span>House</span>
-                        </div>
-                        <div class="genre-tab" data-genre="kompa">
-                            <div class="genre-icon">🎺</div>
-                            <span>Kompa</span>
-                        </div>
-                        <div class="genre-tab" data-genre="gogo">
-                            <div class="genre-icon">🎤</div>
-                            <span>Go-Go</span>
-                        </div>
-                    </div>
+                    <!-- Navigation -->
+                    <button class="carousel-nav prev" id="frontpage-prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-nav next" id="frontpage-next">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- Main Content Grid -->
-        <section class="music-content" id="music-content">
+        <!-- Continental Navigation -->
+        <section class="continental-navigation">
             <div class="container">
-                <div class="content-grid">
-                    <!-- Artist Spotlight -->
-                    <div class="content-column artist-spotlight">
-                        <div class="column-header">
-                            <h2><i class="fas fa-star"></i> Artist Spotlight</h2>
+                <h2>Explore News by Region</h2>
+                <div class="continental-tabs" id="continental-tabs">
+                    <div class="continent-tab active" data-continent="all">
+                        <div class="continent-icon">
+                            <i class="fas fa-globe-africa"></i>
                         </div>
-                        <div class="artist-card" id="artist-card">
-                            <!-- Dynamic content will be inserted here -->
-                            <div class="loading-state">
-                                <div class="vinyl-loader"></div>
-                                <p>Loading artist information...</p>
-                            </div>
-                        </div>
+                        <span class="continent-name">All Regions</span>
+                        <div class="news-count" id="count-all">1,200+</div>
                     </div>
-
-                    <!-- Curated Playlist -->
-                    <div class="content-column playlist-section">
-                        <div class="column-header">
-                            <h2><i class="fas fa-headphones"></i> Curated Playlist</h2>
+                    
+                    <div class="continent-tab" data-continent="africa">
+                        <div class="continent-icon">
+                            <i class="fas fa-map-marked-alt"></i>
                         </div>
-                        <div class="playlist-card" id="playlist-card">
-                            <!-- Dynamic content will be inserted here -->
-                            <div class="loading-state">
-                                <div class="waveform-loader"></div>
-                                <p>Loading playlist...</p>
-                            </div>
-                        </div>
+                        <span class="continent-name">Africa</span>
+                        <div class="news-count" id="count-africa">450+</div>
                     </div>
-
-                    <!-- Cultural Context -->
-                    <div class="content-column cultural-context">
-                        <div class="column-header">
-                            <h2><i class="fas fa-globe-africa"></i> Cultural Context</h2>
+                    
+                    <div class="continent-tab" data-continent="americas">
+                        <div class="continent-icon">
+                            <i class="fas fa-globe-americas"></i>
                         </div>
-                        <div class="context-card" id="context-card">
-                            <!-- Dynamic content will be inserted here -->
-                            <div class="loading-state">
-                                <div class="map-loader"></div>
-                                <p>Loading cultural information...</p>
-                            </div>
+                        <span class="continent-name">Americas</span>
+                        <div class="news-count" id="count-americas">380+</div>
+                    </div>
+                    
+                    <div class="continent-tab" data-continent="europe">
+                        <div class="continent-icon">
+                            <i class="fas fa-map"></i>
                         </div>
+                        <span class="continent-name">Europe</span>
+                        <div class="news-count" id="count-europe">240+</div>
+                    </div>
+                    
+                    <div class="continent-tab" data-continent="asia">
+                        <div class="continent-icon">
+                            <i class="fas fa-globe-asia"></i>
+                        </div>
+                        <span class="continent-name">Asia & Oceania</span>
+                        <div class="news-count" id="count-asia">130+</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Featured Performances Section -->
-        <section class="featured-performances">
+        <!-- Category Filters -->
+        <section class="category-filters">
             <div class="container">
-                <h2 class="section-title">Featured Performances</h2>
-                <div class="performances-grid" id="performances-grid">
-                    <!-- Performance videos will be loaded here -->
+                <h3>Filter by Diaspora Topics</h3>
+                <div class="filter-buttons" id="category-filters">
+                    <button class="filter-btn active" data-category="all">
+                        <i class="fas fa-list"></i>
+                        <span>All News</span>
+                    </button>
+                    <button class="filter-btn" data-category="migration">
+                        <i class="fas fa-plane"></i>
+                        <span>Migration</span>
+                    </button>
+                    <button class="filter-btn" data-category="culture">
+                        <i class="fas fa-theater-masks"></i>
+                        <span>Culture</span>
+                    </button>
+                    <button class="filter-btn" data-category="politics">
+                        <i class="fas fa-vote-yea"></i>
+                        <span>Politics</span>
+                    </button>
+                    <button class="filter-btn" data-category="economics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Economics</span>
+                    </button>
+                    <button class="filter-btn" data-category="community">
+                        <i class="fas fa-users"></i>
+                        <span>Community</span>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- Then & Now Section -->
-        <section class="then-now-section">
+        <!-- News Grid -->
+        <section class="news-grid-section">
             <div class="container">
-                <h2 class="section-title">Then & Now</h2>
-                <div class="timeline-container" id="timeline-container">
-                    <div class="timeline-header">
-                        <h3 id="timeline-genre-title">Afrobeat Evolution</h3>
-                        <p>Trace the journey from traditional roots to global influence</p>
+                <div class="grid-header">
+                    <h3 id="grid-title">Latest Diaspora News</h3>
+                    <div class="grid-controls">
+                        <button class="view-toggle active" data-view="grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="view-toggle" data-view="list">
+                            <i class="fas fa-list"></i>
+                        </button>
+                        <div class="sort-dropdown">
+                            <select id="sort-select">
+                                <option value="relevance">Diaspora Relevance</option>
+                                <option value="time">Most Recent</option>
+                                <option value="sentiment">Positive First</option>
+                                <option value="popularity">Most Read</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="timeline-content" id="timeline-content">
-                        <!-- Timeline content will be dynamically loaded -->
+                </div>
+                
+                <!-- Loading State -->
+                <div class="news-loading" id="news-loading">
+                    <div class="loading-grid">
+                        <div class="news-card-skeleton" style="--delay: 0s;"></div>
+                        <div class="news-card-skeleton" style="--delay: 0.1s;"></div>
+                        <div class="news-card-skeleton" style="--delay: 0.2s;"></div>
+                        <div class="news-card-skeleton" style="--delay: 0.3s;"></div>
+                        <div class="news-card-skeleton" style="--delay: 0.4s;"></div>
+                        <div class="news-card-skeleton" style="--delay: 0.5s;"></div>
                     </div>
+                    <p class="loading-text">
+                        <i class="fas fa-robot fa-spin"></i>
+                        AI is analyzing news relevance to diaspora communities...
+                    </p>
+                </div>
+                
+                <!-- News Grid -->
+                <div class="news-grid" id="news-grid">
+                    <!-- News cards will be dynamically inserted here -->
+                </div>
+                
+                <!-- Load More -->
+                <div class="load-more-container" id="load-more-container" style="display: none;">
+                    <button class="btn btn-primary load-more-btn" id="load-more-btn">
+                        <i class="fas fa-plus"></i>
+                        Load More Stories
+                    </button>
                 </div>
             </div>
         </section>
+
+        <!-- AI Insights Panel -->
+        <div class="ai-insights-panel" id="ai-insights-panel">
+            <div class="insights-header">
+                <h4>
+                    <i class="fas fa-robot"></i>
+                    AI News Analysis
+                </h4>
+                <button class="close-insights" id="close-insights">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="insights-content" id="insights-content">
+                <div class="insights-loading">
+                    <div class="ai-spinner"></div>
+                    <p>Analyzing news relevance to diaspora communities...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- News Detail Modal -->
+        <div class="news-modal" id="news-modal">
+            <div class="modal-overlay" id="modal-overlay"></div>
+            <div class="modal-content" id="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">News Article</h3>
+                    <button class="modal-close" id="modal-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Content will be dynamically loaded -->
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -389,7 +506,13 @@
     <script src="js/page-loader.js"></script>
     <script src="js/config.js"></script>
     
-    <!-- Music-specific Scripts -->
-    <script src="js/music-dance.js"></script>
+    <!-- AI Enhancement Scripts -->
+    <script src="js/env-loader.js"></script>
+    <script src="js/ai-service.js"></script>
+    <script src="js/ai-config-secure.js"></script>
+    
+    <!-- News-specific Scripts -->
+    <script src="js/news-ai.js"></script>
+    <script src="js/news.js"></script>
 </body>
 </html>

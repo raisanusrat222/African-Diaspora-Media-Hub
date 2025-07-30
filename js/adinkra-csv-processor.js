@@ -1,554 +1,457 @@
+// js/adinkra-csv-processor.js - CSV Processing WITHOUT automatic AI enhancement
+// Loads and processes Adinkra symbols from CSV data
+
+
 /**
- * CSV-based Adinkra symbol processor with AI enhancement
- * Reads symbols from CSV and uses AI to generate descriptions
+ * Adinkra CSV Processor
+ * Handles loading and processing of Adinkra symbols from CSV data
+ * AI enhancement is now user-controlled via separate handler
  */
 class AdinkraCsvProcessor {
     constructor() {
         this.symbols = [];
         this.isLoaded = false;
-        this.csvPath = 'assets/data/adinkra-symbols.csv';
-        this.enhancedSymbols = new Map();
-        this.svgSymbols = new Map();
+        this.csvUrl = 'data/adinkra-symbols.csv';
+        
+        this.init();
+    }
+
+    async init() {
+        console.log('📄 Initializing Adinkra CSV Processor...');
+        // Load symbols but don't auto-enhance
+        await this.loadSymbolsFromCSV();
     }
 
     /**
-     * Load and process CSV file containing Adinkra symbols
+     * Load symbols from CSV file
      */
     async loadSymbolsFromCSV() {
-        if (this.isLoaded && this.symbols.length > 0) {
-            console.log('📚 Using cached CSV symbols');
-            return this.symbols;
-        }
-
-        console.log('📄 Loading Adinkra symbols from CSV...');
-
         try {
-            // Try to read the CSV file
-            let csvData;
-            if (window.fs && typeof window.fs.readFile === 'function') {
-                // If file API is available (for uploaded files)
-                csvData = await window.fs.readFile(this.csvPath, { encoding: 'utf8' });
-            } else {
-                // Fallback to fetch
-                const response = await fetch(this.csvPath);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch CSV: ${response.status}`);
-                }
-                csvData = await response.text();
+            console.log('📄 Loading Adinkra symbols from CSV...');
+            
+            // Check cache first
+            const cached = this.getCachedSymbols();
+            if (cached && cached.length > 0) {
+                this.symbols = cached;
+                this.isLoaded = true;
+                console.log(`💾 Loaded ${this.symbols.length} symbols from cache`);
+                return this.symbols;
             }
 
-            // Parse CSV data
-            const parsedData = this.parseCSV(csvData);
-            
-            if (parsedData && parsedData.length > 0) {
-                console.log(`✅ Loaded ${parsedData.length} symbols from CSV`);
-                
-                // Enhance symbols with AI
-                this.symbols = await this.enhanceSymbolsWithAI(parsedData);
-                this.isLoaded = true;
-                
-                // Cache the results
-                this.cacheSymbols();
-                
-                return this.symbols;
-            } else {
-                throw new Error('No symbols found in CSV');
+            // Fetch CSV data
+            const csvData = await this.fetchCSVData();
+            if (!csvData) {
+                throw new Error('Failed to fetch CSV data');
             }
+
+            // Parse CSV
+            const parsedData = await this.parseCSV(csvData);
+            if (!parsedData || parsedData.length === 0) {
+                throw new Error('No symbols found in CSV data');
+            }
+
+            // Process symbols (but don't enhance with AI)
+            this.symbols = this.processSymbolData(parsedData);
+            this.isLoaded = true;
+
+            // Cache the basic symbols
+            this.cacheSymbols(this.symbols);
+
+            console.log(`✅ Loaded ${this.symbols.length} symbols from CSV`);
+            return this.symbols;
 
         } catch (error) {
-            console.error('❌ Error loading CSV symbols:', error);
-            console.log('📚 Using fallback symbol data');
+            console.error('❌ Error loading symbols from CSV:', error);
+            
+            // Fallback to basic symbols
             this.symbols = this.getFallbackSymbols();
             this.isLoaded = true;
+            
             return this.symbols;
         }
     }
 
     /**
-     * Parse CSV data using Papa Parse
+     * Fetch CSV data from file or URL
      */
-    parseCSV(csvText) {
+    async fetchCSVData() {
         try {
-            // Use Papa Parse if available
-            if (typeof Papa !== 'undefined') {
-                const parsed = Papa.parse(csvText, {
-                    header: true,
-                    skipEmptyLines: true,
-                    dynamicTyping: true,
-                    transformHeader: (header) => header.trim().toLowerCase().replace(/\s+/g, '_')
-                });
-
-                if (parsed.errors.length > 0) {
-                    console.warn('CSV parsing warnings:', parsed.errors);
-                }
-
-                return parsed.data;
-            } else {
-                // Fallback manual CSV parsing
-                return this.manualCSVParse(csvText);
+            const response = await fetch(this.csvUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+            
+            const csvText = await response.text();
+            if (!csvText || csvText.trim().length === 0) {
+                throw new Error('Empty CSV file');
+            }
+            
+            return csvText;
+            
         } catch (error) {
-            console.error('Error parsing CSV:', error);
-            return [];
+            console.warn('Could not fetch CSV from URL, trying fallback data:', error);
+            return this.getFallbackCSVData();
         }
     }
 
     /**
-     * Manual CSV parsing fallback
+     * Parse CSV data using PapaParse
      */
-    manualCSVParse(csvText) {
-        const lines = csvText.split('\n');
+    async parseCSV(csvData) {
+        return new Promise((resolve, reject) => {
+            if (typeof Papa === 'undefined') {
+                console.warn('PapaParse not available, using basic parsing');
+                resolve(this.basicCSVParse(csvData));
+                return;
+            }
+
+            Papa.parse(csvData, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                delimitersToGuess: [',', '\t', '|', ';'],
+                complete: (results) => {
+                    if (results.errors && results.errors.length > 0) {
+                        console.warn('CSV parsing warnings:', results.errors);
+                    }
+                    
+                    resolve(results.data);
+                },
+                error: (error) => {
+                    console.error('CSV parsing error:', error);
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    /**
+     * Basic CSV parsing fallback
+     */
+    basicCSVParse(csvData) {
+        const lines = csvData.split('\n').filter(line => line.trim());
         if (lines.length < 2) return [];
 
-        const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g, '_'));
-        const symbols = [];
+        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        const data = [];
 
         for (let i = 1; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
-
-            const values = this.parseCSVLine(line);
-            if (values.length >= headers.length) {
-                const symbol = {};
-                headers.forEach((header, index) => {
-                    symbol[header] = values[index] ? values[index].trim() : '';
-                });
-                symbols.push(symbol);
-            }
-        }
-
-        return symbols;
-    }
-
-    /**
-     * Parse a single CSV line handling quotes
-     */
-    parseCSVLine(line) {
-        const values = [];
-        let current = '';
-        let inQuotes = false;
-
-        for (let i = 0; i < line.length; i++) {
-            const char = line[i];
+            const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+            const row = {};
             
-            if (char === '"') {
-                inQuotes = !inQuotes;
-            } else if (char === ',' && !inQuotes) {
-                values.push(current);
-                current = '';
-            } else {
-                current += char;
-            }
-        }
-        
-        values.push(current);
-        return values;
-    }
-
-    /**
-     * Enhance symbols with AI-generated descriptions and cultural context
-     */
-    async enhanceSymbolsWithAI(rawSymbols) {
-        const enhancedSymbols = [];
-
-        for (const rawSymbol of rawSymbols) {
-            try {
-                const enhanced = await this.enhanceSingleSymbol(rawSymbol);
-                enhancedSymbols.push(enhanced);
-                
-                // Add small delay to avoid overwhelming the AI service
-                await this.delay(100);
-                
-            } catch (error) {
-                console.warn(`Error enhancing symbol ${rawSymbol.name}:`, error);
-                // Add unenhanced symbol as fallback
-                enhancedSymbols.push(this.formatBasicSymbol(rawSymbol));
-            }
-        }
-
-        return enhancedSymbols;
-    }
-
-    /**
-     * Enhance a single symbol with AI
-     */
-    async enhanceSingleSymbol(rawSymbol) {
-        const symbolName = rawSymbol.name || rawSymbol.symbol_name || '';
-        const basicMeaning = rawSymbol.meaning || rawSymbol.description || '';
-        
-        if (!symbolName) {
-            return this.formatBasicSymbol(rawSymbol);
-        }
-
-        // Check cache first
-        const cacheKey = symbolName.toLowerCase();
-        if (this.enhancedSymbols.has(cacheKey)) {
-            return this.enhancedSymbols.get(cacheKey);
-        }
-
-        try {
-            let enhancedDescription = basicMeaning;
-            let diasporaConnections = {};
-
-            // Try to enhance with AI if available
-            if (window.DiasporaAI && typeof window.DiasporaAI.callOpenAI === 'function') {
-                const prompt = `Enhance this Adinkra symbol information for cultural education:
-
-Symbol Name: ${symbolName}
-Basic Meaning: ${basicMeaning}
-
-Please provide:
-1. **Enhanced Description** (2-3 sentences): Expand on the cultural significance and spiritual meaning of this symbol in Akan/Ghanaian culture
-2. **Visual Elements**: Describe the key visual characteristics and design elements
-3. **Diaspora Connections**: How this symbol might have influenced or appeared in African diaspora communities (Jamaica, Brazil, USA, Haiti)
-
-Format as natural, educational text. Focus on cultural respect and accuracy.`;
-
-                try {
-                    const aiResponse = await window.DiasporaAI.callOpenAI(prompt, 300, 0.7);
-                    const parsed = this.parseAIResponse(aiResponse);
-                    
-                    if (parsed.description) {
-                        enhancedDescription = parsed.description;
-                    }
-                    if (parsed.diasporaConnections) {
-                        diasporaConnections = parsed.diasporaConnections;
-                    }
-                    
-                } catch (aiError) {
-                    console.warn(`AI enhancement failed for ${symbolName}:`, aiError);
-                }
-            }
-
-            const enhanced = {
-                name: symbolName,
-                meaning: enhancedDescription,
-                basicMeaning: basicMeaning,
-                category: this.categorizeSymbol(symbolName, enhancedDescription),
-                icon: 'fas fa-star-and-crescent',
-                country: 'Ghana',
-                region: 'West Africa',
-                type: 'origin',
-                description: enhancedDescription,
-                source: 'CSV + AI Enhanced',
-                visualElements: rawSymbol.visual_elements || this.generateVisualDescription(symbolName),
-                diasporaEvolution: Object.keys(diasporaConnections).length > 0 ? diasporaConnections : this.getDefaultDiasporaConnections(),
-                csvData: rawSymbol,
-                svgPattern: this.generateSVGPattern(symbolName),
-                unicode: rawSymbol.unicode || null
-            };
-
-            // Cache the enhanced symbol
-            this.enhancedSymbols.set(cacheKey, enhanced);
+            headers.forEach((header, index) => {
+                row[header] = values[index] || '';
+            });
             
-            return enhanced;
-
-        } catch (error) {
-            console.error(`Error enhancing symbol ${symbolName}:`, error);
-            return this.formatBasicSymbol(rawSymbol);
+            data.push(row);
         }
+
+        return data;
     }
 
     /**
-     * Parse AI response to extract structured information
+     * Process raw CSV data into symbol objects
      */
-    parseAIResponse(aiResponse) {
-        const result = {};
+    processSymbolData(rawData) {
+        const processed = [];
         
-        // Extract enhanced description (usually the first substantial paragraph)
-        const lines = aiResponse.split('\n').filter(line => line.trim());
-        let description = '';
-        let diasporaConnections = {};
-
-        for (const line of lines) {
-            const trimmed = line.trim();
+        for (let i = 0; i < rawData.length; i++) {
+            const row = rawData[i];
             
-            // Skip headers and short lines
-            if (trimmed.length < 20 || trimmed.includes('**') || trimmed.includes(':')) {
+            // Skip empty rows
+            if (!row.name && !row.Name && !row.symbol_name) {
                 continue;
             }
             
-            // Use the first substantial line as description
-            if (!description && trimmed.length > 50) {
-                description = trimmed;
-            }
-            
-            // Look for diaspora mentions
-            if (trimmed.toLowerCase().includes('diaspora') || 
-                trimmed.toLowerCase().includes('jamaica') ||
-                trimmed.toLowerCase().includes('brazil') ||
-                trimmed.toLowerCase().includes('haiti')) {
-                // Simple extraction - could be enhanced
-                if (trimmed.includes('Jamaica')) {
-                    diasporaConnections['Jamaica'] = this.extractDiasporaConnection(trimmed, 'Jamaica');
-                }
-                if (trimmed.includes('Brazil')) {
-                    diasporaConnections['Brazil'] = this.extractDiasporaConnection(trimmed, 'Brazil');
-                }
-                if (trimmed.includes('United States') || trimmed.includes('USA')) {
-                    diasporaConnections['United States'] = this.extractDiasporaConnection(trimmed, 'United States');
-                }
+            const symbol = this.createSymbolObject(row);
+            if (symbol) {
+                processed.push(symbol);
             }
         }
-
-        result.description = description || null;
-        result.diasporaConnections = diasporaConnections;
         
-        return result;
+        return processed;
     }
 
     /**
-     * Extract diaspora connection from AI text
+     * Create standardized symbol object from CSV row
      */
-    extractDiasporaConnection(text, country) {
-        // Simple extraction logic - could be enhanced with more sophisticated parsing
-        const sentences = text.split('.').map(s => s.trim());
-        for (const sentence of sentences) {
-            if (sentence.toLowerCase().includes(country.toLowerCase())) {
-                return sentence.replace(country, '').trim();
-            }
-        }
-        return `Influences found in ${country} cultural expressions`;
-    }
-
-    /**
-     * Categorize symbol based on name and meaning
-     */
-    categorizeSymbol(name, meaning) {
-        const nameAndMeaning = (name + ' ' + meaning).toLowerCase();
-        
-        if (nameAndMeaning.includes('god') || nameAndMeaning.includes('spiritual') || nameAndMeaning.includes('divine')) {
-            return 'spiritual';
-        } else if (nameAndMeaning.includes('wisdom') || nameAndMeaning.includes('knowledge') || nameAndMeaning.includes('learn')) {
-            return 'wisdom';
-        } else if (nameAndMeaning.includes('strength') || nameAndMeaning.includes('power') || nameAndMeaning.includes('courage')) {
-            return 'strength';
-        } else if (nameAndMeaning.includes('unity') || nameAndMeaning.includes('cooperation') || nameAndMeaning.includes('community')) {
-            return 'unity';
-        } else if (nameAndMeaning.includes('peace') || nameAndMeaning.includes('harmony') || nameAndMeaning.includes('calm')) {
-            return 'peace';
-        } else {
-            return 'cultural';
-        }
-    }
-
-    /**
-     * Generate visual description for symbols
-     */
-    generateVisualDescription(symbolName) {
-        const visualDescriptions = {
-            'sankofa': 'Stylized bird with head turned backward, or heart-shaped symbol with decorative curves',
-            'gye nyame': 'Circular design with radiating patterns and central motif representing divine omnipresence',
-            'dwennimmen': 'Symmetrical curved horn patterns representing ram\'s horns',
-            'nyame dua': 'Stylized tree design with distinctive branching pattern',
-            'adwo': 'Gentle flowing curves suggesting peaceful water or serene movement',
-            'aya': 'Delicate fern frond pattern with intricate leaflet details'
-        };
-
-        const key = symbolName.toLowerCase();
-        return visualDescriptions[key] || `Traditional Adinkra geometric pattern with symbolic significance`;
-    }
-
-    /**
-     * Generate simple SVG pattern for the symbol
-     */
-    generateSVGPattern(symbolName) {
-        const patterns = {
-            'sankofa': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 20 Q30 40 20 60 Q30 80 50 85 Q70 80 80 60 Q70 40 50 20" 
-                      fill="none" stroke="currentColor" stroke-width="3"/>
-                <circle cx="25" cy="65" r="8" fill="currentColor"/>
-                <path d="M25 57 Q20 50 15 55" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>`,
-            
-            'gye nyame': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="3"/>
-                <path d="M30 30 L70 70 M70 30 L30 70" stroke="currentColor" stroke-width="2"/>
-                <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
-                <circle cx="50" cy="50" r="5" fill="currentColor"/>
-            </svg>`,
-            
-            'dwennimmen': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 80 Q20 40 40 30 Q50 25 60 30 Q80 40 80 80" 
-                      fill="none" stroke="currentColor" stroke-width="4"/>
-                <path d="M25 75 Q25 45 35 40" fill="none" stroke="currentColor" stroke-width="2"/>
-                <path d="M75 75 Q75 45 65 40" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>`,
-            
-            'default': `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <rect x="20" y="20" width="60" height="60" fill="none" stroke="currentColor" stroke-width="3"/>
-                <path d="M30 30 L70 70 M70 30 L30 70" stroke="currentColor" stroke-width="2"/>
-                <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>`
-        };
-
-        const key = symbolName.toLowerCase().replace(/\s+/g, '');
-        return patterns[key] || patterns['default'];
-    }
-
-    /**
-     * Format basic symbol without AI enhancement
-     */
-    formatBasicSymbol(rawSymbol) {
-        const name = rawSymbol.name || rawSymbol.symbol_name || 'Unknown Symbol';
-        const meaning = rawSymbol.meaning || rawSymbol.description || 'Traditional Adinkra symbol';
-
-        return {
-            name: name,
-            meaning: meaning,
-            basicMeaning: meaning,
-            category: this.categorizeSymbol(name, meaning),
-            icon: 'fas fa-star-and-crescent',
-            country: 'Ghana',
-            region: 'West Africa',
-            type: 'origin',
-            description: meaning,
-            source: 'CSV Data',
-            visualElements: this.generateVisualDescription(name),
-            diasporaEvolution: this.getDefaultDiasporaConnections(),
-            csvData: rawSymbol,
-            svgPattern: this.generateSVGPattern(name),
-            unicode: rawSymbol.unicode || null
-        };
-    }
-
-    /**
-     * Get default diaspora connections
-     */
-    getDefaultDiasporaConnections() {
-        return {
-            "United States": "Incorporated into African American cultural education and artistic expressions",
-            "Jamaica": "Adapted by Maroon communities for spiritual and cultural purposes", 
-            "Brazil": "Integrated into Afro-Brazilian spiritual practices and contemporary art",
-            "Haiti": "Influenced cultural preservation and spiritual practices in Vodou tradition"
-        };
-    }
-
-    /**
-     * Cache symbols to localStorage
-     */
-    cacheSymbols() {
+    createSymbolObject(row) {
         try {
-            const cacheData = {
-                symbols: this.symbols,
-                timestamp: Date.now(),
-                source: 'CSV + AI Enhanced'
-            };
-            localStorage.setItem('enhanced_symbols_cache', JSON.stringify(cacheData));
-            console.log('💾 Cached enhanced symbols');
-        } catch (error) {
-            console.warn('Could not cache symbols:', error);
-        }
-    }
-
-    /**
-     * Get cached symbols if available
-     */
-    getCachedSymbols() {
-        try {
-            const cached = localStorage.getItem('enhanced_symbols_cache');
-            if (!cached) return null;
-
-            const cacheData = JSON.parse(cached);
-            const age = Date.now() - cacheData.timestamp;
-            const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-            if (age < maxAge) {
-                return cacheData.symbols;
-            } else {
-                localStorage.removeItem('enhanced_symbols_cache');
+            // Handle different CSV column naming conventions
+            const name = row.name || row.Name || row.symbol_name || row['Symbol Name'];
+            const meaning = row.meaning || row.Meaning || row.description || row.Description;
+            
+            if (!name || !meaning) {
                 return null;
             }
+
+            return {
+                name: name.trim(),
+                meaning: meaning.trim(),
+                category: this.determineCategory(row),
+                country: row.country || row.Country || 'Ghana',
+                region: row.region || row.Region || 'West Africa',
+                symbolCategory: 'Adinkra',
+                type: 'origin',
+                source: 'CSV Data',
+                // Additional fields from CSV
+                akan_name: row.akan_name || row['Akan Name'],
+                pronunciation: row.pronunciation || row.Pronunciation,
+                themes: row.themes || row.Themes,
+                usage: row.usage || row.Usage,
+                // Visual representation
+                unicode: row.unicode || row.Unicode,
+                svgPattern: row.svg_pattern || row['SVG Pattern'],
+                icon: this.determineIcon(row)
+            };
+            
         } catch (error) {
-            console.warn('Error reading cached symbols:', error);
+            console.warn('Error creating symbol object:', error, row);
             return null;
         }
     }
 
     /**
-     * Fallback symbols if CSV loading fails
+     * Determine symbol category from CSV data
+     */
+    determineCategory(row) {
+        const meaning = (row.meaning || row.description || '').toLowerCase();
+        const themes = (row.themes || '').toLowerCase();
+        const combined = meaning + ' ' + themes;
+        
+        if (combined.includes('god') || combined.includes('divine') || combined.includes('spiritual')) {
+            return 'spiritual';
+        }
+        if (combined.includes('wisdom') || combined.includes('knowledge') || combined.includes('learn')) {
+            return 'wisdom';
+        }
+        if (combined.includes('strength') || combined.includes('courage') || combined.includes('power')) {
+            return 'character';
+        }
+        if (combined.includes('unity') || combined.includes('community') || combined.includes('cooperation')) {
+            return 'social';
+        }
+        
+        return 'cultural';
+    }
+
+    /**
+     * Determine appropriate icon for symbol
+     */
+    determineIcon(row) {
+        const category = this.determineCategory(row);
+        const iconMap = {
+            'spiritual': 'fas fa-star-and-crescent',
+            'wisdom': 'fas fa-lightbulb',
+            'character': 'fas fa-shield-alt',
+            'social': 'fas fa-users',
+            'cultural': 'fas fa-circle'
+        };
+        
+        return iconMap[category] || 'fas fa-star-and-crescent';
+    }
+
+    /**
+     * Get cached symbols
+     */
+    getCachedSymbols() {
+        try {
+            const cached = localStorage.getItem('adinkra_symbols_cache');
+            if (cached) {
+                const data = JSON.parse(cached);
+                // Check if cache is still valid (24 hours)
+                if (Date.now() - data.timestamp < 24 * 60 * 60 * 1000) {
+                    return data.symbols;
+                }
+            }
+        } catch (error) {
+            console.warn('Error loading cached symbols:', error);
+        }
+        return null;
+    }
+
+    /**
+     * Cache symbols
+     */
+    cacheSymbols(symbols) {
+        try {
+            const cacheData = {
+                symbols: symbols,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('adinkra_symbols_cache', JSON.stringify(cacheData));
+        } catch (error) {
+            console.warn('Error caching symbols:', error);
+        }
+    }
+
+    /**
+     * Get all loaded symbols
+     */
+    async getSymbols() {
+        if (!this.isLoaded) {
+            await this.loadSymbolsFromCSV();
+        }
+        return this.symbols;
+    }
+
+    /**
+     * Get random symbols
+     */
+    async getRandomSymbols(count = 6) {
+        const symbols = await this.getSymbols();
+        const shuffled = [...symbols].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
+    }
+
+    /**
+     * Search symbols
+     */
+    async searchSymbols(query) {
+        const symbols = await this.getSymbols();
+        const searchTerm = query.toLowerCase();
+        
+        return symbols.filter(symbol => 
+            symbol.name.toLowerCase().includes(searchTerm) ||
+            symbol.meaning.toLowerCase().includes(searchTerm) ||
+            (symbol.country && symbol.country.toLowerCase().includes(searchTerm)) ||
+            (symbol.category && symbol.category.toLowerCase().includes(searchTerm)) ||
+            (symbol.themes && symbol.themes.toLowerCase().includes(searchTerm))
+        );
+    }
+
+    /**
+     * Get symbol by name
+     */
+    async getSymbolByName(name) {
+        const symbols = await this.getSymbols();
+        return symbols.find(symbol => 
+            symbol.name.toLowerCase() === name.toLowerCase()
+        );
+    }
+
+    /**
+     * Refresh symbol data
+     */
+    async refreshSymbolData() {
+        // Clear cache
+        localStorage.removeItem('adinkra_symbols_cache');
+        
+        // Reload symbols
+        this.symbols = [];
+        this.isLoaded = false;
+        
+        return await this.loadSymbolsFromCSV();
+    }
+
+    /**
+     * Get fallback CSV data if file not available
+     */
+    getFallbackCSVData() {
+        return `name,meaning,category,themes,country,region
+Gye Nyame,"Except for God - Symbol of the omnipotence and supremacy of God",spiritual,"god,divine,supreme",Ghana,"West Africa"
+Sankofa,"Look back and fetch it - Learn from the past to move forward wisely",wisdom,"learning,history,wisdom",Ghana,"West Africa"
+Dwennimmen,"Ram's horns - Humility and strength",character,"strength,humility,wisdom",Ghana,"West Africa"
+Pempamsie,"Sew in readiness - Being prepared and ready",character,"preparation,readiness,work",Ghana,"West Africa"
+Nyame Nnwu Na Mawu,"God never dies therefore I cannot die",spiritual,"god,eternal,divine",Ghana,"West Africa"
+Adwo,"Peace and tranquility",social,"peace,harmony,calm",Ghana,"West Africa"
+Aya,"Fern - Endurance and resourcefulness",character,"endurance,strength,survival",Ghana,"West Africa"
+Akoma,"Heart - Love and patience",social,"love,patience,heart",Ghana,"West Africa"
+Ese Ne Tekrema,"Teeth and tongue - Friendship and interdependence",social,"friendship,cooperation,unity",Ghana,"West Africa"
+Fihankra,"House - Security and safety",social,"home,security,safety",Ghana,"West Africa"`;
+    }
+
+    /**
+     * Get fallback symbols if CSV loading fails
      */
     getFallbackSymbols() {
         return [
             {
                 name: "Gye Nyame",
-                meaning: "Except for God - This symbol represents the omnipotence and supremacy of God in all affairs. It expresses deep faith in divine providence and the belief that God's power surpasses all earthly authority.",
-                basicMeaning: "Except for God",
+                meaning: "Except for God - Symbol of the omnipotence and supremacy of God",
                 category: "spiritual",
-                icon: "fas fa-star-and-crescent",
                 country: "Ghana",
                 region: "West Africa",
+                symbolCategory: "Adinkra",
                 type: "origin",
-                description: "One of the most revered Adinkra symbols representing divine authority and eternal nature of God.",
                 source: "Fallback Data",
-                visualElements: "Circular design with radiating elements and central cross-like motif symbolizing divine omnipresence",
-                diasporaEvolution: this.getDefaultDiasporaConnections(),
-                svgPattern: this.generateSVGPattern('gye nyame')
+                icon: "fas fa-star-and-crescent"
             },
             {
                 name: "Sankofa",
-                meaning: "Look back and fetch it - Learn from the past to move forward wisely. This symbol teaches that we must understand our history and heritage to make progress in the future.",
-                basicMeaning: "Look back and fetch it",
-                category: "wisdom", 
-                icon: "fas fa-star-and-crescent",
+                meaning: "Look back and fetch it - Learn from the past to move forward wisely",
+                category: "wisdom",
                 country: "Ghana",
                 region: "West Africa",
+                symbolCategory: "Adinkra",
                 type: "origin",
-                description: "Represents the importance of learning from history and ancestral wisdom.",
                 source: "Fallback Data",
-                visualElements: "Stylized bird with head turned backward or heart-shaped symbol with decorative curves",
-                diasporaEvolution: this.getDefaultDiasporaConnections(),
-                svgPattern: this.generateSVGPattern('sankofa')
+                icon: "fas fa-lightbulb"
+            },
+            {
+                name: "Dwennimmen",
+                meaning: "Ram's horns - Humility and strength, learning and wisdom",
+                category: "character",
+                country: "Ghana",
+                region: "West Africa",
+                symbolCategory: "Adinkra",
+                type: "origin",
+                source: "Fallback Data",
+                icon: "fas fa-shield-alt"
+            },
+            {
+                name: "Pempamsie",
+                meaning: "Sew in readiness - Being prepared, steadfast, and hardworking",
+                category: "character",
+                country: "Ghana",
+                region: "West Africa",
+                symbolCategory: "Adinkra",
+                type: "origin",
+                source: "Fallback Data",
+                icon: "fas fa-shield-alt"
             }
         ];
     }
 
     /**
-     * Utility function for delays
+     * Get statistics about loaded symbols
      */
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    getStats() {
+        return {
+            totalSymbols: this.symbols.length,
+            categories: this.getCategories(),
+            isLoaded: this.isLoaded,
+            sources: this.getSources()
+        };
     }
 
     /**
-     * Public methods
+     * Get available sources
      */
-    async getSymbols() {
-        // Try cache first
-        const cached = this.getCachedSymbols();
-        if (cached && cached.length > 0) {
-            this.symbols = cached;
-            this.isLoaded = true;
-            return cached;
-        }
-
-        // Load fresh data
-        return await this.loadSymbolsFromCSV();
+    getSources() {
+        const sources = {};
+        this.symbols.forEach(symbol => {
+            const source = symbol.source || 'Unknown';
+            sources[source] = (sources[source] || 0) + 1;
+        });
+        return sources;
     }
 
-    async searchSymbols(query) {
-        const symbols = await this.getSymbols();
-        const lowercaseQuery = query.toLowerCase();
-        
-        return symbols.filter(symbol => 
-            symbol.name.toLowerCase().includes(lowercaseQuery) ||
-            symbol.meaning.toLowerCase().includes(lowercaseQuery) ||
-            symbol.description.toLowerCase().includes(lowercaseQuery) ||
-            symbol.category.toLowerCase().includes(lowercaseQuery)
-        );
-    }
-
-    async getRandomSymbols(count = 6) {
-        const symbols = await this.getSymbols();
-        const shuffled = symbols.sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, count);
+    /**
+     * Clear all caches
+     */
+    clearCache() {
+        localStorage.removeItem('adinkra_symbols_cache');
+        console.log('🗑️ Adinkra symbols cache cleared');
     }
 }
 
-// Global instance
+// Initialize global instance
 window.AdinkraCsvProcessor = new AdinkraCsvProcessor();
 
 // Export for module use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = AdinkraCsvProcessor;
 }
+
+console.log('📄 Adinkra CSV Processor loaded (without auto AI enhancement)');

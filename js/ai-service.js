@@ -1,4 +1,4 @@
-// js/ai-service.js - Enhanced version with gap-filling capabilities
+// js/ai-service.js - Complete Enhanced version with news capabilities
 class DiasporaAIService {
     constructor() {
         // Store API key securely - you'll set this via environment or config
@@ -82,6 +82,426 @@ class DiasporaAIService {
             return this.getFallbackContent(prompt);
         }
     }
+    
+    // =================================================================
+    // NEWS AI METHODS - START
+    // =================================================================
+    
+    // Analyze sentiment of news headlines and content
+    async analyzeNewsSentiment(headline, content = '') {
+        console.log('🎭 Analyzing news sentiment for:', headline.substring(0, 50) + '...');
+        
+        const prompt = `Analyze the sentiment of this news headline and determine its likely impact on diaspora communities:
+
+HEADLINE: "${headline}"
+${content ? `CONTENT PREVIEW: "${content.substring(0, 200)}..."` : ''}
+
+Classify the sentiment as:
+- POSITIVE: Encouraging, uplifting, beneficial news for communities
+- NEUTRAL: Informational, balanced, no strong emotional impact
+- NEGATIVE: Concerning, challenging, potentially distressing news
+
+Respond with just one word: POSITIVE, NEUTRAL, or NEGATIVE
+Then on a new line, provide a brief 1-sentence explanation of why this sentiment classification applies to diaspora communities specifically.`;
+
+        try {
+            const response = await this.callOpenAI(prompt, 100, 0.3);
+            const lines = response.trim().split('\n');
+            const sentiment = lines[0].toLowerCase().replace(/[^a-z]/g, '');
+            const explanation = lines[1] || 'Analysis complete';
+            
+            console.log('✅ Sentiment analysis result:', sentiment);
+            this.trackUserInterest('sentiment_analysis', headline);
+            
+            return {
+                sentiment: ['positive', 'neutral', 'negative'].includes(sentiment) ? sentiment : 'neutral',
+                explanation: explanation,
+                confidence: 0.85
+            };
+            
+        } catch (error) {
+            console.error('❌ Sentiment analysis failed:', error);
+            return {
+                sentiment: 'neutral',
+                explanation: 'Unable to analyze sentiment at this time',
+                confidence: 0.5
+            };
+        }
+    }
+
+    // Generate contextual insights about news relevance to diaspora
+    async generateNewsContext(headline, region = 'global', category = 'general') {
+        console.log('🔍 Generating news context for:', headline.substring(0, 50) + '...');
+        
+        const prompt = `Explain why this news story is relevant to ${region} diaspora communities:
+
+HEADLINE: "${headline}"
+REGION: ${region}
+CATEGORY: ${category}
+
+Provide insights in this format:
+
+DIASPORA RELEVANCE:
+[2-3 sentences explaining why this story matters to diaspora communities specifically]
+
+KEY IMPACTS:
+[List 2-3 specific ways this could affect diaspora individuals or communities]
+
+CULTURAL CONNECTIONS:
+[1-2 sentences about how this relates to cultural identity, heritage, or community bonds]
+
+Keep the response concise but informative. Focus on practical implications for diaspora communities.`;
+
+        try {
+            const context = await this.callOpenAI(prompt, 350, 0.7);
+            
+            console.log('✅ News context generated successfully');
+            this.trackUserInterest('news_context', `${region}-${category}`);
+            
+            return {
+                context: context,
+                region: region,
+                category: category,
+                generatedAt: Date.now()
+            };
+            
+        } catch (error) {
+            console.error('❌ News context generation failed:', error);
+            return this.getFallbackNewsContext(headline, region, category);
+        }
+    }
+
+    // Analyze multiple news articles for insights
+    async getNewsInsights(articles, timeframe = 'today') {
+        console.log('📊 Analyzing news insights for', articles.length, 'articles');
+        
+        const headlines = articles.slice(0, 10).map(article => article.headline || article.title).join('\n- ');
+        
+        const prompt = `Analyze these recent news headlines for trends affecting diaspora communities:
+
+HEADLINES FROM ${timeframe.toUpperCase()}:
+- ${headlines}
+
+Provide analysis in this format:
+
+TRENDING TOPICS:
+[Identify 2-3 major themes or topics appearing across multiple headlines]
+
+REGIONAL FOCUS:
+[Which geographic regions or countries are most prominently featured?]
+
+COMMUNITY IMPACT:
+[What are the main ways these stories could affect diaspora communities?]
+
+SENTIMENT OVERVIEW:
+[Are the overall news trends positive, concerning, or mixed for diaspora communities?]
+
+RECOMMENDATIONS:
+[Suggest 2-3 topics or regions community members should pay attention to]
+
+Keep insights practical and relevant to diaspora community interests.`;
+
+        try {
+            const insights = await this.callOpenAI(prompt, 500, 0.7);
+            
+            console.log('✅ News insights analysis complete');
+            this.trackUserInterest('news_insights', timeframe);
+            
+            return {
+                insights: insights,
+                articlesAnalyzed: articles.length,
+                timeframe: timeframe,
+                generatedAt: Date.now()
+            };
+            
+        } catch (error) {
+            console.error('❌ News insights analysis failed:', error);
+            return this.getFallbackNewsInsights(articles.length, timeframe);
+        }
+    }
+
+    // Categorize news relevance to specific diaspora categories
+    async categorizeNewsRelevance(article, diasporaCategories = ['migration', 'culture', 'politics', 'economics', 'community']) {
+        console.log('🏷️ Categorizing news relevance:', article.headline?.substring(0, 40) + '...');
+        
+        const prompt = `Categorize this news article's relevance to diaspora community interests:
+
+HEADLINE: "${article.headline || article.title}"
+CONTENT PREVIEW: "${(article.content || article.excerpt || '').substring(0, 300)}..."
+
+Rate relevance (0-10) for each category:
+- MIGRATION: Immigration policies, visa changes, border issues, refugee matters
+- CULTURE: Arts, festivals, language preservation, cultural events, traditions
+- POLITICS: Voting rights, representation, policy impacts on communities
+- ECONOMICS: Employment, business opportunities, remittances, economic policies
+- COMMUNITY: Local events, organizations, social issues, community development
+
+Format response as:
+CATEGORY: SCORE (0-10) - Brief explanation
+CATEGORY: SCORE (0-10) - Brief explanation
+...
+
+OVERALL DIASPORA RELEVANCE: HIGH/MEDIUM/LOW
+PRIMARY CATEGORY: [Category with highest score]`;
+
+        try {
+            const categorization = await this.callOpenAI(prompt, 300, 0.5);
+            const parsed = this.parseCategorizationResponse(categorization);
+            
+            console.log('✅ News categorization complete:', parsed.primaryCategory);
+            this.trackUserInterest('news_category', parsed.primaryCategory);
+            
+            return parsed;
+            
+        } catch (error) {
+            console.error('❌ News categorization failed:', error);
+            return this.getFallbackCategorization(article);
+        }
+    }
+
+    // Enhanced search for diaspora-relevant news
+    async searchDiasporaNews(query, filters = {}) {
+        console.log('🔍 Searching diaspora news for:', query);
+        
+        const prompt = `Based on the search query "${query}", suggest the most relevant news topics and search terms for diaspora communities.
+
+SEARCH QUERY: "${query}"
+FILTERS: ${JSON.stringify(filters)}
+
+Provide suggestions for:
+
+RECOMMENDED HEADLINES:
+[Suggest 3-4 headline types that would be most relevant]
+
+RELATED SEARCH TERMS:
+[List 5-6 alternative search terms that might yield better results]
+
+DIASPORA ANGLES:
+[Explain 2-3 specific angles or perspectives that would make this topic relevant to diaspora communities]
+
+GEOGRAPHIC FOCUS:
+[Suggest which countries or regions would be most important to follow for this topic]
+
+Keep suggestions practical and actionable for news discovery.`;
+
+        try {
+            const suggestions = await this.callOpenAI(prompt, 400, 0.7);
+            
+            console.log('✅ Diaspora news search suggestions generated');
+            this.trackUserInterest('news_search', query);
+            
+            return {
+                suggestions: suggestions,
+                query: query,
+                filters: filters,
+                generatedAt: Date.now()
+            };
+            
+        } catch (error) {
+            console.error('❌ News search suggestions failed:', error);
+            return this.getFallbackSearchSuggestions(query, filters);
+        }
+    }
+
+    // Parse categorization response from AI
+    parseCategorizationResponse(response) {
+        const lines = response.split('\n').filter(line => line.trim());
+        const categories = {};
+        let overallRelevance = 'MEDIUM';
+        let primaryCategory = 'general';
+        
+        lines.forEach(line => {
+            if (line.includes('MIGRATION:')) {
+                const match = line.match(/(\d+)/);
+                categories.migration = match ? parseInt(match[1]) : 5;
+            } else if (line.includes('CULTURE:')) {
+                const match = line.match(/(\d+)/);
+                categories.culture = match ? parseInt(match[1]) : 5;
+            } else if (line.includes('POLITICS:')) {
+                const match = line.match(/(\d+)/);
+                categories.politics = match ? parseInt(match[1]) : 5;
+            } else if (line.includes('ECONOMICS:')) {
+                const match = line.match(/(\d+)/);
+                categories.economics = match ? parseInt(match[1]) : 5;
+            } else if (line.includes('COMMUNITY:')) {
+                const match = line.match(/(\d+)/);
+                categories.community = match ? parseInt(match[1]) : 5;
+            } else if (line.includes('OVERALL DIASPORA RELEVANCE:')) {
+                const relevanceMatch = line.match(/(HIGH|MEDIUM|LOW)/i);
+                overallRelevance = relevanceMatch ? relevanceMatch[1].toUpperCase() : 'MEDIUM';
+            } else if (line.includes('PRIMARY CATEGORY:')) {
+                const categoryMatch = line.match(/PRIMARY CATEGORY:\s*(\w+)/i);
+                primaryCategory = categoryMatch ? categoryMatch[1].toLowerCase() : 'general';
+            }
+        });
+        
+        // Find highest scoring category if primary wasn't detected
+        if (primaryCategory === 'general' && Object.keys(categories).length > 0) {
+            primaryCategory = Object.keys(categories).reduce((a, b) => 
+                (categories[a] || 0) > (categories[b] || 0) ? a : b
+            );
+        }
+        
+        return {
+            categories: categories,
+            overallRelevance: overallRelevance,
+            primaryCategory: primaryCategory,
+            maxScore: Math.max(...Object.values(categories), 0)
+        };
+    }
+
+    // Enhanced user tracking for news
+    trackNewsInteraction(interactionType, data) {
+        console.log('📊 News interaction:', interactionType, data);
+        
+        // Track specific news interactions
+        if (interactionType === 'sentiment_view') {
+            this.trackUserInterest('news_sentiment', data.sentiment);
+        } else if (interactionType === 'category_filter') {
+            this.trackUserInterest('news_category', data.category);
+        } else if (interactionType === 'region_filter') {
+            this.trackUserInterest('news_region', data.region);
+        } else if (interactionType === 'article_read') {
+            this.trackUserInterest('news_engagement', data.headline);
+        }
+        
+        // Update activity timestamp
+        this.userProfile.lastActivity = Date.now();
+        this.saveUserProfile();
+    }
+
+    // Generate personalized news recommendations
+    async generatePersonalizedNewsRecommendations() {
+        if (this.userProfile.countries.length === 0 && this.userProfile.interests.length === 0) {
+            return this.getDefaultNewsRecommendations();
+        }
+        
+        const userContext = `User has shown interest in: ${this.userProfile.countries.join(', ')} countries and topics: ${this.userProfile.interests.join(', ')}`;
+        
+        const prompt = `Based on a user interested in ${this.userProfile.countries.join(' and ')} and topics like ${this.userProfile.interests.join(', ')}, recommend specific news categories and sources they should follow on our diaspora news platform.
+
+Consider:
+- News sources from their countries of interest
+- Diaspora-specific angles on current events  
+- Regional publications with diaspora coverage
+- Community news and cultural updates
+
+Provide 4-5 personalized recommendations with brief explanations of why each would be valuable to this user.`;
+        
+        try {
+            const recommendations = await this.callOpenAI(prompt, 400, 0.7);
+            return recommendations;
+        } catch (error) {
+            console.error('Error generating personalized news recommendations:', error);
+            return this.getDefaultNewsRecommendations();
+        }
+    }
+
+    // FALLBACK METHODS FOR NEWS AI
+    getFallbackNewsContext(headline, region, category) {
+        const contexts = {
+            migration: `This news story relates to migration patterns and policies that directly affect diaspora communities' ability to travel, settle, and maintain family connections across borders.`,
+            culture: `This cultural development impacts how diaspora communities preserve and express their heritage while adapting to new environments and sharing traditions globally.`,
+            politics: `Political developments like this can affect diaspora communities' civic participation, representation, and policy advocacy in their host countries.`,
+            economics: `Economic news of this type influences diaspora communities' financial opportunities, remittance flows, and business development across borders.`,
+            community: `Community-focused stories like this highlight the social connections, support systems, and collective action that strengthen diaspora networks worldwide.`
+        };
+        
+        return {
+            context: contexts[category] || contexts.community,
+            region: region,
+            category: category,
+            generatedAt: Date.now()
+        };
+    }
+
+    getFallbackNewsInsights(articleCount, timeframe) {
+        return {
+            insights: `Analysis of ${articleCount} recent articles shows continued focus on migration policies, cultural preservation efforts, and community development initiatives. Diaspora communities remain actively engaged in both homeland and host country developments, with particular attention to policies affecting cross-border movement and cultural expression.`,
+            articlesAnalyzed: articleCount,
+            timeframe: timeframe,
+            generatedAt: Date.now()
+        };
+    }
+
+    getFallbackCategorization(article) {
+        // Simple keyword-based fallback categorization
+        const headline = (article.headline || article.title || '').toLowerCase();
+        const content = (article.content || article.excerpt || '').toLowerCase();
+        const text = headline + ' ' + content;
+        
+        const categories = {
+            migration: this.calculateKeywordScore(text, ['visa', 'immigration', 'border', 'refugee', 'asylum', 'citizenship']),
+            culture: this.calculateKeywordScore(text, ['culture', 'festival', 'art', 'music', 'tradition', 'heritage', 'language']),
+            politics: this.calculateKeywordScore(text, ['election', 'vote', 'policy', 'government', 'political', 'parliament']),
+            economics: this.calculateKeywordScore(text, ['economy', 'business', 'employment', 'trade', 'finance', 'remittance']),
+            community: this.calculateKeywordScore(text, ['community', 'organization', 'social', 'local', 'neighborhood', 'group'])
+        };
+        
+        const primaryCategory = Object.keys(categories).reduce((a, b) => 
+            categories[a] > categories[b] ? a : b
+        );
+        
+        const maxScore = Math.max(...Object.values(categories));
+        const overallRelevance = maxScore >= 6 ? 'HIGH' : maxScore >= 3 ? 'MEDIUM' : 'LOW';
+        
+        return {
+            categories: categories,
+            overallRelevance: overallRelevance,
+            primaryCategory: primaryCategory,
+            maxScore: maxScore
+        };
+    }
+
+    getFallbackSearchSuggestions(query, filters) {
+        const commonSuggestions = {
+            'immigration': ['visa policy changes', 'diaspora citizenship', 'border regulations', 'family reunification'],
+            'culture': ['cultural festivals', 'heritage preservation', 'diaspora arts', 'traditional celebrations'],
+            'politics': ['diaspora voting', 'political representation', 'policy impacts', 'civic engagement'],
+            'community': ['community organizations', 'social networks', 'local events', 'support systems'],
+            'economics': ['remittances', 'diaspora business', 'economic opportunities', 'financial services']
+        };
+        
+        const category = Object.keys(commonSuggestions).find(key => 
+            query.toLowerCase().includes(key)
+        ) || 'community';
+        
+        return {
+            suggestions: `RECOMMENDED HEADLINES:\n- ${commonSuggestions[category].join('\n- ')}\n\nRELATED SEARCH TERMS:\n- ${query} diaspora\n- ${query} community\n- ${query} global impact\n\nDIASPORA ANGLES:\nFocus on community impact, cultural connections, and cross-border implications.`,
+            query: query,
+            filters: filters,
+            generatedAt: Date.now()
+        };
+    }
+
+    // Utility method for keyword scoring
+    calculateKeywordScore(text, keywords) {
+        let score = 0;
+        keywords.forEach(keyword => {
+            const regex = new RegExp(keyword, 'gi');
+            const matches = text.match(regex);
+            if (matches) {
+                score += matches.length * 2; // Weight multiple mentions
+            }
+        });
+        return Math.min(score, 10); // Cap at 10
+    }
+
+    getDefaultNewsRecommendations() {
+        return `RECOMMENDED FOR YOU:
+
+- Migration Policy Updates: Stay informed about visa changes and immigration policies affecting diaspora movement
+- Cultural Events Calendar: Discover festivals, arts events, and cultural celebrations in your area
+- Community Business News: Learn about diaspora entrepreneurs and economic opportunities
+- Political Representation: Follow stories about diaspora political participation and representation
+- Heritage Preservation: Read about efforts to maintain cultural traditions and languages globally`;
+    }
+    
+    // =================================================================
+    // NEWS AI METHODS - END
+    // =================================================================
+    
+    // EXISTING METHODS CONTINUE BELOW...
     
     // NEW: Enhanced country summary with gap-filling
     async enhanceCountrySummaryWithAI(country) {
@@ -169,7 +589,7 @@ EXISTING DATA (reference only, don't repeat):
 
 ${gapInstructions}
 
-Write 2-3 additional paragraphs that naturally flow from the existing summary. Make it feel like one cohesive, authoritative description. Include specific names, places, and examples where possible. Write in an engaging, informative style.
+Write 1-2 paragraphs that naturally flow from the existing summary. Make it feel like one cohesive, authoritative description. Include how the country became a part of the African Diaspora. Include specific names, places, and examples where possible. Write in an engaging, informative style.
         `.trim();
     }
     
